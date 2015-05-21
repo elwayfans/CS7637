@@ -56,6 +56,11 @@ public class Agent {
      * @return your Agent's answer to this problem
      */
     public int Solve(RavensProblem problem) {
+        if(problem.hasVerbal())
+        	return 2;
+        
+        System.out.println("HERE");
+        
         return -1;
     }
 }
