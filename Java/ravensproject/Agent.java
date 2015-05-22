@@ -4,6 +4,7 @@ package ravensproject;
 //import java.awt.Image;
 //import java.io.File;
 //import javax.imageio.ImageIO;
+import java.util.HashMap;;
 
 /**
  * Your Agent for solving Raven's Progressive Matrices. You MUST modify this
@@ -56,11 +57,23 @@ public class Agent {
      * @return your Agent's answer to this problem
      */
     public int Solve(RavensProblem problem) {
-        if(problem.hasVerbal())
-        	return 2;
         
-        System.out.println("HERE");
+    	//"2x2" or "3x3":
+    	String name = problem.getName();
+    	
+    	if(problem.hasVerbal()) {
+    		
+    		AgentDiagramComparison compAB = new AgentDiagramComparison(problem.getFigures().get("A"), problem.getFigures().get("B"));
+    		
+    		
+    		
+    	}
+    	
+    	int realAnswer = problem.checkAnswer(1);
+        
+        System.out.println("Answer: " + realAnswer);
         
         return -1;
     }
 }
+
