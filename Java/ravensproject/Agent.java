@@ -4,7 +4,8 @@ package ravensproject;
 //import java.awt.Image;
 //import java.io.File;
 //import javax.imageio.ImageIO;
-import java.util.HashMap;;
+import java.util.HashMap;
+import java.util.ArrayList;
 
 /**
  * Your Agent for solving Raven's Progressive Matrices. You MUST modify this
@@ -60,11 +61,33 @@ public class Agent {
         
     	//"2x2" or "3x3":
     	String name = problem.getName();
+    	String type = problem.getProblemType();
+
+    	int numAnswers = 6;
+    	if(type.equals("3x3"))
+    		numAnswers = 8;
+
+    	System.out.println("************************");
+    	System.out.println("Here we go for " + name);
+    	System.out.println("************************");
+    	
     	
     	if(problem.hasVerbal()) {
     		
+    		//BUILD COMPARISON MAPPINGS FOR A AND B
     		AgentDiagramComparison compAB = new AgentDiagramComparison(problem.getFigures().get("A"), problem.getFigures().get("B"));
     		
+    		//BUILD COMPARISON MAPPINGS FOR C AND EACH TEST CASE
+    		ArrayList<AgentDiagramComparison> compCTests = new ArrayList<AgentDiagramComparison>();
+    		for(int i = 0; i < numAnswers; ++i) {
+    			compCTests.add(new AgentDiagramComparison(problem.getFigures().get("C"), problem.getFigures().get(Integer.toString(i + 1))));    		
+    		}
+    		
+
+    		//GO THROUGH EACH MAPPING IN EACH OF THE SOLUTION COMPARISONS IN compCTests.  ASSIGN EACH 
+    		//MAPPING A SCORE BASED ON HOW CLOSE IT IS TO ANY OF THE MAPPINGS IN compAB.  
+    		//THEN ASSIGN EACH SOLUTION A SCORE WHICH CORRELATES TO THE LOWEST SCORE OF ITS MAPS
+    		//IF THERE'S A TIE, GO WITH THE LOWEST SCORE
     		
     		
     	}

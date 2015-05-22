@@ -7,23 +7,160 @@ import java.util.Map;
 
 public class AgentDiagramComparison {
 
+	//THIS STRING IS USED TO MAP OBJECTS IN ON FIGURE TO OBJECTS WHICH DON'T EXIST IN ANOTHER
+	//FIGURE.  THAT MEANS THE OBJECT MAPPED TO THIS WAS CREATED OR DELETED
+	static String dummyRavensObjectString = "NO OBJECT TO MAP";
+	
 	RavensFigure figure1 = null;
 	RavensFigure figure2 = null;
 	ArrayList<AgentShapeMapping> allPossibleMappings = new ArrayList<AgentShapeMapping>();
+	
+	//THESE HASHMAPS ARE THE SAME AS THOSE IN THE RavensFigure OBJECTS OTHER THAN
+	//THEY ARE TWEAKED TO BE THE SAME SIZE AS EACH OTHER.  IF ONE OF THE HASHMAPS
+	//WAS LARGER THAN THE OTHER, THE SMALLER WAS ADDED TO WITH DUMMY VALUES TO MAKE 
+	//THEM THE SAME SIZE
+	HashMap<String, RavensObject> figure1RevisedObjectList = new HashMap<String, RavensObject>();
+	HashMap<String, RavensObject> figure2RevisedObjectList = new HashMap<String, RavensObject>();
 	
 	public AgentDiagramComparison(RavensFigure fig1, RavensFigure fig2) {
 		figure1 = fig1;
 		figure2 = fig2;
 		
-		int numObjects1 = getObjectCount(1);
-		int numObjects2 = getObjectCount(2);
+		int dummyCount = 0;
 		
-		for(int i = 0; i < numObjects1; ++i) {
-			AgentShapeMapping mapping = new AgentShapeMapping();
-			mapping.figure1Objects.add(getFigureObjectByIndex(figure1,  i));
-			//NOT SURE HOW TO MAP THESE -- THINKING I NEED RECURSION
+		//COPY THE OBJECT LISTS INTO THE INTERNAL HASHMAPS FOR THIS CLASS
+		//SO WE CAN ADD DUMMY VALUES TO MAKE THEM THE SAME SIZE
+		for(int i = 0; i < getObjectCount(1); ++i) {
+			Map.Entry<String, RavensObject> temp = getFigureObjectByIndex(figure1, i);
+			figure1RevisedObjectList.put(temp.getKey(), temp.getValue());
+		}
+		for(int i = 0; i < getObjectCount(2); ++i) {
+			Map.Entry<String, RavensObject> temp = getFigureObjectByIndex(figure2, i);
+			figure2RevisedObjectList.put(temp.getKey(), temp.getValue());
+		}		
+		
+		//NOW MAKE THE TWO INTERNAL OBJECT ARRAYS BE THE SAME SIZE
+		for(int i = figure1RevisedObjectList.size(); i < figure2RevisedObjectList.size(); ++i) {
+			figure1RevisedObjectList.put(dummyRavensObjectString + "_" + i, new RavensObject(dummyRavensObjectString + "_" + i));
+			dummyCount++;
+		}
+		for(int i = figure2RevisedObjectList.size(); i < figure1RevisedObjectList.size(); ++i) {
+			figure2RevisedObjectList.put(dummyRavensObjectString + "_" + i, new RavensObject(dummyRavensObjectString + "_" + i));
+			dummyCount++;
+		}
+			
+		
+		//NOW WE GENERATE ALL POSSIBLE MAPPINGS.  THE LEFT SIDE OF THE MAPPING WILL BE THE FIGURE1 LIST
+		//OF OBJECTS IN ORDER.  THE RIGHT SIDE WILL BE ALL POSSIBLE PERMUTATIONS OF THE FIGURE2 LIST OF 
+		//OBJECTS TO GET ALL POSSIBLE COMBINATIONS
+		int initialIndex = 0;
+		getAllPossibleMappings(initialIndex, null);
+
+		
+		
+		//NOW WE NEED TO DETECT DUPLICATES BASED ON ANY VALUES WHICH USE THE dummyRavensObjectString
+		//FOR EXAMPLE, IF FIGURE 1 HAS 2 OBJECTS AND FIGURE 2 HAS 4, FIGURE 1'S LIST WILL NOW CONTAIN
+		//TWO DUMMY ENTRIES.  WE DON'T NEED TWO PERMUTATIONS LIKE THIS:
+		/*
+		 * 	FIG1	FIG2 (Map1)		FIG2 (Map2)
+		 * 	a		1				1
+		 * 	b		2				2
+		 * 	dummy	3				4
+		 * 	dummy	4				3
+		 * 
+		 * BECAUSE THIS MAY SCREW UP THE LEARNING OF THE MACHINE.  ANYWHERE WE HAVE TWO DIFFERENT MAPPINS
+		 * AND THE ONLY DIFFERNCE BETWEEN THEM IS THAT THEY HAVE DIFFERENT MAPS TO DUMMY OBJECTS
+		 * WE SHOULD NUKE THEM UNTIL WE HAVE ONLY ONE REMAINING */
+		 //NOTE: THE ABOVE SCENARIO ONLY HAPPENS IF THERE ARE MORE THAN ONE DUMMY OBJECT
+		if(dummyCount > 1)
+			removeExtraDummyMappings();
+
+		
+		//NOW WE NEED TO IDENTIFY WHICH TRANSFORMATIONS TOOK PLACE FOR EACH MAPPING PERMUTATION
+		for(int i = 0; i < allPossibleMappings.size(); ++i) {
+			allPossibleMappings.get(i).identifyTransformationsForMap();
+		}
+		
+		//USED FOR DEBUGGING ONLY - PRING THE MAPPINGS
+				for(int i = 0; i < allPossibleMappings.size(); ++i) {
+					allPossibleMappings.get(i).printMapping(Integer.toString(i));
+					System.out.println("-----END OF MAP----");
+				}
+				System.out.println("-----NO MORE MAPS FOR THIS PROBLEM----");
+
+
+	}
+	
+	//NOW WE NEED TO DETECT DUPLICATES BASED ON ANY VALUES WHICH USE THE dummyRavensObjectString
+	//FOR EXAMPLE, IF FIGURE 1 HAS 2 OBJECTS AND FIGURE 2 HAS 4, FIGURE 1'S LIST WILL NOW CONTAIN
+	//TWO DUMMY ENTRIES.  WE DON'T NEED TWO PERMUTATIONS LIKE THIS:
+	/*
+	 * 	FIG1	FIG2 (Map1)		FIG2 (Map2)
+	 * 	a		1				1
+	 * 	b		2				2
+	 * 	dummy	3				4
+	 * 	dummy	4				3
+	 * 
+	 * BECAUSE THIS MAY SCREW UP THE LEARNING OF THE MACHINE.  ANYWHERE WE HAVE TWO DIFFERENT MAPPINS
+	 * AND THE ONLY DIFFERNCE BETWEEN THEM IS THAT THEY HAVE DIFFERENT MAPS TO DUMMY OBJECTS
+	 * WE SHOULD NUKE THEM UNTIL WE HAVE ONLY ONE REMAINING */	
+	private void removeExtraDummyMappings() {
+		for(int i =0; i < allPossibleMappings.size(); ++i) {
+			for(int j = i + 1; j < allPossibleMappings.size(); ++j) {
+
+				if(allPossibleMappings.get(i).hasSameMappingsIgnoringDummys(allPossibleMappings.get(j))) {
+					allPossibleMappings.remove(j);
+					j--;
+				}
+			}
+		}			
+	}
+	
+	public void getAllPossibleMappings(int index, AgentShapeMapping theMapping) {
+		if(theMapping == null) {
+			theMapping = new AgentShapeMapping();
+			
+			//FILL THE MAP WITH FIGURE1 OBJECTS IN ORDER
+			for(int i = 0; i < figure1RevisedObjectList.size(); ++i) {
+				Map.Entry<String, RavensObject> temp =getFigureObjectByIndex(figure1, i); 
+				theMapping.figure1Objects.add(temp);
+			}
+		}
+
+		//NOW FILL THE MAP WITH ALL POSSIBLE COMBINATIONS OF FIGURE2 STUFF
+		for(int i = 0; i < figure2RevisedObjectList.size(); ++i) {
+			
+			Map.Entry<String, RavensObject> temp = getObjectByIndex(figure2RevisedObjectList, i);
+			
+			//HAVE WE ALREADY ADDED THIS OBJECT TO THE ARRAY? IF SO, DON'T ADD AGAIN, JUST 
+			//USE A continue TO GO TO THE NEXT OBJECT
+			boolean isDummyObject = false;
+			if(temp.getKey().length() > dummyRavensObjectString.length() && 
+					temp.getKey().substring(0, dummyRavensObjectString.length()).equals(dummyRavensObjectString)) {
+				isDummyObject = true;
+			}
+			if(theMapping.keyAlreadyUsed(theMapping.figure2Objects, temp.getKey())) {
+				continue;
+			}
+			
+			//IF SOMETHING IS ALREADY IN THIS SPOT, NUKE IT. THEN ADD INTO THAT INDEX
+			if(theMapping.figure2Objects.size() > index) {
+				theMapping.figure2Objects.remove(index);
+			}
+			theMapping.figure2Objects.add(index, temp);
+			
+			
+			if(index == figure2RevisedObjectList.size() - 1) {
+				//DONE! FOUND A MAP
+				allPossibleMappings.add(theMapping);
+			}
+			else {
+				//CALL SELF WITH AN INCREMENTED INDEX
+				getAllPossibleMappings(index + 1, new AgentShapeMapping(theMapping));
+			}
 		}
 	}
+	
 	
 	public String getFigureName(int figure) {
 		if(figure == 1)
@@ -41,14 +178,30 @@ public class AgentDiagramComparison {
 		return -1;
 	}
 	
-	public RavensObject getFigureObjectByIndex(RavensFigure figure, int objectIndex) {
+	public Map.Entry<String, RavensObject> getObjectByIndex(HashMap<String, RavensObject> objects, int objectIndex) {
+		
+		int index = 0;
+		for(HashMap.Entry<String, RavensObject> entry : objects.entrySet()){
+			if(index == objectIndex) {
+				return entry;
+			}
+			
+			index++;
+		}
+
+		return null;
+	}
+	
+	
+	
+	public Map.Entry<String, RavensObject> getFigureObjectByIndex(RavensFigure figure, int objectIndex) {
 		
 		HashMap<String, RavensObject> objects = figure.getObjects();
 		
 		int index = 0;
 		for(HashMap.Entry<String, RavensObject> entry : objects.entrySet()){
 			if(index == objectIndex) {
-				return entry.getValue();
+				return entry;
 			}
 			
 			index++;
@@ -66,6 +219,8 @@ public class AgentDiagramComparison {
 				return attribEntry;
 			}
 		}
+		
+		return null;
 		
 	}
 
