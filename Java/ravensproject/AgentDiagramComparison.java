@@ -224,6 +224,13 @@ public class AgentDiagramComparison {
 		
 	}
 
+	public void calculateScores() {
+		//CALCULATE SCORES OF EACH POSSIBLE MAPPING
+		for(int i = 0; i < allPossibleMappings.size(); ++i) {
+			allPossibleMappings.get(i).calculateScores();
+		}
+	}
+
 
 	
 	

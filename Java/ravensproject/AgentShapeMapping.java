@@ -10,6 +10,7 @@ public class AgentShapeMapping {
 	ArrayList<Map.Entry<String, RavensObject>> figure2Objects = new ArrayList<Map.Entry<String, RavensObject>>();
 	enum mappingTransformations { NO_CHANGE, SHAPE_CHANGE, SIZE_CHANGE, ABOVE_CHANGE, OVERLAP_CHANGE, ANGLE_CHANGE, FILL_CHANGE, INSIDE_CHANGE, ALIGNMENT_CHANGE	}
 	ArrayList<ArrayList<mappingTransformations>> mapTransformations = new ArrayList<ArrayList<mappingTransformations>>(); 
+	ArrayList<AgentMapScore> mapScores = new ArrayList<AgentMapScore>();
 	
 	public AgentShapeMapping() {
 		
@@ -176,5 +177,9 @@ public class AgentShapeMapping {
 
 		return false;
 	}
-	
+
+	public void calculateScores() {
+		
+	}
+
 }

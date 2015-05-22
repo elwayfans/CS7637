@@ -88,7 +88,10 @@ public class Agent {
     		//MAPPING A SCORE BASED ON HOW CLOSE IT IS TO ANY OF THE MAPPINGS IN compAB.  
     		//THEN ASSIGN EACH SOLUTION A SCORE WHICH CORRELATES TO THE LOWEST SCORE OF ITS MAPS
     		//IF THERE'S A TIE, GO WITH THE LOWEST SCORE
-    		
+    		for(int i = 0; i < compCTests.size(); ++i) {
+    			compCTests.get(i).calculateScores();
+    		}
+    			
     		
     	}
     	
