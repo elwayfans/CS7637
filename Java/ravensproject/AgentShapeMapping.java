@@ -207,13 +207,15 @@ public class AgentShapeMapping {
 			
 			alreadyUsedIndices.add(theScore.correspondingMapIndex);
 			for(int j = 0; j < theScore.transformationDelta.size(); ++j) {
+				if(theScore.transformationDelta.get(i) != mappingTransformations.NO_CHANGE ||
+						!totalTransformationDelta.contains(mappingTransformations.NO_CHANGE))
 				totalTransformationDelta.add(theScore.transformationDelta.get(j));
 			}
 			
 		}
 
 		
-		return new AgentMappingScore(-1, totalTransformationDelta);
+		return new AgentMappingScore(-1, totalTransformationDelta, ???);
 	}
 	
 	private AgentMappingScore getClosestMatch(ArrayList<mappingTransformations> transformList, ArrayList<ArrayList<mappingTransformations>> listOTransformLists, ArrayList<Integer> alreadyUsedIndices) {
