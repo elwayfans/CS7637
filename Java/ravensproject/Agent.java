@@ -21,6 +21,9 @@ import java.util.ArrayList;
  * 
  */
 public class Agent {
+	
+	enum debugPrintType { NONE, SOME, ALL };
+	debugPrintType debugPrinting = debugPrintType.SOME;
     /**
      * The default constructor for your Agent. Make sure to execute any
      * processing necessary before your Agent starts solving problems here.
@@ -67,20 +70,22 @@ public class Agent {
     	if(type.equals("3x3"))
     		numAnswers = 8;
 
-    	System.out.println("************************");
-    	System.out.println("Here we go for " + name);
-    	System.out.println("************************");
+    	if(debugPrinting == debugPrintType.SOME || debugPrinting == debugPrintType.ALL) {
+	    	System.out.println("************************");
+	    	System.out.println("Here we go for " + name);
+	    	System.out.println("************************");
+    	}
     	
     	
     	if(problem.hasVerbal()) {
     		
     		//BUILD COMPARISON MAPPINGS FOR A AND B
-    		AgentDiagramComparison compAB = new AgentDiagramComparison(problem.getFigures().get("A"), problem.getFigures().get("B"));
+    		AgentDiagramComparison compAB = new AgentDiagramComparison(problem.getFigures().get("A"), problem.getFigures().get("B"), debugPrinting);
     		
     		//BUILD COMPARISON MAPPINGS FOR C AND EACH TEST CASE
     		ArrayList<AgentDiagramComparison> compCTests = new ArrayList<AgentDiagramComparison>();
     		for(int i = 0; i < numAnswers; ++i) {
-    			compCTests.add(new AgentDiagramComparison(problem.getFigures().get("C"), problem.getFigures().get(Integer.toString(i + 1))));    		
+    			compCTests.add(new AgentDiagramComparison(problem.getFigures().get("C"), problem.getFigures().get(Integer.toString(i + 1)), debugPrinting));    		
     		}
     		
 
@@ -88,16 +93,28 @@ public class Agent {
     		//MAPPING A SCORE BASED ON HOW CLOSE IT IS TO ANY OF THE MAPPINGS IN compAB.  
     		//THEN ASSIGN EACH SOLUTION A SCORE WHICH CORRELATES TO THE LOWEST SCORE OF ITS MAPS
     		//IF THERE'S A TIE, GO WITH THE LOWEST SCORE
+    		AgentMappingScore bestScore = null;
+    		int bestIndex = -1;
     		for(int i = 0; i < compCTests.size(); ++i) {
-    			compCTests.get(i).calculateScores();
+    			AgentMappingScore thisScore = compCTests.get(i).calculateScores(compAB);
+    			if(bestScore == null || thisScore.whichScoreIsBetter(bestScore) == thisScore) {
+    				bestScore = thisScore;
+    				bestIndex = i;
+    			}
     		}
     			
-    		
+        	if(debugPrinting == debugPrintType.SOME || debugPrinting == debugPrintType.ALL) {
+        		System.out.println("Guess: " + (bestIndex + 1));
+        	}
+        	
+        	int realAnswer = problem.checkAnswer(bestIndex + 1);
+            
+        	if(debugPrinting == debugPrintType.SOME || debugPrinting == debugPrintType.ALL) {
+        		System.out.println("Answer: " + realAnswer);
+        	}
     	}
     	
-    	int realAnswer = problem.checkAnswer(1);
-        
-        System.out.println("Answer: " + realAnswer);
+
         
         return -1;
     }

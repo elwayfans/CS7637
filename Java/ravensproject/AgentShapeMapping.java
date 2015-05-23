@@ -10,7 +10,7 @@ public class AgentShapeMapping {
 	ArrayList<Map.Entry<String, RavensObject>> figure2Objects = new ArrayList<Map.Entry<String, RavensObject>>();
 	enum mappingTransformations { NO_CHANGE, SHAPE_CHANGE, SIZE_CHANGE, ABOVE_CHANGE, OVERLAP_CHANGE, ANGLE_CHANGE, FILL_CHANGE, INSIDE_CHANGE, ALIGNMENT_CHANGE	}
 	ArrayList<ArrayList<mappingTransformations>> mapTransformations = new ArrayList<ArrayList<mappingTransformations>>(); 
-	ArrayList<AgentMapScore> mapScores = new ArrayList<AgentMapScore>();
+	AgentMappingScore mapScore = null;
 	
 	public AgentShapeMapping() {
 		
@@ -178,8 +178,80 @@ public class AgentShapeMapping {
 		return false;
 	}
 
-	public void calculateScores() {
+	public AgentMappingScore calculateScore(AgentDiagramComparison compareTo) {
 		
+		AgentMappingScore bestScore = null;
+		
+		//LOOP THROUGH ALL THE POSSIBLE MAPPINGS IN "COMPARE TO" AND FIND THE CLOSEST 
+		//MATCH TO THIS MAPS TRANSFORMATIONS 
+		for(int i = 0; i < compareTo.allPossibleMappings.size(); ++i) {
+			AgentShapeMapping compareMap = compareTo.allPossibleMappings.get(i);
+			
+			AgentMappingScore thisScore = GenerateProximityScore(mapTransformations, compareMap.mapTransformations);
+			if(bestScore == null || thisScore.whichScoreIsBetter(bestScore) == thisScore)
+				bestScore = thisScore;
+		}
+		
+		mapScore = bestScore;
+		return mapScore;
+	}
+	
+	private AgentMappingScore GenerateProximityScore(ArrayList<ArrayList<mappingTransformations>> tranListA, ArrayList<ArrayList<mappingTransformations>> tranListB) {
+		
+		ArrayList<mappingTransformations> totalTransformationDelta = new ArrayList<mappingTransformations>();
+		
+		ArrayList<Integer> alreadyUsedIndices = new ArrayList<Integer>();
+		for(int i = 0; i < tranListA.size(); ++i) {
+			
+			AgentMappingScore theScore = getClosestMatch(tranListA.get(i), tranListB, alreadyUsedIndices);
+			
+			alreadyUsedIndices.add(theScore.correspondingMapIndex);
+			for(int j = 0; j < theScore.transformationDelta.size(); ++j) {
+				totalTransformationDelta.add(theScore.transformationDelta.get(j));
+			}
+			
+		}
+
+		
+		return new AgentMappingScore(-1, totalTransformationDelta);
+	}
+	
+	private AgentMappingScore getClosestMatch(ArrayList<mappingTransformations> transformList, ArrayList<ArrayList<mappingTransformations>> listOTransformLists, ArrayList<Integer> alreadyUsedIndices) {
+		
+		int bestMatchIndex = -1;
+		ArrayList<mappingTransformations> bestTransformDifference = null;
+		
+		
+		for(int i = 0; i < listOTransformLists.size(); ++i) {
+			if(alreadyUsedIndices.contains(i))
+				continue;
+			
+			ArrayList<mappingTransformations> transformDifference = getDifferenceInTransformLists(transformList, listOTransformLists.get(i));
+			
+			if(bestTransformDifference == null || bestTransformDifference.size() > transformDifference.size()) {
+				bestTransformDifference = transformDifference;
+				bestMatchIndex = i;
+			}
+		}
+		
+		return new AgentMappingScore(bestMatchIndex, bestTransformDifference);
+	}
+	
+	private ArrayList<mappingTransformations> getDifferenceInTransformLists(ArrayList<mappingTransformations> listA, ArrayList<mappingTransformations> listB) {
+		ArrayList<mappingTransformations> transformDifference = new ArrayList<mappingTransformations>();
+		
+		for(int i = 0; i < listA.size(); ++i) {
+			if(!listB.contains(listA.get(i)))
+				transformDifference.add(listA.get(i));
+		}
+
+		for(int i = 0; i < listB.size(); ++i) {
+			if(!listA.contains(listB.get(i)))
+				transformDifference.add(listB.get(i));
+		}
+		
+		
+		return transformDifference;
 	}
 
 }

@@ -25,7 +25,7 @@ B
 		shape:right triangle
 		fill:yes
 		size:huge
-		angle:90
+		angle:270
 C
 	e
 		shape:right triangle

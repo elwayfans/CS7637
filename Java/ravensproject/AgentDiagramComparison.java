@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import ravensproject.Agent.debugPrintType;
+
 public class AgentDiagramComparison {
 
 	//THIS STRING IS USED TO MAP OBJECTS IN ON FIGURE TO OBJECTS WHICH DON'T EXIST IN ANOTHER
@@ -22,7 +24,7 @@ public class AgentDiagramComparison {
 	HashMap<String, RavensObject> figure1RevisedObjectList = new HashMap<String, RavensObject>();
 	HashMap<String, RavensObject> figure2RevisedObjectList = new HashMap<String, RavensObject>();
 	
-	public AgentDiagramComparison(RavensFigure fig1, RavensFigure fig2) {
+	public AgentDiagramComparison(RavensFigure fig1, RavensFigure fig2, debugPrintType debugPrinting) {
 		figure1 = fig1;
 		figure2 = fig2;
 		
@@ -82,12 +84,14 @@ public class AgentDiagramComparison {
 		}
 		
 		//USED FOR DEBUGGING ONLY - PRING THE MAPPINGS
-				for(int i = 0; i < allPossibleMappings.size(); ++i) {
-					allPossibleMappings.get(i).printMapping(Integer.toString(i));
-					System.out.println("-----END OF MAP----");
-				}
-				System.out.println("-----NO MORE MAPS FOR THIS PROBLEM----");
+    	if(debugPrinting == debugPrintType.ALL) {
 
+			for(int i = 0; i < allPossibleMappings.size(); ++i) {
+				allPossibleMappings.get(i).printMapping(Integer.toString(i));
+				System.out.println("-----END OF MAP----");
+			}
+			System.out.println("-----NO MORE MAPS FOR THIS PROBLEM----");
+    	}
 
 	}
 	
@@ -224,11 +228,19 @@ public class AgentDiagramComparison {
 		
 	}
 
-	public void calculateScores() {
+	public AgentMappingScore calculateScores(AgentDiagramComparison compareTo) {
+
+		AgentMappingScore bestScore = null;
+		
 		//CALCULATE SCORES OF EACH POSSIBLE MAPPING
 		for(int i = 0; i < allPossibleMappings.size(); ++i) {
-			allPossibleMappings.get(i).calculateScores();
+			AgentMappingScore theScore = allPossibleMappings.get(i).calculateScore(compareTo);
+			
+			if(bestScore == null || theScore.whichScoreIsBetter(bestScore) == theScore)
+				bestScore = theScore;
 		}
+		
+		return bestScore;
 	}
 
 
