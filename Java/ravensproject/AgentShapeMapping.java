@@ -208,8 +208,8 @@ public class AgentShapeMapping {
 			
 			alreadyUsedIndices.add(theScore.correspondingMapIndex);
 			for(int j = 0; j < theScore.transformationDelta.size(); ++j) {
-				if(theScore.transformationDelta.get(i) != mappingTransformations.NO_CHANGE ||
-						!totalTransformationDelta.contains(mappingTransformations.NO_CHANGE))
+				if(theScore.transformationDelta.get(j) != mappingTransformations.NO_CHANGE ||
+						(theScore.transformationDelta.get(j) == mappingTransformations.NO_CHANGE && !totalTransformationDelta.contains(mappingTransformations.NO_CHANGE)))
 				totalTransformationDelta.add(theScore.transformationDelta.get(j));
 			}
 			

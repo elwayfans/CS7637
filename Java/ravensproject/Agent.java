@@ -23,7 +23,7 @@ import java.util.ArrayList;
 public class Agent {
 	
 	enum debugPrintType { NONE, SOME, ALL };
-	debugPrintType debugPrinting = debugPrintType.ALL;
+	debugPrintType debugPrinting = debugPrintType.SOME;
     /**
      * The default constructor for your Agent. Make sure to execute any
      * processing necessary before your Agent starts solving problems here.
