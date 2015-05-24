@@ -15,9 +15,9 @@ public class AgentMappingScore {
 	ArrayList<mappingTransformations> totalTransformation = null;
 	int correspondingMapIndex = -1;
 	
-	public AgentMappingScore(int correspondingMapIndex, ArrayList<mappingTransformations> transformationDelta, ArrayList<mappingTransformations> totalTransformation) {
+	public AgentMappingScore(int correspondingMapIndex, ArrayList<mappingTransformations> transformationDelta, ArrayList<ArrayList<mappingTransformations>> transformationsForEachObject) {
 		this.transformationDelta = transformationDelta;
-		this.totalTransformation = totalTransformation;
+		this.totalTransformation = getTotalTransformation(transformationsForEachObject);
 		this.correspondingMapIndex = correspondingMapIndex;
 		
 		if(transformationDelta != null) {
@@ -27,6 +27,24 @@ public class AgentMappingScore {
 			
 		}
 		
+	}
+	
+	//ACCEPTS AN ARRAY OF TRANSFORMATION ARRAYS FOR EACH OBJECT IN A MAP BETWEEN FIGURES. 
+	//RETURNS THE CUMULATIVE LIST OF ALL TRANSFORMATIONS USED IN THE MAP
+	private ArrayList<mappingTransformations> getTotalTransformation(ArrayList<ArrayList<mappingTransformations>> list) {
+		ArrayList<mappingTransformations> retval = new ArrayList<mappingTransformations>();
+		
+		for(int i = 0; i < list.size(); ++i) {
+			for(int j = 0; j < list.get(i).size(); ++j) {
+				if(list.get(i).get(j) != mappingTransformations.NO_CHANGE)
+					retval.add(list.get(i).get(j));
+			}
+		}
+		
+		if(retval.size() == 0)
+			retval.add(mappingTransformations.NO_CHANGE);
+		
+		return retval;
 	}
 		
 	private void calculateScore() {

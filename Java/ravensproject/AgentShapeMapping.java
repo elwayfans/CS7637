@@ -80,6 +80,7 @@ public class AgentShapeMapping {
 	public void identifyTransformationsForMap() {
 		mapTransformations.clear();
 		
+		
 		for(int i = 0; i < figure1Objects.size(); ++i) {
 			RavensObject Obj1 = figure1Objects.get(i).getValue();
 			RavensObject Obj2 = figure2Objects.get(i).getValue();
@@ -215,14 +216,13 @@ public class AgentShapeMapping {
 		}
 
 		
-		return new AgentMappingScore(-1, totalTransformationDelta, ???);
+		return new AgentMappingScore(-1, totalTransformationDelta, mapTransformations);
 	}
 	
 	private AgentMappingScore getClosestMatch(ArrayList<mappingTransformations> transformList, ArrayList<ArrayList<mappingTransformations>> listOTransformLists, ArrayList<Integer> alreadyUsedIndices) {
 		
 		int bestMatchIndex = -1;
 		ArrayList<mappingTransformations> bestTransformDifference = null;
-		
 		
 		for(int i = 0; i < listOTransformLists.size(); ++i) {
 			if(alreadyUsedIndices.contains(i))
@@ -236,7 +236,7 @@ public class AgentShapeMapping {
 			}
 		}
 		
-		return new AgentMappingScore(bestMatchIndex, bestTransformDifference);
+		return new AgentMappingScore(bestMatchIndex, bestTransformDifference, mapTransformations);
 	}
 	
 	private ArrayList<mappingTransformations> getDifferenceInTransformLists(ArrayList<mappingTransformations> listA, ArrayList<mappingTransformations> listB) {

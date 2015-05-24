@@ -138,11 +138,6 @@ public class AgentDiagramComparison {
 			
 			//HAVE WE ALREADY ADDED THIS OBJECT TO THE ARRAY? IF SO, DON'T ADD AGAIN, JUST 
 			//USE A continue TO GO TO THE NEXT OBJECT
-			boolean isDummyObject = false;
-			if(temp.getKey().length() > dummyRavensObjectString.length() && 
-					temp.getKey().substring(0, dummyRavensObjectString.length()).equals(dummyRavensObjectString)) {
-				isDummyObject = true;
-			}
 			if(theMapping.keyAlreadyUsed(theMapping.figure2Objects, temp.getKey())) {
 				continue;
 			}
