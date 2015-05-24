@@ -6,6 +6,7 @@ package ravensproject;
 //import javax.imageio.ImageIO;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Your Agent for solving Raven's Progressive Matrices. You MUST modify this
@@ -76,6 +77,7 @@ public class Agent {
 	    	System.out.println("************************");
     	}
     	
+    	int answer = -1;
     	
     	if(problem.hasVerbal()) {
     		
@@ -88,35 +90,102 @@ public class Agent {
     			compCTests.add(new AgentDiagramComparison(problem.getFigures().get("C"), problem.getFigures().get(Integer.toString(i + 1)), debugPrinting));    		
     		}
     		
-
+    		//BUILD COMPARISON MAPPINGS FOR A AND C
+    		AgentDiagramComparison compAC = new AgentDiagramComparison(problem.getFigures().get("A"), problem.getFigures().get("C"), debugPrinting);
+    		
+    		//BUILD COMPARISON MAPPINGS FOR B AND EACH TEST CASE
+    		ArrayList<AgentDiagramComparison> compBTests = new ArrayList<AgentDiagramComparison>();
+    		for(int i = 0; i < numAnswers; ++i) {
+    			compBTests.add(new AgentDiagramComparison(problem.getFigures().get("B"), problem.getFigures().get(Integer.toString(i + 1)), debugPrinting));    		
+    		}
+    		
     		//GO THROUGH EACH MAPPING IN EACH OF THE SOLUTION COMPARISONS IN compCTests.  ASSIGN EACH 
     		//MAPPING A SCORE BASED ON HOW CLOSE IT IS TO ANY OF THE MAPPINGS IN compAB.  
     		//THEN ASSIGN EACH SOLUTION A SCORE WHICH CORRELATES TO THE LOWEST SCORE OF ITS MAPS
     		//IF THERE'S A TIE, GO WITH THE LOWEST SCORE
-    		AgentMappingScore bestScore = null;
-    		int bestIndex = -1;
+    		
+    		ArrayList<AgentMappingScore> compCScoreRankings = new ArrayList<AgentMappingScore>();
     		for(int i = 0; i < compCTests.size(); ++i) {
-    			AgentMappingScore thisScore = compCTests.get(i).calculateScores(compAB);
-    			if(bestScore == null || thisScore.whichScoreIsBetter(bestScore) == thisScore) {
-    				bestScore = thisScore;
-    				bestIndex = i;
-    			}
+    			AgentMappingScore temp = compCTests.get(i).calculateScores(compAB);
+    			temp.correspondingMapIndex = i;
+    			insertScoreIntoSortedArray(temp, compCScoreRankings);
     		}
-    			
+
+    		ArrayList<AgentMappingScore> compBScoreRankings = new ArrayList<AgentMappingScore>();
+    		for(int i = 0; i < compBTests.size(); ++i) {
+    			AgentMappingScore temp = compBTests.get(i).calculateScores(compAC);
+    			temp.correspondingMapIndex = i;
+    			insertScoreIntoSortedArray(temp, compBScoreRankings);
+    		}
+    		
+    		int index = getBestCombinedRankingIndex(compCScoreRankings, compBScoreRankings); 
+    		
+    		answer = index + 1;
+    		
         	if(debugPrinting == debugPrintType.SOME || debugPrinting == debugPrintType.ALL) {
-        		System.out.println("Guess: " + (bestIndex + 1));
+        		System.out.println("Guess: " + (answer));
         	}
         	
-        	int realAnswer = problem.checkAnswer(bestIndex + 1);
+        	int realAnswer = problem.checkAnswer(answer);
             
         	if(debugPrinting == debugPrintType.SOME || debugPrinting == debugPrintType.ALL) {
         		System.out.println("Answer: " + realAnswer);
         	}
     	}
     	
+        return answer;
+    }
+    
+    private int getBestCombinedRankingIndex(ArrayList<AgentMappingScore> compCScoreRankings, ArrayList<AgentMappingScore> compBScoreRankings) {
+    	
+    	HashMap<Integer, Integer> indexScores = new HashMap<Integer, Integer>();
+    	
+    	for(int i = 0; i < compCScoreRankings.size(); ++i) {
+    		if(indexScores.containsKey(compCScoreRankings.get(i).correspondingMapIndex)) {
+    			int prevValue = indexScores.get(compCScoreRankings.get(i).correspondingMapIndex);
+    			indexScores.put(compCScoreRankings.get(i).correspondingMapIndex, prevValue + i);
+    		}
+    		else {
+    			indexScores.put(compCScoreRankings.get(i).correspondingMapIndex, i);
+    		}
+    	}
 
-        
-        return -1;
+    	for(int i = 0; i < compBScoreRankings.size(); ++i) {
+    		if(indexScores.containsKey(compBScoreRankings.get(i).correspondingMapIndex)) {
+    			int prevValue = indexScores.get(compBScoreRankings.get(i).correspondingMapIndex);
+    			indexScores.put(compBScoreRankings.get(i).correspondingMapIndex, prevValue + i);
+    		}
+    		else {
+    			indexScores.put(compBScoreRankings.get(i).correspondingMapIndex, i);
+    		}
+    	}
+
+    	int bestIndex = -1;
+    	int bestScore = -1;
+    	
+    	for(int i = 0; i < compCScoreRankings.size(); ++i) {
+    		if(bestIndex == -1 || indexScores.get(i) < bestScore) {
+    			bestIndex = i;
+    			bestScore = indexScores.get(i);
+    		}
+    	}
+    	
+    	
+    	return bestIndex;
+    }
+    
+    private void insertScoreIntoSortedArray(AgentMappingScore theScore, ArrayList<AgentMappingScore> theArray) {
+    	boolean added = false;
+    	for(int i = 0; i < theArray.size(); ++i) {
+    		if(theScore.whichScoreIsBetter(theArray.get(i)) == theScore) {
+    			theArray.add(i, theScore);
+    			added = true;
+    			return;
+    		}    			
+    	}
+    	
+    	if(!added)
+    		theArray.add(theScore);
     }
 }
 

@@ -23,6 +23,9 @@ public class AgentDiagramComparison {
 	//THEM THE SAME SIZE
 	HashMap<String, RavensObject> figure1RevisedObjectList = new HashMap<String, RavensObject>();
 	HashMap<String, RavensObject> figure2RevisedObjectList = new HashMap<String, RavensObject>();
+
+	AgentMappingScore mapScore = null;
+
 	
 	public AgentDiagramComparison(RavensFigure fig1, RavensFigure fig2, debugPrintType debugPrinting) {
 		figure1 = fig1;
@@ -234,7 +237,8 @@ public class AgentDiagramComparison {
 			if(bestScore == null || theScore.whichScoreIsBetter(bestScore) == theScore)
 				bestScore = theScore;
 		}
-		
+
+		mapScore = bestScore;
 		return bestScore;
 	}
 
