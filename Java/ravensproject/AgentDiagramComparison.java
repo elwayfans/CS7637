@@ -129,7 +129,13 @@ public class AgentDiagramComparison {
 			
 			//FILL THE MAP WITH FIGURE1 OBJECTS IN ORDER
 			for(int i = 0; i < figure1RevisedObjectList.size(); ++i) {
-				Map.Entry<String, RavensObject> temp =getFigureObjectByIndex(figure1, i); 
+				//********************
+				//THIS WAS KIND OF WORKING BUT FAILED ON DUMMY OBJECTS (getFigureObjectByIndex pulled
+				//from the original figure array and would return null on dummy objects)
+				//********************
+				//Map.Entry<String, RavensObject> temp =getFigureObjectByIndex(figure1, i);
+				Map.Entry<String, RavensObject> temp =getObjectByIndex(figure1RevisedObjectList, i);
+				
 				theMapping.figure1Objects.add(temp);
 			}
 		}
