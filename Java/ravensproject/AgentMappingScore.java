@@ -36,13 +36,13 @@ public class AgentMappingScore {
 		
 		for(int i = 0; i < list.size(); ++i) {
 			for(int j = 0; j < list.get(i).size(); ++j) {
-				if(list.get(i).get(j) != mappingTransformations.NO_CHANGE)
+//				if(list.get(i).get(j) != mappingTransformations.NO_CHANGE)
 					retval.add(list.get(i).get(j));
 			}
 		}
 		
-		if(retval.size() == 0)
-			retval.add(mappingTransformations.NO_CHANGE);
+//		if(retval.size() == 0)
+//			retval.add(mappingTransformations.NO_CHANGE);
 		
 		return retval;
 	}
@@ -52,10 +52,10 @@ public class AgentMappingScore {
 		int deltaCost = 0;
 		
 		for(int i = 0; i < transformationDelta.size(); ++i) {
-			if(transformationDelta.get(i) != mappingTransformations.NO_CHANGE) {
+//			if(transformationDelta.get(i) != mappingTransformations.NO_CHANGE) {
 				deltaScore += 100;
 				deltaCost += 1;
-			}
+//			}
 		}
 		
 		transformationScore = deltaScore;
@@ -63,9 +63,9 @@ public class AgentMappingScore {
 
 		int totalCost = 0;
 		for(int i = 0; i < totalTransformation.size(); ++i) {
-			if(totalTransformation.get(i) != mappingTransformations.NO_CHANGE) {
+//			if(totalTransformation.get(i) != mappingTransformations.NO_CHANGE) {
 				totalCost += 1;
-			}
+//			}
 		}
 		
 		transformationTotalCost = totalCost;

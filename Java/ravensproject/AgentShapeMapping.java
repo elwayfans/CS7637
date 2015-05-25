@@ -8,7 +8,7 @@ public class AgentShapeMapping {
 
 	ArrayList<Map.Entry<String, RavensObject>> figure1Objects = new ArrayList<Map.Entry<String, RavensObject>>();
 	ArrayList<Map.Entry<String, RavensObject>> figure2Objects = new ArrayList<Map.Entry<String, RavensObject>>();
-	enum mappingTransformations { NO_CHANGE, SHAPE_CHANGE, SIZE_CHANGE, ABOVE_CHANGE, OVERLAP_CHANGE, ANGLE_CHANGE, FILL_CHANGE, INSIDE_CHANGE, ALIGNMENT_CHANGE, CREATED, DELETED	}
+	enum mappingTransformations { UNDEFINED, /*NO_CHANGE,*/ SHAPE_CHANGE, SIZE_CHANGE, ABOVE_CHANGE, OVERLAP_CHANGE, ANGLE_CHANGE, FILL_CHANGE, INSIDE_CHANGE, ALIGNMENT_CHANGE, CREATED, DELETED	}
 	ArrayList<ArrayList<mappingTransformations>> mapTransformations = new ArrayList<ArrayList<mappingTransformations>>(); 
 	AgentMappingScore mapScore = null;
 	
@@ -156,8 +156,8 @@ public class AgentShapeMapping {
 				
 			}		
 	
-			if(retval.size() == 0)
-				retval.add(mappingTransformations.NO_CHANGE);
+//			if(retval.size() == 0)
+//				retval.add(mappingTransformations.NO_CHANGE);
 		}
 		
 		return retval;
@@ -181,7 +181,7 @@ public class AgentShapeMapping {
 		if(attrib.getKey().equals("alignment"))
 			return mappingTransformations.ALIGNMENT_CHANGE;
 		
-		return mappingTransformations.NO_CHANGE;
+		return mappingTransformations.UNDEFINED;
 	}
 	
 	/*******************************************************************************
@@ -232,8 +232,8 @@ public class AgentShapeMapping {
 				
 				alreadyUsedIndices.add(theScore.correspondingMapIndex);
 				for(int j = 0; j < theScore.transformationDelta.size(); ++j) {
-					if(theScore.transformationDelta.get(j) != mappingTransformations.NO_CHANGE ||
-							(theScore.transformationDelta.get(j) == mappingTransformations.NO_CHANGE && !totalTransformationDelta.contains(mappingTransformations.NO_CHANGE)))
+//					if(theScore.transformationDelta.get(j) != mappingTransformations.NO_CHANGE ||
+//						(theScore.transformationDelta.get(j) == mappingTransformations.NO_CHANGE && !totalTransformationDelta.contains(mappingTransformations.NO_CHANGE)))
 					totalTransformationDelta.add(theScore.transformationDelta.get(j));
 				}
 				
@@ -269,12 +269,12 @@ public class AgentShapeMapping {
 		ArrayList<mappingTransformations> transformDifference = new ArrayList<mappingTransformations>();
 		
 		for(int i = 0; i < listA.size(); ++i) {
-			if(!listB.contains(listA.get(i)))
+			if(!listB.contains(listA.get(i)))// && listA.get(i) != mappingTransformations.NO_CHANGE)
 				transformDifference.add(listA.get(i));
 		}
 
 		for(int i = 0; i < listB.size(); ++i) {
-			if(!listA.contains(listB.get(i)))
+			if(!listA.contains(listB.get(i)))// && listB.get(i) != mappingTransformations.NO_CHANGE)
 				transformDifference.add(listB.get(i));
 		}
 		
