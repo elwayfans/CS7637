@@ -82,21 +82,21 @@ public class Agent {
     	if(problem.hasVerbal()) {
     		
     		//BUILD COMPARISON MAPPINGS FOR A AND B
-    		AgentDiagramComparison compAB = new AgentDiagramComparison(problem.getFigures().get("A"), problem.getFigures().get("B"), debugPrinting);
+    		AgentDiagramComparison compAB = new AgentDiagramComparison(name, "AB", problem.getFigures().get("A"), problem.getFigures().get("B"), debugPrinting);
     		
     		//BUILD COMPARISON MAPPINGS FOR C AND EACH TEST CASE
     		ArrayList<AgentDiagramComparison> compCTests = new ArrayList<AgentDiagramComparison>();
     		for(int i = 0; i < numAnswers; ++i) {
-    			compCTests.add(new AgentDiagramComparison(problem.getFigures().get("C"), problem.getFigures().get(Integer.toString(i + 1)), debugPrinting));    		
+    			compCTests.add(new AgentDiagramComparison(name, "C" + Integer.toString(i + 1), problem.getFigures().get("C"), problem.getFigures().get(Integer.toString(i + 1)), debugPrinting));    		
     		}
     		
     		//BUILD COMPARISON MAPPINGS FOR A AND C
-    		AgentDiagramComparison compAC = new AgentDiagramComparison(problem.getFigures().get("A"), problem.getFigures().get("C"), debugPrinting);
+    		AgentDiagramComparison compAC = new AgentDiagramComparison(name, "AC", problem.getFigures().get("A"), problem.getFigures().get("C"), debugPrinting);
     		
     		//BUILD COMPARISON MAPPINGS FOR B AND EACH TEST CASE
     		ArrayList<AgentDiagramComparison> compBTests = new ArrayList<AgentDiagramComparison>();
     		for(int i = 0; i < numAnswers; ++i) {
-    			compBTests.add(new AgentDiagramComparison(problem.getFigures().get("B"), problem.getFigures().get(Integer.toString(i + 1)), debugPrinting));    		
+    			compBTests.add(new AgentDiagramComparison(name, "B" + Integer.toString(i + 1), problem.getFigures().get("B"), problem.getFigures().get(Integer.toString(i + 1)), debugPrinting));    		
     		}
     		
     		//GO THROUGH EACH MAPPING IN EACH OF THE SOLUTION COMPARISONS IN compCTests.  ASSIGN EACH 
@@ -130,6 +130,12 @@ public class Agent {
             
         	if(debugPrinting == debugPrintType.SOME || debugPrinting == debugPrintType.ALL) {
         		System.out.println("Answer: " + realAnswer);
+        	}
+    	}
+    	else {
+
+    		if(debugPrinting == debugPrintType.SOME || debugPrinting == debugPrintType.ALL) {
+    	    	System.out.println("No verbal data available");
         	}
     	}
     	

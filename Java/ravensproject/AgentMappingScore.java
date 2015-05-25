@@ -8,7 +8,7 @@ public class AgentMappingScore {
 
 	int transformationScore = -1;
 	//WHAT'S THE COST OF THE DIFFERENCE BETWEEN THESE TRANSFORMATIONS AND THE COMPARED ONE?
-	int transformationDeltCost = -1;
+	int transformationDeltaCost = -1;
 	//WHAT'S THE TOTAL COST OF THE TRANSFORMATIONS FOR THIS MAP?
 	int transformationTotalCost = -1;
 	ArrayList<mappingTransformations> transformationDelta = null;
@@ -59,7 +59,7 @@ public class AgentMappingScore {
 		}
 		
 		transformationScore = deltaScore;
-		transformationDeltCost = deltaCost;
+		transformationDeltaCost = deltaCost;
 
 		int totalCost = 0;
 		for(int i = 0; i < totalTransformation.size(); ++i) {
@@ -76,12 +76,12 @@ public class AgentMappingScore {
 	public AgentMappingScore whichScoreIsBetter(AgentMappingScore compare) {
 		//HERE IS WHERE WE CAN ADD MORE LOGIC FOR MAKING DECISIONS
 		
-		if(transformationDeltCost == compare.transformationDeltCost) {
+		if(transformationDeltaCost == compare.transformationDeltaCost) {
 			if(transformationTotalCost < compare.transformationTotalCost)
 				return this;
 			return compare;
 		}
-		else if(transformationDeltCost < compare.transformationDeltCost)
+		else if(transformationDeltaCost < compare.transformationDeltaCost)
 			return this;
 		
 		return compare;

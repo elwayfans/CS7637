@@ -8,15 +8,22 @@ public class AgentShapeMapping {
 
 	ArrayList<Map.Entry<String, RavensObject>> figure1Objects = new ArrayList<Map.Entry<String, RavensObject>>();
 	ArrayList<Map.Entry<String, RavensObject>> figure2Objects = new ArrayList<Map.Entry<String, RavensObject>>();
-	enum mappingTransformations { NO_CHANGE, SHAPE_CHANGE, SIZE_CHANGE, ABOVE_CHANGE, OVERLAP_CHANGE, ANGLE_CHANGE, FILL_CHANGE, INSIDE_CHANGE, ALIGNMENT_CHANGE	}
+	enum mappingTransformations { NO_CHANGE, SHAPE_CHANGE, SIZE_CHANGE, ABOVE_CHANGE, OVERLAP_CHANGE, ANGLE_CHANGE, FILL_CHANGE, INSIDE_CHANGE, ALIGNMENT_CHANGE, CREATED, DELETED	}
 	ArrayList<ArrayList<mappingTransformations>> mapTransformations = new ArrayList<ArrayList<mappingTransformations>>(); 
 	AgentMappingScore mapScore = null;
 	
-	public AgentShapeMapping() {
-		
+	String comparisonName = "";
+	String problemName = "";	
+	
+	public AgentShapeMapping(String problem, String name) {
+		problemName = problem;
+		comparisonName = name;
 	}
 	
-	public AgentShapeMapping(AgentShapeMapping map) {
+	public AgentShapeMapping(String problem, String name, AgentShapeMapping map) {
+		problemName = problem;
+		comparisonName = name;
+		
 		//COPY CONSTRUCTOR
 		for(int i = 0; i < map.figure1Objects.size(); ++i) {
 			Map.Entry<String, RavensObject> temp = map.figure1Objects.get(i);
@@ -63,7 +70,7 @@ public class AgentShapeMapping {
 			String fig2Key = figure2Objects.get(i).getKey();
 			
 			//IGNORE ANY MAPS TO DUMMY OBJECTS
-			if(fig1Key.contains(AgentDiagramComparison.dummyRavensObjectString) || fig2Key.contains(AgentDiagramComparison.dummyRavensObjectString))
+			if(isDummyObject(fig1Key) || isDummyObject(fig2Key))
 				continue;
 			
 			for(int j = 0; j < otherMapping.figure1Objects.size(); ++j) {
@@ -77,67 +84,81 @@ public class AgentShapeMapping {
 		return true;
 	}
 	
+	public boolean isDummyObject(String objectKey) {
+		return objectKey.contains(AgentDiagramComparison.dummyRavensObjectString);		
+	}
+	
 	public void identifyTransformationsForMap() {
 		mapTransformations.clear();
 		
 		
 		for(int i = 0; i < figure1Objects.size(); ++i) {
+			String Obj1Key = figure1Objects.get(i).getKey();
+			String Obj2Key = figure2Objects.get(i).getKey();
 			RavensObject Obj1 = figure1Objects.get(i).getValue();
 			RavensObject Obj2 = figure2Objects.get(i).getValue();
 			
-			ArrayList<mappingTransformations> transforms = getTransformations(Obj1, Obj2);
+			ArrayList<mappingTransformations> transforms = getTransformations(Obj1Key, Obj1, Obj2Key, Obj2);
 			mapTransformations.add(transforms);
 		}
 	}
 	
-	private ArrayList<mappingTransformations> getTransformations(RavensObject Obj1, RavensObject Obj2) {
+	private ArrayList<mappingTransformations> getTransformations(String Obj1Key, RavensObject Obj1, String Obj2Key, RavensObject Obj2) {
 		ArrayList<mappingTransformations> retval = new ArrayList<mappingTransformations>();
 		
-		//CYCLE THROUGH ATTRIBUTES ON Obj1 AND SEE IF THEY ARE THE SAME ON Obj2
-		for(HashMap.Entry<String, String> Obj1Attribute : Obj1.getAttributes().entrySet()){
-			
-			mappingTransformations theTransformForThisAttribute = getTransformFromAttribute(Obj1Attribute);
-
-			if(Obj2.getAttributes().containsKey(Obj1Attribute.getKey())) {
-
-				if(!treatAllInstancesOfThisTransformAsEqual(theTransformForThisAttribute)) {
-					String value = Obj2.getAttributes().get(Obj1Attribute.getKey());
-					if(!value.equals(Obj1Attribute.getValue())) {
-						retval.add(theTransformForThisAttribute);
-					}
-				}
-			}
-			else
-				retval.add(theTransformForThisAttribute);
-			
-		}
-
 		
-		//NOW CYCLE THROUGH ATTRIBUTES ON Obj2 AND SEE IF THEY ARE THE SAME ON Obj1
-		//DON'T ADD THE SAME mappingTransformations OBJECT
-		for(HashMap.Entry<String, String> Obj2Attribute : Obj2.getAttributes().entrySet()){
-			
-			mappingTransformations theTransformForThisAttribute = getTransformFromAttribute(Obj2Attribute);
-
-			if(!retval.contains(theTransformForThisAttribute)) {
+		//IF EITHER OBJECT IS A DUMMY OBJECT, ADD THE CREATED OR DELETED FLAG AND SKIP THE REST
+		if(isDummyObject(Obj1Key))
+			retval.add(mappingTransformations.CREATED);
+		else if (isDummyObject(Obj2Key))
+			retval.add(mappingTransformations.DELETED);
+		else {
+			//CYCLE THROUGH ATTRIBUTES ON Obj1 AND SEE IF THEY ARE THE SAME ON Obj2
+			for(HashMap.Entry<String, String> Obj1Attribute : Obj1.getAttributes().entrySet()){
 				
-				if(Obj1.getAttributes().containsKey(Obj2Attribute.getKey())) {
-
+				mappingTransformations theTransformForThisAttribute = getTransformFromAttribute(Obj1Attribute);
+	
+				if(Obj2.getAttributes().containsKey(Obj1Attribute.getKey())) {
+	
 					if(!treatAllInstancesOfThisTransformAsEqual(theTransformForThisAttribute)) {
-						String value = Obj1.getAttributes().get(Obj2Attribute.getKey());
-						if(!value.equals(Obj2Attribute.getValue())) {
+						String value = Obj2.getAttributes().get(Obj1Attribute.getKey());
+						if(!value.equals(Obj1Attribute.getValue())) {
 							retval.add(theTransformForThisAttribute);
 						}
 					}
 				}
 				else
 					retval.add(theTransformForThisAttribute);
+				
 			}
-			
-		}		
 	
-		if(retval.size() == 0)
-			retval.add(mappingTransformations.NO_CHANGE);
+			
+			//NOW CYCLE THROUGH ATTRIBUTES ON Obj2 AND SEE IF THEY ARE THE SAME ON Obj1
+			//DON'T ADD THE SAME mappingTransformations OBJECT
+			for(HashMap.Entry<String, String> Obj2Attribute : Obj2.getAttributes().entrySet()){
+				
+				mappingTransformations theTransformForThisAttribute = getTransformFromAttribute(Obj2Attribute);
+	
+				if(!retval.contains(theTransformForThisAttribute)) {
+					
+					if(Obj1.getAttributes().containsKey(Obj2Attribute.getKey())) {
+	
+						if(!treatAllInstancesOfThisTransformAsEqual(theTransformForThisAttribute)) {
+							String value = Obj1.getAttributes().get(Obj2Attribute.getKey());
+							if(!value.equals(Obj2Attribute.getValue())) {
+								retval.add(theTransformForThisAttribute);
+							}
+						}
+					}
+					else
+						retval.add(theTransformForThisAttribute);
+				}
+				
+			}		
+	
+			if(retval.size() == 0)
+				retval.add(mappingTransformations.NO_CHANGE);
+		}
 		
 		return retval;
 	}

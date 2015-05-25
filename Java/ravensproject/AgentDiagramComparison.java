@@ -13,6 +13,9 @@ public class AgentDiagramComparison {
 	//FIGURE.  THAT MEANS THE OBJECT MAPPED TO THIS WAS CREATED OR DELETED
 	static String dummyRavensObjectString = "NO OBJECT TO MAP";
 	
+	String comparisonName = "";
+	String problemName = "";
+	
 	RavensFigure figure1 = null;
 	RavensFigure figure2 = null;
 	ArrayList<AgentShapeMapping> allPossibleMappings = new ArrayList<AgentShapeMapping>();
@@ -26,10 +29,15 @@ public class AgentDiagramComparison {
 
 	AgentMappingScore mapScore = null;
 
+	debugPrintType debugPrinting = debugPrintType.NONE;
 	
-	public AgentDiagramComparison(RavensFigure fig1, RavensFigure fig2, debugPrintType debugPrinting) {
+	public AgentDiagramComparison(String problem, String name, RavensFigure fig1, RavensFigure fig2, debugPrintType debugPrinting) {
 		figure1 = fig1;
 		figure2 = fig2;
+		
+		comparisonName = name;
+		problemName = problem;
+		this.debugPrinting = debugPrinting;
 		
 		int dummyCount = 0;
 		
@@ -89,11 +97,11 @@ public class AgentDiagramComparison {
 		//USED FOR DEBUGGING ONLY - PRING THE MAPPINGS
     	if(debugPrinting == debugPrintType.ALL) {
 
+    		System.out.println("-----COMPARISON " + comparisonName + " (" + problemName + ")----");
+    		
 			for(int i = 0; i < allPossibleMappings.size(); ++i) {
 				allPossibleMappings.get(i).printMapping(Integer.toString(i));
-				System.out.println("-----END OF MAP----");
 			}
-			System.out.println("-----NO MORE MAPS FOR THIS PROBLEM----");
     	}
 
 	}
@@ -125,7 +133,7 @@ public class AgentDiagramComparison {
 	
 	public void getAllPossibleMappings(int index, AgentShapeMapping theMapping) {
 		if(theMapping == null) {
-			theMapping = new AgentShapeMapping();
+			theMapping = new AgentShapeMapping(problemName, comparisonName);
 			
 			//FILL THE MAP WITH FIGURE1 OBJECTS IN ORDER
 			for(int i = 0; i < figure1RevisedObjectList.size(); ++i) {
@@ -164,7 +172,7 @@ public class AgentDiagramComparison {
 			}
 			else {
 				//CALL SELF WITH AN INCREMENTED INDEX
-				getAllPossibleMappings(index + 1, new AgentShapeMapping(theMapping));
+				getAllPossibleMappings(index + 1, new AgentShapeMapping(problemName, comparisonName, theMapping));
 			}
 		}
 	}
@@ -235,15 +243,27 @@ public class AgentDiagramComparison {
 	public AgentMappingScore calculateScores(AgentDiagramComparison compareTo) {
 
 		AgentMappingScore bestScore = null;
+		int bestIndex = -1;
 		
 		//CALCULATE SCORES OF EACH POSSIBLE MAPPING
 		for(int i = 0; i < allPossibleMappings.size(); ++i) {
 			AgentMappingScore theScore = allPossibleMappings.get(i).calculateScore(compareTo);
 			
-			if(bestScore == null || theScore.whichScoreIsBetter(bestScore) == theScore)
+			if(bestScore == null || theScore.whichScoreIsBetter(bestScore) == theScore) {
 				bestScore = theScore;
+				bestIndex = i;
+			}
 		}
 
+		//USED FOR DEBUGGING ONLY - PRING THE MAPPINGS
+    	if(debugPrinting == debugPrintType.ALL) {
+
+    		System.out.println("****** BEST SCORE FOR COMPARISON " + comparisonName + " (" + problemName + ") **********");
+    		System.out.println("delta Cost: " + bestScore.transformationDeltaCost);
+    		System.out.println("total Cost: " + bestScore.transformationTotalCost);
+			allPossibleMappings.get(bestIndex).printMapping(Integer.toString(bestIndex));
+    	}		
+		
 		mapScore = bestScore;
 		return bestScore;
 	}
