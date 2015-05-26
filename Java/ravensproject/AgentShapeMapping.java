@@ -222,15 +222,18 @@ public class AgentShapeMapping {
 		
 		ArrayList<mappingTransformations> totalTransformationDelta = new ArrayList<mappingTransformations>();
 		
-		ArrayList<Integer> alreadyUsedIndices = new ArrayList<Integer>();
+		ArrayList<ArrayList<mappingTransformations>> newListB = copyListOfLists(tranListB);
+		
+		
 		for(int i = 0; i < tranListA.size(); ++i) {
 			
-			AgentMappingScore theScore = getClosestMatch(tranListA.get(i), tranListB, alreadyUsedIndices);
+			AgentMappingScore theScore = getClosestMatch(tranListA.get(i), newListB);
 			
-			//THIS IS RETURNING NULL ON PROBLEM 10 - NOT SURE WHY BUT SEEING IF THIS FIXES IT AND IT WORKS.
+			if(theScore == null)
+				continue;
+			
 			if(theScore.transformationDelta != null) {
 				
-				alreadyUsedIndices.add(theScore.correspondingMapIndex);
 				for(int j = 0; j < theScore.transformationDelta.size(); ++j) {
 //					if(theScore.transformationDelta.get(j) != mappingTransformations.NO_CHANGE ||
 //						(theScore.transformationDelta.get(j) == mappingTransformations.NO_CHANGE && !totalTransformationDelta.contains(mappingTransformations.NO_CHANGE)))
@@ -245,22 +248,27 @@ public class AgentShapeMapping {
 		return new AgentMappingScore(-1, totalTransformationDelta, mapTransformations);
 	}
 	
-	private AgentMappingScore getClosestMatch(ArrayList<mappingTransformations> transformList, ArrayList<ArrayList<mappingTransformations>> listOTransformLists, ArrayList<Integer> alreadyUsedIndices) {
+	private AgentMappingScore getClosestMatch(ArrayList<mappingTransformations> transformList, ArrayList<ArrayList<mappingTransformations>> listOTransformLists) {
 		
 		int bestMatchIndex = -1;
+		ArrayList<mappingTransformations> bestTransformDifferenceTotalTransform = null;
 		ArrayList<mappingTransformations> bestTransformDifference = null;
 		
 		for(int i = 0; i < listOTransformLists.size(); ++i) {
-			if(alreadyUsedIndices.contains(i))
-				continue;
 			
 			ArrayList<mappingTransformations> transformDifference = getDifferenceInTransformLists(transformList, listOTransformLists.get(i));
 			
-			if(bestTransformDifference == null || bestTransformDifference.size() > transformDifference.size()) {
+			if(bestTransformDifference == null || whichTransformListCostsLess("champ", bestTransformDifference, bestTransformDifferenceTotalTransform, "contender", transformDifference, listOTransformLists.get(i)) == "contender") {
 				bestTransformDifference = transformDifference;
+				bestTransformDifferenceTotalTransform = listOTransformLists.get(i);
 				bestMatchIndex = i;
 			}
 		}
+		
+		if(bestMatchIndex == -1)
+			return null;
+
+		listOTransformLists.remove(bestMatchIndex);
 		
 		return new AgentMappingScore(bestMatchIndex, bestTransformDifference, mapTransformations);
 	}
@@ -268,18 +276,68 @@ public class AgentShapeMapping {
 	private ArrayList<mappingTransformations> getDifferenceInTransformLists(ArrayList<mappingTransformations> listA, ArrayList<mappingTransformations> listB) {
 		ArrayList<mappingTransformations> transformDifference = new ArrayList<mappingTransformations>();
 		
-		for(int i = 0; i < listA.size(); ++i) {
-			if(!listB.contains(listA.get(i)))// && listA.get(i) != mappingTransformations.NO_CHANGE)
-				transformDifference.add(listA.get(i));
+		ArrayList<mappingTransformations> newListA = copyList(listA);
+		ArrayList<mappingTransformations> newListB = copyList(listB);
+		
+		for(int i = 0; i < newListA.size(); ++i) {
+			if(!newListB.contains(newListA.get(i)))// && listA.get(i) != mappingTransformations.NO_CHANGE)
+				transformDifference.add(newListA.get(i));
+			else
+				newListB.remove(newListA.get(i));
 		}
 
-		for(int i = 0; i < listB.size(); ++i) {
-			if(!listA.contains(listB.get(i)))// && listB.get(i) != mappingTransformations.NO_CHANGE)
-				transformDifference.add(listB.get(i));
+		newListA = copyList(listA);
+		newListB = copyList(listB);
+		
+		for(int i = 0; i < newListB.size(); ++i) {
+			if(!newListA.contains(newListB.get(i)))// && listB.get(i) != mappingTransformations.NO_CHANGE)
+				transformDifference.add(newListB.get(i));
+			else
+				newListA.remove(newListB.get(i));
 		}
 		
 		
 		return transformDifference;
 	}
 
+	private ArrayList<ArrayList<mappingTransformations>> copyListOfLists(ArrayList<ArrayList<mappingTransformations>> list) {
+		
+		ArrayList<ArrayList<mappingTransformations>> retval = new ArrayList<ArrayList<mappingTransformations>>();
+		
+		for(int i = 0; i < list.size(); ++i) {
+			retval.add(copyList(list.get(i)));
+		}
+		
+		return retval;
+	}	
+	
+	private ArrayList<mappingTransformations> copyList(ArrayList<mappingTransformations> list) {
+		
+		ArrayList<mappingTransformations> retval = new ArrayList<mappingTransformations>();
+		
+		for(int i = 0; i < list.size(); ++i) {
+			retval.add(list.get(i));
+		}
+		
+		return retval;
+	}
+	
+	private String whichTransformListCostsLess(String AName, ArrayList<mappingTransformations> ADiff, ArrayList<mappingTransformations> ATotal, String BName, ArrayList<mappingTransformations> BDiff, ArrayList<mappingTransformations> BTotal) {
+		//*********************************************************
+		// THIS AND IN AgentMappingScore.whichScoreIsBetter ARE
+		// THE PLACES TO PUT LEARNING LOGIC
+		//*********************************************************
+		
+		int costOfADiff = AgentMappingScore.getTransformationListWeight(ADiff);
+		int costOfATotal = AgentMappingScore.getTransformationListWeight(ATotal);
+		int costOfBDiff = AgentMappingScore.getTransformationListWeight(BDiff);
+		int costOfBTotal = AgentMappingScore.getTransformationListWeight(BTotal);
+
+		
+		if(AgentMappingScore.whichScoreIsBetter("A", costOfADiff, costOfATotal, "B", costOfBDiff, costOfBTotal) == "A")
+			return AName;
+		
+		return BName; 
+	}
+	
 }

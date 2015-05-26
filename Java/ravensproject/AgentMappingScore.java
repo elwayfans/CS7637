@@ -14,6 +14,19 @@ public class AgentMappingScore {
 	ArrayList<mappingTransformations> transformationDelta = null;
 	ArrayList<mappingTransformations> totalTransformation = null;
 	int correspondingMapIndex = -1;
+	int agentIndex = -1;
+
+	static int transformShapeChangeCost = 2; //DELETE AND CREATE - COUNT AS TWO
+	static int transformSizeChangeCost = 2; //DELETE AND CREATE - COUNT AS TWO
+	static int transformAboveChangeCost = 1;
+	static int transformOverlapChangeCost = 1;
+	static int transformAngleChangeCost = 1; //MAYBE 2???
+	static int transformFillChangeCost = 1;
+	static int transformInsideChangeCost = 1;
+	static int transformAlignmentChangeCost = 2; //DELETE AND CREATE - COUNT AS TWO 
+	static int transformCreatedCost = 1;
+	static int transformDeletedCost = 1;	
+	static int transformUndefinedChangeCost = 10;
 	
 	public AgentMappingScore(int correspondingMapIndex, ArrayList<mappingTransformations> transformationDelta, ArrayList<ArrayList<mappingTransformations>> transformationsForEachObject) {
 		this.transformationDelta = transformationDelta;
@@ -48,42 +61,69 @@ public class AgentMappingScore {
 	}
 		
 	private void calculateScore() {
-		int deltaScore = 0;
-		int deltaCost = 0;
 		
-		for(int i = 0; i < transformationDelta.size(); ++i) {
-//			if(transformationDelta.get(i) != mappingTransformations.NO_CHANGE) {
-				deltaScore += 100;
-				deltaCost += 1;
-//			}
-		}
+		transformationDeltaCost = getTransformationListWeight(transformationDelta);
+		transformationScore = transformationDeltaCost * 100;
 		
-		transformationScore = deltaScore;
-		transformationDeltaCost = deltaCost;
 
-		int totalCost = 0;
-		for(int i = 0; i < totalTransformation.size(); ++i) {
-//			if(totalTransformation.get(i) != mappingTransformations.NO_CHANGE) {
-				totalCost += 1;
-//			}
-		}
-		
-		transformationTotalCost = totalCost;
-	
+		transformationTotalCost = getTransformationListWeight(totalTransformation);
 	
 	}
 	
-	public AgentMappingScore whichScoreIsBetter(AgentMappingScore compare) {
-		//HERE IS WHERE WE CAN ADD MORE LOGIC FOR MAKING DECISIONS
+	public static int getTransformationListWeight(ArrayList<mappingTransformations> theList) {
+		int retval = 0;
 		
-		if(transformationDeltaCost == compare.transformationDeltaCost) {
-			if(transformationTotalCost < compare.transformationTotalCost)
-				return this;
-			return compare;
+		for(int i = 0; i < theList.size(); ++i) {
+			retval += getTransformationWeight(theList.get(i));
 		}
-		else if(transformationDeltaCost < compare.transformationDeltaCost)
+		
+		return retval;
+	}
+	
+	public static int getTransformationWeight(mappingTransformations transformation) {
+		if(transformation == mappingTransformations.SHAPE_CHANGE)
+			return transformShapeChangeCost;
+		if(transformation == mappingTransformations.ABOVE_CHANGE)
+			return transformAboveChangeCost;
+		if(transformation == mappingTransformations.OVERLAP_CHANGE)
+			return transformOverlapChangeCost;
+		if(transformation == mappingTransformations.ANGLE_CHANGE)
+			return transformAngleChangeCost;
+		if(transformation == mappingTransformations.FILL_CHANGE)
+			return transformFillChangeCost;
+		if(transformation == mappingTransformations.INSIDE_CHANGE)
+			return transformInsideChangeCost;
+		if(transformation == mappingTransformations.ALIGNMENT_CHANGE)
+			return transformAlignmentChangeCost;
+		if(transformation == mappingTransformations.CREATED)
+			return transformCreatedCost;
+		if(transformation == mappingTransformations.DELETED)
+			return transformDeletedCost;
+		
+		return transformUndefinedChangeCost;
+	}
+	
+	public AgentMappingScore whichScoreIsBetter(AgentMappingScore compare) {
+		if(whichScoreIsBetter("this", transformationDeltaCost, transformationTotalCost, "compare", compare.transformationDeltaCost, compare.transformationTotalCost) == "this")
 			return this;
 		
 		return compare;
+	}
+	
+	public static String whichScoreIsBetter(String A, int ADelta, int ATotal, String B, int BDelta, int BTotal) {
+		//*********************************************************
+		// THIS AND IN AgentShapeMapping.whichTransformListCostsLess ARE
+		// THE PLACES TO PUT LEARNING LOGIC
+		//*********************************************************
+		
+		if(ADelta == BDelta) {
+			if(ATotal < BTotal)
+				return A;
+			return B;
+		}
+		else if(ADelta < BDelta)
+			return A;
+		
+		return B;
 	}
 }

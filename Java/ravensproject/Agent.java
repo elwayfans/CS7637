@@ -107,14 +107,14 @@ public class Agent {
     		ArrayList<AgentMappingScore> compCScoreRankings = new ArrayList<AgentMappingScore>();
     		for(int i = 0; i < compCTests.size(); ++i) {
     			AgentMappingScore temp = compCTests.get(i).calculateScores(compAB);
-    			temp.correspondingMapIndex = i;
+    			temp.agentIndex = i;
     			insertScoreIntoSortedArray(temp, compCScoreRankings);
     		}
 
     		ArrayList<AgentMappingScore> compBScoreRankings = new ArrayList<AgentMappingScore>();
     		for(int i = 0; i < compBTests.size(); ++i) {
     			AgentMappingScore temp = compBTests.get(i).calculateScores(compAC);
-    			temp.correspondingMapIndex = i;
+    			temp.agentIndex = i;
     			insertScoreIntoSortedArray(temp, compBScoreRankings);
     		}
     		
@@ -147,22 +147,22 @@ public class Agent {
     	HashMap<Integer, Integer> indexScores = new HashMap<Integer, Integer>();
     	
     	for(int i = 0; i < compCScoreRankings.size(); ++i) {
-    		if(indexScores.containsKey(compCScoreRankings.get(i).correspondingMapIndex)) {
-    			int prevValue = indexScores.get(compCScoreRankings.get(i).correspondingMapIndex);
-    			indexScores.put(compCScoreRankings.get(i).correspondingMapIndex, prevValue + i);
+    		if(indexScores.containsKey(compCScoreRankings.get(i).agentIndex)) {
+    			int prevValue = indexScores.get(compCScoreRankings.get(i).agentIndex);
+    			indexScores.put(compCScoreRankings.get(i).agentIndex, prevValue + i);
     		}
     		else {
-    			indexScores.put(compCScoreRankings.get(i).correspondingMapIndex, i);
+    			indexScores.put(compCScoreRankings.get(i).agentIndex, i);
     		}
     	}
 
     	for(int i = 0; i < compBScoreRankings.size(); ++i) {
-    		if(indexScores.containsKey(compBScoreRankings.get(i).correspondingMapIndex)) {
-    			int prevValue = indexScores.get(compBScoreRankings.get(i).correspondingMapIndex);
-    			indexScores.put(compBScoreRankings.get(i).correspondingMapIndex, prevValue + i);
+    		if(indexScores.containsKey(compBScoreRankings.get(i).agentIndex)) {
+    			int prevValue = indexScores.get(compBScoreRankings.get(i).agentIndex);
+    			indexScores.put(compBScoreRankings.get(i).agentIndex, prevValue + i);
     		}
     		else {
-    			indexScores.put(compBScoreRankings.get(i).correspondingMapIndex, i);
+    			indexScores.put(compBScoreRankings.get(i).agentIndex, i);
     		}
     	}
 
