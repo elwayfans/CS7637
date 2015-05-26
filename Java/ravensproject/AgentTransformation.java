@@ -4,12 +4,16 @@ import ravensproject.AgentShapeMapping.mappingTransformations;
 
 public class AgentTransformation {
 
-	mappingTransformations transformation;
-	Object value;
+	mappingTransformations theTransformation;
+	Object theValue;
 	
-	public AgentTransformation(	mappingTransformations transformation, Object value) {
-		this.transformation = transformation;
-		this.value = value;
+	public AgentTransformation(	mappingTransformations trans, Object val) {
+		this.theTransformation = trans;
+		this.theValue = val;
+	}
+	
+	public static AgentTransformation copy(AgentTransformation A) {
+		return new AgentTransformation(A.theTransformation, A.theValue);
 	}
 	
 }

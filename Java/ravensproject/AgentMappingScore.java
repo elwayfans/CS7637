@@ -11,8 +11,8 @@ public class AgentMappingScore {
 	int transformationDeltaCost = -1;
 	//WHAT'S THE TOTAL COST OF THE TRANSFORMATIONS FOR THIS MAP?
 	int transformationTotalCost = -1;
-	ArrayList<mappingTransformations> transformationDelta = null;
-	ArrayList<mappingTransformations> totalTransformation = null;
+	ArrayList<AgentTransformation> transformationDelta = null;
+	ArrayList<AgentTransformation> totalTransformation = null;
 	int correspondingMapIndex = -1;
 	int agentIndex = -1;
 
@@ -28,7 +28,7 @@ public class AgentMappingScore {
 	static int transformDeletedCost = 1;	
 	static int transformUndefinedChangeCost = 10;
 	
-	public AgentMappingScore(int correspondingMapIndex, ArrayList<mappingTransformations> transformationDelta, ArrayList<ArrayList<mappingTransformations>> transformationsForEachObject) {
+	public AgentMappingScore(int correspondingMapIndex, ArrayList<AgentTransformation> transformationDelta, ArrayList<ArrayList<AgentTransformation>> transformationsForEachObject) {
 		this.transformationDelta = transformationDelta;
 		this.totalTransformation = getTotalTransformation(transformationsForEachObject);
 		this.correspondingMapIndex = correspondingMapIndex;
@@ -44,13 +44,13 @@ public class AgentMappingScore {
 	
 	//ACCEPTS AN ARRAY OF TRANSFORMATION ARRAYS FOR EACH OBJECT IN A MAP BETWEEN FIGURES. 
 	//RETURNS THE CUMULATIVE LIST OF ALL TRANSFORMATIONS USED IN THE MAP
-	private ArrayList<mappingTransformations> getTotalTransformation(ArrayList<ArrayList<mappingTransformations>> list) {
-		ArrayList<mappingTransformations> retval = new ArrayList<mappingTransformations>();
+	private ArrayList<AgentTransformation> getTotalTransformation(ArrayList<ArrayList<AgentTransformation>> list) {
+		ArrayList<AgentTransformation> retval = new ArrayList<AgentTransformation>();
 		
 		for(int i = 0; i < list.size(); ++i) {
 			for(int j = 0; j < list.get(i).size(); ++j) {
 //				if(list.get(i).get(j) != mappingTransformations.NO_CHANGE)
-					retval.add(list.get(i).get(j));
+					retval.add(new AgentTransformation(list.get(i).get(j).theTransformation, list.get(i).get(j).theValue));
 			}
 		}
 		
@@ -70,7 +70,7 @@ public class AgentMappingScore {
 	
 	}
 	
-	public static int getTransformationListWeight(ArrayList<mappingTransformations> theList) {
+	public static int getTransformationListWeight(ArrayList<AgentTransformation> theList) {
 		int retval = 0;
 		
 		for(int i = 0; i < theList.size(); ++i) {
@@ -80,24 +80,24 @@ public class AgentMappingScore {
 		return retval;
 	}
 	
-	public static int getTransformationWeight(mappingTransformations transformation) {
-		if(transformation == mappingTransformations.SHAPE_CHANGE)
+	public static int getTransformationWeight(AgentTransformation transformation) {
+		if(transformation.theTransformation == mappingTransformations.SHAPE_CHANGE)
 			return transformShapeChangeCost;
-		if(transformation == mappingTransformations.ABOVE_CHANGE)
+		if(transformation.theTransformation == mappingTransformations.ABOVE_CHANGE)
 			return transformAboveChangeCost;
-		if(transformation == mappingTransformations.OVERLAP_CHANGE)
+		if(transformation.theTransformation == mappingTransformations.OVERLAP_CHANGE)
 			return transformOverlapChangeCost;
-		if(transformation == mappingTransformations.ANGLE_CHANGE)
+		if(transformation.theTransformation == mappingTransformations.ANGLE_CHANGE)
 			return transformAngleChangeCost;
-		if(transformation == mappingTransformations.FILL_CHANGE)
+		if(transformation.theTransformation == mappingTransformations.FILL_CHANGE)
 			return transformFillChangeCost;
-		if(transformation == mappingTransformations.INSIDE_CHANGE)
+		if(transformation.theTransformation == mappingTransformations.INSIDE_CHANGE)
 			return transformInsideChangeCost;
-		if(transformation == mappingTransformations.ALIGNMENT_CHANGE)
+		if(transformation.theTransformation == mappingTransformations.ALIGNMENT_CHANGE)
 			return transformAlignmentChangeCost;
-		if(transformation == mappingTransformations.CREATED)
+		if(transformation.theTransformation == mappingTransformations.CREATED)
 			return transformCreatedCost;
-		if(transformation == mappingTransformations.DELETED)
+		if(transformation.theTransformation == mappingTransformations.DELETED)
 			return transformDeletedCost;
 		
 		return transformUndefinedChangeCost;
