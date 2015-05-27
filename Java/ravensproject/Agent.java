@@ -213,6 +213,11 @@ public class Agent {
 			return angleA;
 
 
+		//A AND C ARE THE SAME BUT B IS DIFFERENT SO YOU WOULD THINK D SHOULD EQUAL B
+		if(angleA == angleC && angleA != angleB)
+			return angleB;
+		
+		
 		//SEE IF ALL FOUR COMBINED SHOULD ADD TO 720
 		if((Math.abs(angleA - angleB) == 90 || (angleA + 90) % 360 == angleB || (angleB + 90) % 360 == angleA) &&
 				(Math.abs(angleA - angleC) == 90 || (angleA + 90) % 360 == angleC || (angleC + 90) % 360 == angleA)) {

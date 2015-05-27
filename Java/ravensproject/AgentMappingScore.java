@@ -23,7 +23,7 @@ public class AgentMappingScore {
 	static int transformAboveChangeCost = 1;
 	static int transformOverlapChangeCost = 1;
 	static int transformAngleChangeCost = 1; //MAYBE 2???
-	static int transformExpectedAngleChangeCost = -1; //SPECIAL CASES IN ROTATION/REFLECTION WHERE A SPECIFIC ANGLE CHANGE IS EXPECTED
+	static int transformExpectedAngleChangeCost = 0; //SPECIAL CASES IN ROTATION/REFLECTION WHERE A SPECIFIC ANGLE CHANGE IS EXPECTED
 	static int transformFillChangeCost = 1;
 	static int transformInsideChangeCost = 1;
 	static int transformAlignmentChangeCost = 2; //DELETE AND CREATE - COUNT AS TWO 

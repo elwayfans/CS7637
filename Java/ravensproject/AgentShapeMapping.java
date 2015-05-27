@@ -237,6 +237,8 @@ public class AgentShapeMapping {
 			ArrayList<AgentSpecialHandling> specials) {
 		
 		ArrayList<AgentTransformation> totalTransformationDelta = new ArrayList<AgentTransformation>();
+		ArrayList<ArrayList<AgentTransformation>> totalTransformations = new ArrayList<ArrayList<AgentTransformation>>();
+		
 		
 		ArrayList<ArrayList<AgentTransformation>> newListB = copyListOfLists(compareTranList);
 		
@@ -258,12 +260,35 @@ public class AgentShapeMapping {
 				
 			}
 			
+			ArrayList<AgentTransformation> thisTotal = copyList(thisTranList.get(i));
+			
+			
+			//SPECIAL CASE SCAN: ROTATION/REFLECTION.  IF ANY EXPECTEDANGLE_CHANGE TRANSFORMATIONS
+			//WERE FOUND IN THE DELTA, REPLACE THE TOTAL ANGLE TRANSFORMATIONS WITH THEM AS WELL
+			int expectedRotationCount = 0;
+			for(int rotIndex = 0; rotIndex < theScore.transformationDelta.size(); ++rotIndex) {
+				if(theScore.transformationDelta.get(rotIndex).theTransformation == mappingTransformations.EXPECTEDANGLE_CHANGE)
+					++expectedRotationCount;
+			}
+			for(int rotIndex = 0; rotIndex < expectedRotationCount; ++rotIndex) {
+				for(int totalIndex = 0; totalIndex < thisTotal.size(); ++totalIndex) {
+					if(thisTotal.get(totalIndex).theTransformation == mappingTransformations.ANGLE_CHANGE) {
+						thisTotal.get(totalIndex).theTransformation = mappingTransformations.EXPECTEDANGLE_CHANGE;
+					}
+				}
+			}
+			
+			totalTransformations.add(thisTotal);
+			
+			
 		}
 
 		
-		return new AgentMappingScore(-1, totalTransformationDelta, mapTransformations);
+		
+		
+		return new AgentMappingScore(-1, totalTransformationDelta, totalTransformations);
 	}
-	
+
 	private AgentMappingScore getClosestMatch(ArrayList<AgentTransformation> thisTransformList, ArrayList<ArrayList<AgentTransformation>> compareTransformLists,
 			ArrayList<AgentSpecialHandling> specials) {
 		
