@@ -2,6 +2,8 @@ package ravensproject;
 
 import java.util.ArrayList;
 
+import javax.xml.crypto.dsig.TransformException;
+
 import ravensproject.AgentShapeMapping.mappingTransformations;
 
 public class AgentMappingScore {
@@ -21,6 +23,7 @@ public class AgentMappingScore {
 	static int transformAboveChangeCost = 1;
 	static int transformOverlapChangeCost = 1;
 	static int transformAngleChangeCost = 1; //MAYBE 2???
+	static int transformExpectedAngleChangeCost = -1; //SPECIAL CASES IN ROTATION/REFLECTION WHERE A SPECIFIC ANGLE CHANGE IS EXPECTED
 	static int transformFillChangeCost = 1;
 	static int transformInsideChangeCost = 1;
 	static int transformAlignmentChangeCost = 2; //DELETE AND CREATE - COUNT AS TWO 
@@ -99,6 +102,8 @@ public class AgentMappingScore {
 			return transformCreatedCost;
 		if(transformation.theTransformation == mappingTransformations.DELETED)
 			return transformDeletedCost;
+		if(transformation.theTransformation == mappingTransformations.EXPECTEDANGLE_CHANGE)
+			return transformExpectedAngleChangeCost;
 		
 		return transformUndefinedChangeCost;
 	}

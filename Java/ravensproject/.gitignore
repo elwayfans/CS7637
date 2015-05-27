@@ -13,3 +13,5 @@
 /Agent$DebugPrintType.class
 /Agent$debugPrintType.class
 /AgentTransformation.class
+/AgentSpecialHandling.class
+/AgentSpecialHandling$specialType.class

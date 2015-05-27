@@ -6,7 +6,11 @@ package ravensproject;
 //import javax.imageio.ImageIO;
 
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.HashMap;
+
+import ravensproject.AgentShapeMapping.mappingTransformations;
+import ravensproject.AgentSpecialHandling.specialType;
 
 /**
  * Your Agent for solving Raven's Progressive Matrices. You MUST modify this
@@ -25,6 +29,8 @@ public class Agent {
 	
 	enum debugPrintType { NONE, SOME, ALL };
 	debugPrintType debugPrinting = debugPrintType.SOME;
+	
+	int unlikelyAnglePrediction = -9999;
     /**
      * The default constructor for your Agent. Make sure to execute any
      * processing necessary before your Agent starts solving problems here.
@@ -81,6 +87,9 @@ public class Agent {
     	
     	if(problem.hasVerbal()) {
     		
+    		//CHECK FOR SPECIAL CASES (LIKE REFLECTION ROTATIONS, ETC)
+    		ArrayList<AgentSpecialHandling> dailySpecials = checkForSpecialness2x2(problem);
+    		
     		//BUILD COMPARISON MAPPINGS FOR A AND B
     		AgentDiagramComparison compAB = new AgentDiagramComparison(name, "AB", problem.getFigures().get("A"), problem.getFigures().get("B"), debugPrinting);
     		
@@ -106,14 +115,14 @@ public class Agent {
     		
     		ArrayList<AgentMappingScore> compCScoreRankings = new ArrayList<AgentMappingScore>();
     		for(int i = 0; i < compCTests.size(); ++i) {
-    			AgentMappingScore temp = compCTests.get(i).calculateScores(compAB);
+    			AgentMappingScore temp = compCTests.get(i).calculateScores(compAB, dailySpecials);
     			temp.agentIndex = i;
     			insertScoreIntoSortedArray(temp, compCScoreRankings);
     		}
 
     		ArrayList<AgentMappingScore> compBScoreRankings = new ArrayList<AgentMappingScore>();
     		for(int i = 0; i < compBTests.size(); ++i) {
-    			AgentMappingScore temp = compBTests.get(i).calculateScores(compAC);
+    			AgentMappingScore temp = compBTests.get(i).calculateScores(compAC, dailySpecials);
     			temp.agentIndex = i;
     			insertScoreIntoSortedArray(temp, compBScoreRankings);
     		}
@@ -141,6 +150,96 @@ public class Agent {
     	
         return answer;
     }
+    
+    private ArrayList<AgentSpecialHandling> checkForSpecialness2x2(RavensProblem problem) {
+
+    	ArrayList<AgentSpecialHandling> retval = new ArrayList<AgentSpecialHandling>();
+    	
+    	//CHECK FOR REFLECTION ROTATION
+    	checkForReflection2x2(problem, retval);    	
+    	
+    	return retval;
+    }
+
+    private void checkForReflection2x2(RavensProblem problem, ArrayList<AgentSpecialHandling> theSpecials) {
+
+    	//CAN ONLY DETECT REFLECTION IF THERE IS ONLY ONE SHAPE IN THE FIGURE (CURRENTLY)
+    	//MAKE SURE A, B, AND C EACH ONLY HAVE ONE FIGURE
+    	if(problem.getFigures().get("A").getObjects().size() != 1 ||
+    			problem.getFigures().get("B").getObjects().size() != 1 ||
+    			problem.getFigures().get("C").getObjects().size() != 1) {
+    		return;
+    	}
+    	
+    	//SCAN A, B, AND C AND SEE IF ALL THREE HAVE A ROTATION ATTRIBUTE
+    	int angleA = 0;
+    	int angleB = 0;
+    	int angleC = 0;
+    	Map.Entry<String, RavensObject> entry = problem.getFigures().get("A").getObjects().entrySet().iterator().next();
+    	if(!entry.getValue().getAttributes().containsKey(AgentShapeMapping.attribKey_angle))
+    		return;
+    	else
+    		angleA = Integer.parseInt(entry.getValue().getAttributes().get(AgentShapeMapping.attribKey_angle));
+    	
+    	entry = problem.getFigures().get("B").getObjects().entrySet().iterator().next();
+    	if(!entry.getValue().getAttributes().containsKey(AgentShapeMapping.attribKey_angle))
+    		return;
+    	else
+    		angleB = Integer.parseInt(entry.getValue().getAttributes().get(AgentShapeMapping.attribKey_angle));
+
+    	entry = problem.getFigures().get("C").getObjects().entrySet().iterator().next();
+    	if(!entry.getValue().getAttributes().containsKey(AgentShapeMapping.attribKey_angle))
+    		return;
+    	else
+    		angleC = Integer.parseInt(entry.getValue().getAttributes().get(AgentShapeMapping.attribKey_angle));
+    	
+    	//THERE'S ONLY ONE SHAPE IN A, B, AND C AND EACH SHAPE HAS AN ASSOCIATED ANGLE
+    	//NO SEE IF WE CAN PREDICT WHICH ANGLE THE ANSWER SHOULD HAVE
+    	int expectedAngle = predictAngleFromThreeOthers(angleA, angleB, angleC);
+    	if(expectedAngle != unlikelyAnglePrediction) {
+    		theSpecials.add(new AgentSpecialHandling(specialType.REFLECTION_ROTATION, expectedAngle, mappingTransformations.ANGLE_CHANGE, mappingTransformations.EXPECTEDANGLE_CHANGE));
+    	}
+    		
+    	
+    	
+    }    
+    
+	private int predictAngleFromThreeOthers(int angleA, int angleB, int angleC) {
+		//SOME NUMBER THAT ISN'T A LIKELY ANGLE (-1 COULD BE ONE)
+		int retval = unlikelyAnglePrediction;
+		
+		//IF THEY ARE ALL THE SAME WE SHOULD RETURN THE SAME
+		if(angleA == angleB && angleB == angleC) 
+			return angleA;
+
+
+		//SEE IF ALL FOUR COMBINED SHOULD ADD TO 720
+		if((Math.abs(angleA - angleB) == 90 || (angleA + 90) % 360 == angleB || (angleB + 90) % 360 == angleA) &&
+				(Math.abs(angleA - angleC) == 90 || (angleA + 90) % 360 == angleC || (angleC + 90) % 360 == angleA)) {
+			retval = 720 - angleA - angleB - angleC;
+			return retval;
+		}
+		
+		//SEE IF ALL FOUR COMBINED SHOULD ADD TO 360
+		if((Math.abs(angleA - angleB) == 45 || (angleA + 45) % 180 == angleB || (angleB + 45) % 180 == angleA) &&
+				(Math.abs(angleA - angleC) == 45 || (angleA + 45) % 180 == angleC || (angleC + 45) % 180 == angleA)) {
+			retval = 360 - angleA - angleB - angleC;
+			return retval;
+		}
+
+		
+		
+		//ITERATE FROM -360 TO 360 TO SEE IF ONE VALUE IN THERE WILL MAKE EACH OF THE NOW FOUR ANGLES
+		//EQUALLY APART FROM EACH OTHER
+		for(int i = -360; i <= 360; ++i) {
+
+			
+			
+		}
+		
+		return retval; 
+	}
+    
     
     private int getBestCombinedRankingIndex(ArrayList<AgentMappingScore> compCScoreRankings, ArrayList<AgentMappingScore> compBScoreRankings) {
     	

@@ -240,14 +240,14 @@ public class AgentDiagramComparison {
 		
 	}
 
-	public AgentMappingScore calculateScores(AgentDiagramComparison compareTo) {
+	public AgentMappingScore calculateScores(AgentDiagramComparison compareTo, ArrayList<AgentSpecialHandling> specials) {
 
 		AgentMappingScore bestScore = null;
 		int bestIndex = -1;
 		
 		//CALCULATE SCORES OF EACH POSSIBLE MAPPING
 		for(int i = 0; i < allPossibleMappings.size(); ++i) {
-			AgentMappingScore theScore = allPossibleMappings.get(i).calculateScore(compareTo);
+			AgentMappingScore theScore = allPossibleMappings.get(i).calculateScore(compareTo, specials);
 			
 			if(bestScore == null || theScore.whichScoreIsBetter(bestScore) == theScore) {
 				bestScore = theScore;

@@ -4,11 +4,24 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.ArrayList;
 
+import ravensproject.AgentSpecialHandling.specialType;
+
 public class AgentShapeMapping {
 
+	static String attribKey_shape = "shape";
+	static String attribKey_size = "size";
+	static String attribKey_above = "above";
+	static String attribKey_overlaps = "overlaps";
+	static String attribKey_angle = "angle";
+	static String attribKey_fill = "fill";
+	static String attribKey_inside = "inside";
+	static String attribKey_alignment = "alignment";	
+	
 	ArrayList<Map.Entry<String, RavensObject>> figure1Objects = new ArrayList<Map.Entry<String, RavensObject>>();
 	ArrayList<Map.Entry<String, RavensObject>> figure2Objects = new ArrayList<Map.Entry<String, RavensObject>>();
-	enum mappingTransformations { UNDEFINED, /*NO_CHANGE,*/ SHAPE_CHANGE, SIZE_CHANGE, ABOVE_CHANGE, OVERLAP_CHANGE, ANGLE_CHANGE, FILL_CHANGE, INSIDE_CHANGE, ALIGNMENT_CHANGE, CREATED, DELETED	}
+	
+	//EXPECTED_ANGLE_CHANGE IS FOR SPECIAL CASE ROTATION/REFLECTIONS WHERE CERTAIN ANGLE ROTATIONS ARE EXPECTED
+	enum mappingTransformations { UNDEFINED, /*NO_CHANGE,*/ SHAPE_CHANGE, SIZE_CHANGE, ABOVE_CHANGE, OVERLAP_CHANGE, EXPECTEDANGLE_CHANGE, ANGLE_CHANGE, FILL_CHANGE, INSIDE_CHANGE, ALIGNMENT_CHANGE, CREATED, DELETED	}
 	ArrayList<ArrayList<AgentTransformation>> mapTransformations = new ArrayList<ArrayList<AgentTransformation>>(); 
 	AgentMappingScore mapScore = null;
 	
@@ -166,21 +179,21 @@ public class AgentShapeMapping {
 	}
 	
 	private AgentTransformation getTransformFromAttribute(Map.Entry<String, String> attrib) {
-		if(attrib.getKey().equals("shape"))
+		if(attrib.getKey().equals(attribKey_shape))
 			return new AgentTransformation(mappingTransformations.SHAPE_CHANGE, attrib.getValue());
-		if(attrib.getKey().equals("size"))
+		if(attrib.getKey().equals(attribKey_size))
 			return new AgentTransformation(mappingTransformations.SIZE_CHANGE, attrib.getValue());
-		if(attrib.getKey().equals("above"))
+		if(attrib.getKey().equals(attribKey_above))
 			return new AgentTransformation(mappingTransformations.ABOVE_CHANGE, attrib.getValue());
-		if(attrib.getKey().equals("overlaps"))
+		if(attrib.getKey().equals(attribKey_overlaps))
 			return new AgentTransformation(mappingTransformations.OVERLAP_CHANGE, attrib.getValue());
-		if(attrib.getKey().equals("angle"))
+		if(attrib.getKey().equals(attribKey_angle))
 			return new AgentTransformation(mappingTransformations.ANGLE_CHANGE, attrib.getValue());
-		if(attrib.getKey().equals("fill"))
+		if(attrib.getKey().equals(attribKey_fill))
 			return new AgentTransformation(mappingTransformations.FILL_CHANGE, attrib.getValue());
-		if(attrib.getKey().equals("inside"))
+		if(attrib.getKey().equals(attribKey_inside))
 			return new AgentTransformation(mappingTransformations.INSIDE_CHANGE, attrib.getValue());
-		if(attrib.getKey().equals("alignment"))
+		if(attrib.getKey().equals(attribKey_alignment))
 			return new AgentTransformation(mappingTransformations.ALIGNMENT_CHANGE, attrib.getValue());
 		
 		return new AgentTransformation(mappingTransformations.UNDEFINED, null);
@@ -202,7 +215,7 @@ public class AgentShapeMapping {
 		return false;
 	}
 
-	public AgentMappingScore calculateScore(AgentDiagramComparison compareTo) {
+	public AgentMappingScore calculateScore(AgentDiagramComparison compareTo, ArrayList<AgentSpecialHandling> specials) {
 		
 		AgentMappingScore bestScore = null;
 		
@@ -211,7 +224,7 @@ public class AgentShapeMapping {
 		for(int i = 0; i < compareTo.allPossibleMappings.size(); ++i) {
 			AgentShapeMapping compareMap = compareTo.allPossibleMappings.get(i);
 			
-			AgentMappingScore thisScore = GenerateProximityScore(mapTransformations, compareMap.mapTransformations);
+			AgentMappingScore thisScore = GenerateProximityScore(mapTransformations, compareMap.mapTransformations, specials);
 			if(bestScore == null || thisScore.whichScoreIsBetter(bestScore) == thisScore)
 				bestScore = thisScore;
 		}
@@ -220,16 +233,17 @@ public class AgentShapeMapping {
 		return mapScore;
 	}
 	
-	private AgentMappingScore GenerateProximityScore(ArrayList<ArrayList<AgentTransformation>> tranListA, ArrayList<ArrayList<AgentTransformation>> tranListB) {
+	private AgentMappingScore GenerateProximityScore(ArrayList<ArrayList<AgentTransformation>> thisTranList, ArrayList<ArrayList<AgentTransformation>> compareTranList,
+			ArrayList<AgentSpecialHandling> specials) {
 		
 		ArrayList<AgentTransformation> totalTransformationDelta = new ArrayList<AgentTransformation>();
 		
-		ArrayList<ArrayList<AgentTransformation>> newListB = copyListOfLists(tranListB);
+		ArrayList<ArrayList<AgentTransformation>> newListB = copyListOfLists(compareTranList);
 		
 		
-		for(int i = 0; i < tranListA.size(); ++i) {
+		for(int i = 0; i < thisTranList.size(); ++i) {
 			
-			AgentMappingScore theScore = getClosestMatch(tranListA.get(i), newListB);
+			AgentMappingScore theScore = getClosestMatch(thisTranList.get(i), newListB, specials);
 			
 			if(theScore == null)
 				continue;
@@ -250,19 +264,20 @@ public class AgentShapeMapping {
 		return new AgentMappingScore(-1, totalTransformationDelta, mapTransformations);
 	}
 	
-	private AgentMappingScore getClosestMatch(ArrayList<AgentTransformation> transformList, ArrayList<ArrayList<AgentTransformation>> listOTransformLists) {
+	private AgentMappingScore getClosestMatch(ArrayList<AgentTransformation> thisTransformList, ArrayList<ArrayList<AgentTransformation>> compareTransformLists,
+			ArrayList<AgentSpecialHandling> specials) {
 		
 		int bestMatchIndex = -1;
 		ArrayList<AgentTransformation> bestTransformDifferenceTotalTransform = null;
 		ArrayList<AgentTransformation> bestTransformDifference = null;
 		
-		for(int i = 0; i < listOTransformLists.size(); ++i) {
+		for(int i = 0; i < compareTransformLists.size(); ++i) {
 			
-			ArrayList<AgentTransformation> transformDifference = getDifferenceInTransformLists(transformList, listOTransformLists.get(i));
+			ArrayList<AgentTransformation> transformDifference = getDifferenceInTransformLists(thisTransformList, compareTransformLists.get(i), specials);
 			
-			if(bestTransformDifference == null || whichTransformListCostsLess("champ", bestTransformDifference, bestTransformDifferenceTotalTransform, "contender", transformDifference, listOTransformLists.get(i)) == "contender") {
+			if(bestTransformDifference == null || whichTransformListCostsLess("champ", bestTransformDifference, bestTransformDifferenceTotalTransform, "contender", transformDifference, compareTransformLists.get(i)) == "contender") {
 				bestTransformDifference = transformDifference;
-				bestTransformDifferenceTotalTransform = listOTransformLists.get(i);
+				bestTransformDifferenceTotalTransform = compareTransformLists.get(i);
 				bestMatchIndex = i;
 			}
 		}
@@ -270,38 +285,60 @@ public class AgentShapeMapping {
 		if(bestMatchIndex == -1)
 			return null;
 
-		listOTransformLists.remove(bestMatchIndex);
+		compareTransformLists.remove(bestMatchIndex);
 		
 		return new AgentMappingScore(bestMatchIndex, bestTransformDifference, mapTransformations);
 	}
 	
-	private ArrayList<AgentTransformation> getDifferenceInTransformLists(ArrayList<AgentTransformation> listA, ArrayList<AgentTransformation> listB) {
+	private ArrayList<AgentTransformation> getDifferenceInTransformLists(ArrayList<AgentTransformation> thisList, ArrayList<AgentTransformation> compareList,
+			ArrayList<AgentSpecialHandling> specials) {
+		
 		ArrayList<AgentTransformation> transformDifference = new ArrayList<AgentTransformation>();
 		
-		ArrayList<AgentTransformation> newListA = copyList(listA);
-		ArrayList<AgentTransformation> newListB = copyList(listB);
+		ArrayList<AgentTransformation> newthisList = copyList(thisList);
+		ArrayList<AgentTransformation> newCompareList = copyList(compareList);
 		
-		for(int i = 0; i < newListA.size(); ++i) {
+		for(int i = 0; i < newthisList.size(); ++i) {
 			
-			int matchingIndex = getIndexOfFirstBestMatch(newListA.get(i), newListB);
+			int matchingIndex = getIndexOfFirstBestMatch(newthisList.get(i), newCompareList);
 			
 			if(matchingIndex == -1)// && listA.get(i) != mappingTransformations.NO_CHANGE)
-				transformDifference.add(AgentTransformation.copy(newListA.get(i)));
-			else
-				newListB.remove(matchingIndex);
+				transformDifference.add(AgentTransformation.copy(newthisList.get(i)));
+			else {
+				
+
+				//SCAN THROUGH ANY SPECIALS AND LOOK FOR A SPECIAL ROTATION/REFLECTION CASE
+				//IF FOUND, SEE IF THIS TRANSFORM MATCHES IT. IF YES, ADD THE SPECIAL TRANSFORMATION
+				//TO THE DELTA LIST
+				for(int specialIndex = 0; specialIndex < specials.size(); ++specialIndex) {
+					if(specials.get(specialIndex).theType == specialType.REFLECTION_ROTATION) {
+					
+						int expectedAngle = (int)specials.get(specialIndex).theValue;
+						
+						if(newthisList.get(i).theTransformation == specials.get(specialIndex).convertFromTransform &&
+								Integer.parseInt(((String)newthisList.get(i).theValue))== expectedAngle && 
+								newCompareList.get(matchingIndex).theTransformation == specials.get(specialIndex).convertFromTransform) {
+						
+							transformDifference.add(new AgentTransformation(specials.get(specialIndex).convertToTransform, expectedAngle));
+						}							
+					}
+				}
+			
+				newCompareList.remove(matchingIndex);
+			}
 		}
 
-		newListA = copyList(listA);
-		newListB = copyList(listB);
+		newthisList = copyList(thisList);
+		newCompareList = copyList(compareList);
 		
-		for(int i = 0; i < newListB.size(); ++i) {
+		for(int i = 0; i < newCompareList.size(); ++i) {
 			
-			int matchingIndex = getIndexOfFirstBestMatch(newListB.get(i),  newListA);
+			int matchingIndex = getIndexOfFirstBestMatch(newCompareList.get(i),  newthisList);
 			
 			if(matchingIndex == -1)// && listB.get(i) != mappingTransformations.NO_CHANGE)
-				transformDifference.add(AgentTransformation.copy(newListB.get(i)));
+				transformDifference.add(AgentTransformation.copy(newCompareList.get(i)));
 			else
-				newListA.remove(matchingIndex);
+				newthisList.remove(matchingIndex);
 		}
 		
 		
