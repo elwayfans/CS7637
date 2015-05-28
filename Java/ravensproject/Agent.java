@@ -30,6 +30,13 @@ public class Agent {
 	enum debugPrintType { NONE, SOME, ALL };
 	debugPrintType debugPrinting = debugPrintType.SOME;
 	
+	int problemsCorrect2x2 = 0;
+	int problemsIncorrect2x2 = 0;
+	int problemsSkipped2x2 = 0;
+	int problemsCorrect3x3 = 0;
+	int problemsIncorrect3x3 = 0;
+	int problemsSkipped3x3 = 0;
+	
 	int unlikelyAnglePrediction = -9999;
     /**
      * The default constructor for your Agent. Make sure to execute any
@@ -136,6 +143,11 @@ public class Agent {
         	}
         	
         	int realAnswer = problem.checkAnswer(answer);
+        	
+        	if(realAnswer == answer)
+        		++problemsCorrect2x2;
+        	else
+        		++problemsIncorrect2x2;
             
         	if(debugPrinting == debugPrintType.SOME || debugPrinting == debugPrintType.ALL) {
         		System.out.println("Answer: " + realAnswer);
@@ -145,8 +157,16 @@ public class Agent {
 
     		if(debugPrinting == debugPrintType.SOME || debugPrinting == debugPrintType.ALL) {
     	    	System.out.println("No verbal data available");
+    	    	++problemsSkipped3x3;
         	}
     	}
+    	
+		if(debugPrinting == debugPrintType.SOME || debugPrinting == debugPrintType.ALL) {
+			System.out.println("################################################################################################");
+			System.out.println("2x2 problems: Correct:" + problemsCorrect2x2 + " Incorrect: " + problemsIncorrect2x2 + " Skipped:" + problemsSkipped2x2);
+			System.out.println("3x3 problems: Correct:" + problemsCorrect3x3 + " Incorrect: " + problemsIncorrect3x3 + " Skipped:" + problemsSkipped3x3);
+			System.out.println("################################################################################################");
+		}
     	
         return answer;
     }
