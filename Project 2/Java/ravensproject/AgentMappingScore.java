@@ -3,7 +3,9 @@ package ravensproject;
 import java.util.ArrayList;
 
 
-import ravensproject.AgentShapeMapping.mappingTransformations;
+
+
+import ravensproject.AgentTransformation.mappingTransformations;
 
 public class AgentMappingScore {
 
@@ -12,6 +14,7 @@ public class AgentMappingScore {
 	int transformationDeltaCost = -1;
 	//WHAT'S THE TOTAL COST OF THE TRANSFORMATIONS FOR THIS MAP?
 	int transformationTotalCost = -1;
+	ArrayList<AgentTransformation> anticipatedTransformations = null; 
 	ArrayList<AgentTransformation> transformationDelta = null;
 	ArrayList<AgentTransformation> totalTransformation = null;
 	int correspondingMapIndex = -1;
@@ -30,8 +33,11 @@ public class AgentMappingScore {
 	static int transformDeletedCost = 1;	
 	static int transformUndefinedChangeCost = 10;
 	
-	public AgentMappingScore(int correspondingMapIndex, ArrayList<AgentTransformation> transformationDelta, ArrayList<ArrayList<AgentTransformation>> transformationsForEachObject) {
+	public AgentMappingScore(int correspondingMapIndex, ArrayList<AgentTransformation> transformationDelta, 
+			ArrayList<AgentTransformation> anticipatedTransformations, ArrayList<ArrayList<AgentTransformation>> transformationsForEachObject) {
+		
 		this.transformationDelta = transformationDelta;
+		this.anticipatedTransformations = anticipatedTransformations;
 		this.totalTransformation = getTotalTransformation(transformationsForEachObject);
 		this.correspondingMapIndex = correspondingMapIndex;
 		
@@ -82,6 +88,13 @@ public class AgentMappingScore {
 		return retval;
 	}
 	
+	public static int getAnticipatedTransformationListValue(ArrayList<AgentTransformation> theList) {
+		if(theList == null)
+			return 0;
+		
+		return theList.size();		
+	}
+	
 	public static int getTransformationWeight(AgentTransformation transformation) {
 		if(transformation.theTransformation == mappingTransformations.SHAPE_CHANGE)
 			return transformShapeChangeCost;
@@ -108,26 +121,38 @@ public class AgentMappingScore {
 	}
 	
 	public AgentMappingScore whichScoreIsBetter(AgentMappingScore compare) {
-		if(whichScoreIsBetter("this", transformationDeltaCost, transformationTotalCost, "compare", compare.transformationDeltaCost, compare.transformationTotalCost) == "this")
+		if(whichScoreIsBetter("this", transformationDeltaCost, anticipatedTransformations.size(), transformationTotalCost, "compare", compare.transformationDeltaCost, compare.anticipatedTransformations.size(), compare.transformationTotalCost) == "this")
 			return this;
 		
 		return compare;
 	}
 	
-	public static String whichScoreIsBetter(String A, int ADelta, int ATotal, String B, int BDelta, int BTotal) {
+	public static String whichScoreIsBetter(String A, int ADelta, int AAnticipated, int ATotal, String B, int BDelta, int BAnticipated, int BTotal) {
 		//*********************************************************
 		// THIS AND IN AgentShapeMapping.whichTransformListCostsLess ARE
 		// THE PLACES TO PUT LEARNING LOGIC
 		//*********************************************************
 		
 		if(ADelta == BDelta) {
-			if(ATotal < BTotal)
-				return A;
-			return B;
+			if(AAnticipated == BAnticipated) {
+				if(ATotal > BTotal)
+					return B;
+				else 
+					return A;
+			}
+			else {
+				if(AAnticipated > BAnticipated)
+					return A;
+				else 
+					return B;
+			}
 		}
-		else if(ADelta < BDelta)
-			return A;
-		
-		return B;
+		else {
+			if(ADelta > BDelta)
+				return B;
+			else 
+				return A;
+		}		
+
 	}
 }

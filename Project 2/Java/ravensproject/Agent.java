@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
 
-import ravensproject.AgentShapeMapping.mappingTransformations;
+import ravensproject.AgentTransformation.mappingTransformations;
 import ravensproject.AgentSpecialHandling.specialType;
 
 /**
@@ -135,44 +135,44 @@ public class Agent {
 		//CHECK FOR SPECIAL CASES (LIKE REFLECTION ROTATIONS, ETC)
 		ArrayList<AgentSpecialHandling> dailySpecials = checkForSpecialness3x3(problem);
 		
-		//BUILD COMPARISON MAPPINGS FOR A AND B
-		AgentDiagramComparison compAB = new AgentDiagramComparison(name, "AB", problem.getFigures().get("A"), problem.getFigures().get("B"), debugPrinting);
+		//BUILD COMPARISON MAPPINGS FOR E AND F
+		AgentDiagramComparison compEF = new AgentDiagramComparison(name, "EF", problem.getFigures().get("E"), problem.getFigures().get("F"), debugPrinting);
 		
-		//BUILD COMPARISON MAPPINGS FOR C AND EACH TEST CASE
-		ArrayList<AgentDiagramComparison> compCTests = new ArrayList<AgentDiagramComparison>();
+		//BUILD COMPARISON MAPPINGS FOR H AND EACH TEST CASE
+		ArrayList<AgentDiagramComparison> compHTests = new ArrayList<AgentDiagramComparison>();
 		for(int i = 0; i < numAnswers; ++i) {
-			compCTests.add(new AgentDiagramComparison(name, "C" + Integer.toString(i + 1), problem.getFigures().get("C"), problem.getFigures().get(Integer.toString(i + 1)), debugPrinting));    		
+			compHTests.add(new AgentDiagramComparison(name, "H" + Integer.toString(i + 1), problem.getFigures().get("H"), problem.getFigures().get(Integer.toString(i + 1)), debugPrinting));    		
 		}
 		
-		//BUILD COMPARISON MAPPINGS FOR A AND C
-		AgentDiagramComparison compAC = new AgentDiagramComparison(name, "AC", problem.getFigures().get("A"), problem.getFigures().get("C"), debugPrinting);
+		//BUILD COMPARISON MAPPINGS FOR E AND H
+		AgentDiagramComparison compEH = new AgentDiagramComparison(name, "EH", problem.getFigures().get("E"), problem.getFigures().get("H"), debugPrinting);
 		
-		//BUILD COMPARISON MAPPINGS FOR B AND EACH TEST CASE
-		ArrayList<AgentDiagramComparison> compBTests = new ArrayList<AgentDiagramComparison>();
+		//BUILD COMPARISON MAPPINGS FOR F AND EACH TEST CASE
+		ArrayList<AgentDiagramComparison> compFTests = new ArrayList<AgentDiagramComparison>();
 		for(int i = 0; i < numAnswers; ++i) {
-			compBTests.add(new AgentDiagramComparison(name, "B" + Integer.toString(i + 1), problem.getFigures().get("B"), problem.getFigures().get(Integer.toString(i + 1)), debugPrinting));    		
+			compFTests.add(new AgentDiagramComparison(name, "F" + Integer.toString(i + 1), problem.getFigures().get("F"), problem.getFigures().get(Integer.toString(i + 1)), debugPrinting));    		
 		}
 		
-		//GO THROUGH EACH MAPPING IN EACH OF THE SOLUTION COMPARISONS IN compCTests.  ASSIGN EACH 
-		//MAPPING A SCORE BASED ON HOW CLOSE IT IS TO ANY OF THE MAPPINGS IN compAB.  
+		//GO THROUGH EACH MAPPING IN EACH OF THE SOLUTION COMPARISONS IN compHTests.  ASSIGN EACH 
+		//MAPPING A SCORE BASED ON HOW CLOSE IT IS TO ANY OF THE MAPPINGS IN compEF.  
 		//THEN ASSIGN EACH SOLUTION A SCORE WHICH CORRELATES TO THE LOWEST SCORE OF ITS MAPS
 		//IF THERE'S A TIE, GO WITH THE LOWEST SCORE
 		
-		ArrayList<AgentMappingScore> compCScoreRankings = new ArrayList<AgentMappingScore>();
-		for(int i = 0; i < compCTests.size(); ++i) {
-			AgentMappingScore temp = compCTests.get(i).calculateScores(compAB, dailySpecials);
+		ArrayList<AgentMappingScore> compHScoreRankings = new ArrayList<AgentMappingScore>();
+		for(int i = 0; i < compHTests.size(); ++i) {
+			AgentMappingScore temp = compHTests.get(i).calculateScores(compEF, dailySpecials);
 			temp.agentIndex = i;
-			insertScoreIntoSortedArray(temp, compCScoreRankings);
+			insertScoreIntoSortedArray(temp, compHScoreRankings);
 		}
 	
-		ArrayList<AgentMappingScore> compBScoreRankings = new ArrayList<AgentMappingScore>();
-		for(int i = 0; i < compBTests.size(); ++i) {
-			AgentMappingScore temp = compBTests.get(i).calculateScores(compAC, dailySpecials);
+		ArrayList<AgentMappingScore> compFScoreRankings = new ArrayList<AgentMappingScore>();
+		for(int i = 0; i < compFTests.size(); ++i) {
+			AgentMappingScore temp = compFTests.get(i).calculateScores(compEH, dailySpecials);
 			temp.agentIndex = i;
-			insertScoreIntoSortedArray(temp, compBScoreRankings);
+			insertScoreIntoSortedArray(temp, compFScoreRankings);
 		}
 		
-		int index = getBestCombinedRankingIndex(compCScoreRankings, compBScoreRankings); 
+		int index = getBestCombinedRankingIndex(compHScoreRankings, compFScoreRankings); 
 		
 		answer = index + 1;
 		

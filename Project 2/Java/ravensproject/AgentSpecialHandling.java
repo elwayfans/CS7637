@@ -1,6 +1,6 @@
 package ravensproject;
 
-import ravensproject.AgentShapeMapping.mappingTransformations;
+import ravensproject.AgentTransformation.mappingTransformations;
 
 public class AgentSpecialHandling {
 

@@ -15,6 +15,7 @@ public class AgentDiagramComparison {
 	
 	String comparisonName = "";
 	String problemName = "";
+	int numMappingsGenerated = 0;
 	
 	RavensFigure figure1 = null;
 	RavensFigure figure2 = null;
@@ -100,7 +101,7 @@ public class AgentDiagramComparison {
     		System.out.println("-----COMPARISON " + comparisonName + " (" + problemName + ")----");
     		
 			for(int i = 0; i < allPossibleMappings.size(); ++i) {
-				allPossibleMappings.get(i).printMapping(Integer.toString(i));
+				allPossibleMappings.get(i).printMapping();
 			}
     	}
 
@@ -133,7 +134,7 @@ public class AgentDiagramComparison {
 	
 	public void getAllPossibleMappings(int index, AgentShapeMapping theMapping) {
 		if(theMapping == null) {
-			theMapping = new AgentShapeMapping(problemName, comparisonName);
+			theMapping = new AgentShapeMapping(debugPrinting, problemName, comparisonName, Integer.toString(numMappingsGenerated));
 			
 			//FILL THE MAP WITH FIGURE1 OBJECTS IN ORDER
 			for(int i = 0; i < figure1RevisedObjectList.size(); ++i) {
@@ -168,11 +169,11 @@ public class AgentDiagramComparison {
 			
 			if(index == figure2RevisedObjectList.size() - 1) {
 				//DONE! FOUND A MAP
-				allPossibleMappings.add(theMapping);
+				allPossibleMappings.add(new AgentShapeMapping(problemName, comparisonName, Integer.toString(++numMappingsGenerated), theMapping));
 			}
 			else {
 				//CALL SELF WITH AN INCREMENTED INDEX
-				getAllPossibleMappings(index + 1, new AgentShapeMapping(problemName, comparisonName, theMapping));
+				getAllPossibleMappings(index + 1, new AgentShapeMapping(problemName, comparisonName, theMapping.mappingName, theMapping));
 			}
 		}
 	}
@@ -261,7 +262,7 @@ public class AgentDiagramComparison {
     		System.out.println("****** BEST SCORE FOR COMPARISON " + comparisonName + " (" + problemName + ") **********");
     		System.out.println("delta Cost: " + bestScore.transformationDeltaCost);
     		System.out.println("total Cost: " + bestScore.transformationTotalCost);
-			allPossibleMappings.get(bestIndex).printMapping(Integer.toString(bestIndex));
+			allPossibleMappings.get(bestIndex).printMapping();
     	}		
 		
 		mapScore = bestScore;
