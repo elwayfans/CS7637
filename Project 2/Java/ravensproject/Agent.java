@@ -92,73 +92,32 @@ public class Agent {
     	
     	int answer = -1;
     	
-    	if(problem.hasVerbal()) {
-    		
-    		//CHECK FOR SPECIAL CASES (LIKE REFLECTION ROTATIONS, ETC)
-    		ArrayList<AgentSpecialHandling> dailySpecials = checkForSpecialness2x2(problem);
-    		
-    		//BUILD COMPARISON MAPPINGS FOR A AND B
-    		AgentDiagramComparison compAB = new AgentDiagramComparison(name, "AB", problem.getFigures().get("A"), problem.getFigures().get("B"), debugPrinting);
-    		
-    		//BUILD COMPARISON MAPPINGS FOR C AND EACH TEST CASE
-    		ArrayList<AgentDiagramComparison> compCTests = new ArrayList<AgentDiagramComparison>();
-    		for(int i = 0; i < numAnswers; ++i) {
-    			compCTests.add(new AgentDiagramComparison(name, "C" + Integer.toString(i + 1), problem.getFigures().get("C"), problem.getFigures().get(Integer.toString(i + 1)), debugPrinting));    		
-    		}
-    		
-    		//BUILD COMPARISON MAPPINGS FOR A AND C
-    		AgentDiagramComparison compAC = new AgentDiagramComparison(name, "AC", problem.getFigures().get("A"), problem.getFigures().get("C"), debugPrinting);
-    		
-    		//BUILD COMPARISON MAPPINGS FOR B AND EACH TEST CASE
-    		ArrayList<AgentDiagramComparison> compBTests = new ArrayList<AgentDiagramComparison>();
-    		for(int i = 0; i < numAnswers; ++i) {
-    			compBTests.add(new AgentDiagramComparison(name, "B" + Integer.toString(i + 1), problem.getFigures().get("B"), problem.getFigures().get(Integer.toString(i + 1)), debugPrinting));    		
-    		}
-    		
-    		//GO THROUGH EACH MAPPING IN EACH OF THE SOLUTION COMPARISONS IN compCTests.  ASSIGN EACH 
-    		//MAPPING A SCORE BASED ON HOW CLOSE IT IS TO ANY OF THE MAPPINGS IN compAB.  
-    		//THEN ASSIGN EACH SOLUTION A SCORE WHICH CORRELATES TO THE LOWEST SCORE OF ITS MAPS
-    		//IF THERE'S A TIE, GO WITH THE LOWEST SCORE
-    		
-    		ArrayList<AgentMappingScore> compCScoreRankings = new ArrayList<AgentMappingScore>();
-    		for(int i = 0; i < compCTests.size(); ++i) {
-    			AgentMappingScore temp = compCTests.get(i).calculateScores(compAB, dailySpecials);
-    			temp.agentIndex = i;
-    			insertScoreIntoSortedArray(temp, compCScoreRankings);
-    		}
 
-    		ArrayList<AgentMappingScore> compBScoreRankings = new ArrayList<AgentMappingScore>();
-    		for(int i = 0; i < compBTests.size(); ++i) {
-    			AgentMappingScore temp = compBTests.get(i).calculateScores(compAC, dailySpecials);
-    			temp.agentIndex = i;
-    			insertScoreIntoSortedArray(temp, compBScoreRankings);
-    		}
-    		
-    		int index = getBestCombinedRankingIndex(compCScoreRankings, compBScoreRankings); 
-    		
-    		answer = index + 1;
-    		
-        	if(debugPrinting == debugPrintType.SOME || debugPrinting == debugPrintType.ALL) {
-        		System.out.println("Guess: " + (answer));
-        	}
-        	
-        	int realAnswer = problem.checkAnswer(answer);
-        	
-        	if(realAnswer == answer)
-        		++problemsCorrect2x2;
-        	else
-        		++problemsIncorrect2x2;
-            
-        	if(debugPrinting == debugPrintType.SOME || debugPrinting == debugPrintType.ALL) {
-        		System.out.println("Answer: " + realAnswer);
-        	}
+    	if(type.equals("2x2")) {
+	    	if(problem.hasVerbal()) {
+	    		
+	    		answer = do2x2Verbal(problem, name, numAnswers);
+	    	}
+	    	else {
+	
+	    		if(debugPrinting == debugPrintType.SOME || debugPrinting == debugPrintType.ALL) {
+	    	    	System.out.println("No verbal data available");
+	    	    	++problemsSkipped2x2;
+	        	}
+	    	}
     	}
-    	else {
-
-    		if(debugPrinting == debugPrintType.SOME || debugPrinting == debugPrintType.ALL) {
-    	    	System.out.println("No verbal data available");
-    	    	++problemsSkipped3x3;
-        	}
+    	else {//3x3
+	    	if(problem.hasVerbal()) {
+	    		
+	    		answer = do3x3Verbal(problem, name, numAnswers);
+	    	}
+	    	else {
+	
+	    		if(debugPrinting == debugPrintType.SOME || debugPrinting == debugPrintType.ALL) {
+	    	    	System.out.println("No verbal data available");
+	    	    	++problemsSkipped3x3;
+	        	}
+	    	}
     	}
     	
 		if(debugPrinting == debugPrintType.SOME || debugPrinting == debugPrintType.ALL) {
@@ -171,7 +130,142 @@ public class Agent {
         return answer;
     }
     
-    private ArrayList<AgentSpecialHandling> checkForSpecialness2x2(RavensProblem problem) {
+	public int do3x3Verbal(RavensProblem problem, String name, int numAnswers) {
+		int answer;
+		//CHECK FOR SPECIAL CASES (LIKE REFLECTION ROTATIONS, ETC)
+		ArrayList<AgentSpecialHandling> dailySpecials = checkForSpecialness3x3(problem);
+		
+		//BUILD COMPARISON MAPPINGS FOR A AND B
+		AgentDiagramComparison compAB = new AgentDiagramComparison(name, "AB", problem.getFigures().get("A"), problem.getFigures().get("B"), debugPrinting);
+		
+		//BUILD COMPARISON MAPPINGS FOR C AND EACH TEST CASE
+		ArrayList<AgentDiagramComparison> compCTests = new ArrayList<AgentDiagramComparison>();
+		for(int i = 0; i < numAnswers; ++i) {
+			compCTests.add(new AgentDiagramComparison(name, "C" + Integer.toString(i + 1), problem.getFigures().get("C"), problem.getFigures().get(Integer.toString(i + 1)), debugPrinting));    		
+		}
+		
+		//BUILD COMPARISON MAPPINGS FOR A AND C
+		AgentDiagramComparison compAC = new AgentDiagramComparison(name, "AC", problem.getFigures().get("A"), problem.getFigures().get("C"), debugPrinting);
+		
+		//BUILD COMPARISON MAPPINGS FOR B AND EACH TEST CASE
+		ArrayList<AgentDiagramComparison> compBTests = new ArrayList<AgentDiagramComparison>();
+		for(int i = 0; i < numAnswers; ++i) {
+			compBTests.add(new AgentDiagramComparison(name, "B" + Integer.toString(i + 1), problem.getFigures().get("B"), problem.getFigures().get(Integer.toString(i + 1)), debugPrinting));    		
+		}
+		
+		//GO THROUGH EACH MAPPING IN EACH OF THE SOLUTION COMPARISONS IN compCTests.  ASSIGN EACH 
+		//MAPPING A SCORE BASED ON HOW CLOSE IT IS TO ANY OF THE MAPPINGS IN compAB.  
+		//THEN ASSIGN EACH SOLUTION A SCORE WHICH CORRELATES TO THE LOWEST SCORE OF ITS MAPS
+		//IF THERE'S A TIE, GO WITH THE LOWEST SCORE
+		
+		ArrayList<AgentMappingScore> compCScoreRankings = new ArrayList<AgentMappingScore>();
+		for(int i = 0; i < compCTests.size(); ++i) {
+			AgentMappingScore temp = compCTests.get(i).calculateScores(compAB, dailySpecials);
+			temp.agentIndex = i;
+			insertScoreIntoSortedArray(temp, compCScoreRankings);
+		}
+	
+		ArrayList<AgentMappingScore> compBScoreRankings = new ArrayList<AgentMappingScore>();
+		for(int i = 0; i < compBTests.size(); ++i) {
+			AgentMappingScore temp = compBTests.get(i).calculateScores(compAC, dailySpecials);
+			temp.agentIndex = i;
+			insertScoreIntoSortedArray(temp, compBScoreRankings);
+		}
+		
+		int index = getBestCombinedRankingIndex(compCScoreRankings, compBScoreRankings); 
+		
+		answer = index + 1;
+		
+		if(debugPrinting == debugPrintType.SOME || debugPrinting == debugPrintType.ALL) {
+			System.out.println("Guess: " + (answer));
+		}
+		
+		int realAnswer = problem.checkAnswer(answer);
+		
+		if(realAnswer == answer)
+			++problemsCorrect3x3;
+		else
+			++problemsIncorrect3x3;
+		
+		if(debugPrinting == debugPrintType.SOME || debugPrinting == debugPrintType.ALL) {
+			System.out.println("Answer: " + realAnswer);
+		}
+		return answer;
+	}
+    
+	public int do2x2Verbal(RavensProblem problem, String name, int numAnswers) {
+		int answer;
+		//CHECK FOR SPECIAL CASES (LIKE REFLECTION ROTATIONS, ETC)
+		ArrayList<AgentSpecialHandling> dailySpecials = checkForSpecialness2x2(problem);
+		
+		//BUILD COMPARISON MAPPINGS FOR A AND B
+		AgentDiagramComparison compAB = new AgentDiagramComparison(name, "AB", problem.getFigures().get("A"), problem.getFigures().get("B"), debugPrinting);
+		
+		//BUILD COMPARISON MAPPINGS FOR C AND EACH TEST CASE
+		ArrayList<AgentDiagramComparison> compCTests = new ArrayList<AgentDiagramComparison>();
+		for(int i = 0; i < numAnswers; ++i) {
+			compCTests.add(new AgentDiagramComparison(name, "C" + Integer.toString(i + 1), problem.getFigures().get("C"), problem.getFigures().get(Integer.toString(i + 1)), debugPrinting));    		
+		}
+		
+		//BUILD COMPARISON MAPPINGS FOR A AND C
+		AgentDiagramComparison compAC = new AgentDiagramComparison(name, "AC", problem.getFigures().get("A"), problem.getFigures().get("C"), debugPrinting);
+		
+		//BUILD COMPARISON MAPPINGS FOR B AND EACH TEST CASE
+		ArrayList<AgentDiagramComparison> compBTests = new ArrayList<AgentDiagramComparison>();
+		for(int i = 0; i < numAnswers; ++i) {
+			compBTests.add(new AgentDiagramComparison(name, "B" + Integer.toString(i + 1), problem.getFigures().get("B"), problem.getFigures().get(Integer.toString(i + 1)), debugPrinting));    		
+		}
+		
+		//GO THROUGH EACH MAPPING IN EACH OF THE SOLUTION COMPARISONS IN compCTests.  ASSIGN EACH 
+		//MAPPING A SCORE BASED ON HOW CLOSE IT IS TO ANY OF THE MAPPINGS IN compAB.  
+		//THEN ASSIGN EACH SOLUTION A SCORE WHICH CORRELATES TO THE LOWEST SCORE OF ITS MAPS
+		//IF THERE'S A TIE, GO WITH THE LOWEST SCORE
+		
+		ArrayList<AgentMappingScore> compCScoreRankings = new ArrayList<AgentMappingScore>();
+		for(int i = 0; i < compCTests.size(); ++i) {
+			AgentMappingScore temp = compCTests.get(i).calculateScores(compAB, dailySpecials);
+			temp.agentIndex = i;
+			insertScoreIntoSortedArray(temp, compCScoreRankings);
+		}
+
+		ArrayList<AgentMappingScore> compBScoreRankings = new ArrayList<AgentMappingScore>();
+		for(int i = 0; i < compBTests.size(); ++i) {
+			AgentMappingScore temp = compBTests.get(i).calculateScores(compAC, dailySpecials);
+			temp.agentIndex = i;
+			insertScoreIntoSortedArray(temp, compBScoreRankings);
+		}
+		
+		int index = getBestCombinedRankingIndex(compCScoreRankings, compBScoreRankings); 
+		
+		answer = index + 1;
+		
+		if(debugPrinting == debugPrintType.SOME || debugPrinting == debugPrintType.ALL) {
+			System.out.println("Guess: " + (answer));
+		}
+		
+		int realAnswer = problem.checkAnswer(answer);
+		
+		if(realAnswer == answer)
+			++problemsCorrect2x2;
+		else
+			++problemsIncorrect2x2;
+		
+		if(debugPrinting == debugPrintType.SOME || debugPrinting == debugPrintType.ALL) {
+			System.out.println("Answer: " + realAnswer);
+		}
+		return answer;
+	}
+    
+    private ArrayList<AgentSpecialHandling> checkForSpecialness3x3(RavensProblem problem) {
+
+    	ArrayList<AgentSpecialHandling> retval = new ArrayList<AgentSpecialHandling>();
+    	
+    	//NO KNOWN SPECIALS FOR 3x3 YET
+    	
+    	return retval;
+    }
+
+	private ArrayList<AgentSpecialHandling> checkForSpecialness2x2(RavensProblem problem) {
 
     	ArrayList<AgentSpecialHandling> retval = new ArrayList<AgentSpecialHandling>();
     	
