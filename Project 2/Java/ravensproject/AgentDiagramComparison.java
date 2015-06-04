@@ -169,7 +169,17 @@ public class AgentDiagramComparison {
 			
 			if(index == figure2RevisedObjectList.size() - 1) {
 				//DONE! FOUND A MAP
-				allPossibleMappings.add(new AgentShapeMapping(problemName, comparisonName, Integer.toString(++numMappingsGenerated), theMapping));
+				
+				//MAKE SURE THE MAP DOESN'T ALREADY EXIST. IF IT DOESN'T, ADD IT
+				boolean dupeFound = false;
+				AgentShapeMapping newby = new AgentShapeMapping(problemName, comparisonName, Integer.toString(++numMappingsGenerated), theMapping);
+				for(int mapIndex = 0; mapIndex < allPossibleMappings.size() && !dupeFound; ++mapIndex) {
+					if(newby.hasSameMappingsIgnoringDummys(allPossibleMappings.get(mapIndex)))
+						dupeFound = true;
+				}
+				
+				if(!dupeFound)
+					allPossibleMappings.add(newby);
 			}
 			else {
 				//CALL SELF WITH AN INCREMENTED INDEX
