@@ -30,7 +30,8 @@ public class AgentShapeMapping {
 	ArrayList<Map.Entry<String, RavensObject>> figure1Objects = new ArrayList<Map.Entry<String, RavensObject>>();
 	ArrayList<Map.Entry<String, RavensObject>> figure2Objects = new ArrayList<Map.Entry<String, RavensObject>>();
 	
-	ArrayList<ArrayList<AgentTransformation>> mapTransformations = new ArrayList<ArrayList<AgentTransformation>>(); 
+	ArrayList<ArrayList<AgentTransformation>> mapTransformations = new ArrayList<ArrayList<AgentTransformation>>();
+	int totalTransformationCount = -1;
 	AgentMappingScore mapScore = null;
 	
 	String comparisonName = "";
@@ -505,5 +506,35 @@ public class AgentShapeMapping {
 		
 		return BName; 
 	}
+	
+	public boolean mappingIsAtLeastSomewhatLikelyToBeUsed() {
+		//USED TO DETERMINE WHETHER THIS MAPPING SHOULD BE SAVED OR DELETED WHEN FIRST IDENTIFIED.
+		//SOMEHOW WE NEED TO NOT ADD SO MANY OPTIONS (PROBLEM C4 HAS 300,000+ COMBINATIONS)
+
+		int fig1Count = figure1Objects.size();
+		int fig2Count = figure2Objects.size();
+		
+		if(totalTransformationCount == -1) {
+			for(int i =0; i < mapTransformations.size(); ++i) {
+				totalTransformationCount += mapTransformations.get(i).size();
+			}
+		}
+		
+		if(totalTransformationCount > (fig1Count + fig2Count) )
+			return false;
+		
+		return true;
+		
+	}
+	
+	public String generateUniqueMappingKey() {
+		//USED TO CREATE A UNIQUE MAPPING KEY TO DETERMINE WHETHER WE HAVE A DUPLICATE KEY QUICKLY OR NOT
+		//SOMEHOW WE NEED TO NOT ADD SO MANY OPTIONS (PROBLEM C4 HAS 300,000+ COMBINATIONS)
+		String key = "";
+		
+	
+		return key;
+	}
+	
 	
 }

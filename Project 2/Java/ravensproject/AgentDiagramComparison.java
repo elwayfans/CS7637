@@ -20,6 +20,7 @@ public class AgentDiagramComparison {
 	RavensFigure figure1 = null;
 	RavensFigure figure2 = null;
 	ArrayList<AgentShapeMapping> allPossibleMappings = new ArrayList<AgentShapeMapping>();
+	ArrayList<String> uniqueMappingKeys = new ArrayList<String>();
 	
 	//THESE HASHMAPS ARE THE SAME AS THOSE IN THE RavensFigure OBJECTS OTHER THAN
 	//THEY ARE TWEAKED TO BE THE SAME SIZE AS EACH OTHER.  IF ONE OF THE HASHMAPS
@@ -32,10 +33,12 @@ public class AgentDiagramComparison {
 
 	debugPrintType debugPrinting = debugPrintType.NONE;
 	
+	int abortMappingThreshold = 10;
+	
 	public AgentDiagramComparison(String problem, String name, RavensFigure fig1, RavensFigure fig2, debugPrintType debugPrinting) {
 		figure1 = fig1;
 		figure2 = fig2;
-		
+
 		comparisonName = name;
 		problemName = problem;
 		this.debugPrinting = debugPrinting;
@@ -86,13 +89,19 @@ public class AgentDiagramComparison {
 		 * AND THE ONLY DIFFERNCE BETWEEN THEM IS THAT THEY HAVE DIFFERENT MAPS TO DUMMY OBJECTS
 		 * WE SHOULD NUKE THEM UNTIL WE HAVE ONLY ONE REMAINING */
 		 //NOTE: THE ABOVE SCENARIO ONLY HAPPENS IF THERE ARE MORE THAN ONE DUMMY OBJECT
-		if(dummyCount > 1)
-			removeExtraDummyMappings();
+
+//		2015-06-04 THINGS ARE JUST TAKING WAY TOO LONG. C4 HAS 300K+ MAPPINGS.  REMOVING THIS STILL YIELDS ALL B PROBLEMS WORKING AND C1 AND C2.  REMOVING FOR EFFICIENCY		
+//		if(dummyCount > 1)
+//			removeExtraDummyMappings();
 
 		
 		//NOW WE NEED TO IDENTIFY WHICH TRANSFORMATIONS TOOK PLACE FOR EACH MAPPING PERMUTATION
 		for(int i = 0; i < allPossibleMappings.size(); ++i) {
 			allPossibleMappings.get(i).identifyTransformationsForMap();
+//			if(!allPossibleMappings.get(i).mappingIsAtLeastSomewhatLikelyToBeUsed()) {
+//				allPossibleMappings.remove(i);
+//				--i;
+//			}
 		}
 		
 		//USED FOR DEBUGGING ONLY - PRING THE MAPPINGS
@@ -170,15 +179,22 @@ public class AgentDiagramComparison {
 			if(index == figure2RevisedObjectList.size() - 1) {
 				//DONE! FOUND A MAP
 				
-				//MAKE SURE THE MAP DOESN'T ALREADY EXIST. IF IT DOESN'T, ADD IT
-				boolean dupeFound = false;
-				AgentShapeMapping newby = new AgentShapeMapping(problemName, comparisonName, Integer.toString(++numMappingsGenerated), theMapping);
-				for(int mapIndex = 0; mapIndex < allPossibleMappings.size() && !dupeFound; ++mapIndex) {
-					if(newby.hasSameMappingsIgnoringDummys(allPossibleMappings.get(mapIndex)))
-						dupeFound = true;
-				}
+				//***************************************************************************************************
+				//SOMEHOW WE NEED TO LIMIT THE NUMBER OF MAPPINGS WE ADD. PROBLEM C3 HAS 300,000+ AND IT'S KILLING US
+				//***************************************************************************************************
 				
-				if(!dupeFound)
+//				//MAKE SURE THE MAP DOESN'T ALREADY EXIST. IF IT DOESN'T, ADD IT
+//				boolean dupeFound = false;
+//				AgentShapeMapping newby = new AgentShapeMapping(problemName, comparisonName, Integer.toString(++numMappingsGenerated), theMapping);
+//				for(int mapIndex = 0; mapIndex < allPossibleMappings.size() && !dupeFound; ++mapIndex) {
+//					if(newby.hasSameMappingsIgnoringDummys(allPossibleMappings.get(mapIndex)))
+//						dupeFound = true;
+//				}
+//				if(!dupeFound)
+//					allPossibleMappings.add(newby);
+				
+				AgentShapeMapping newby = new AgentShapeMapping(problemName, comparisonName, Integer.toString(++numMappingsGenerated), theMapping);
+				if(allPossibleMappings.size() < abortMappingThreshold)
 					allPossibleMappings.add(newby);
 			}
 			else {
