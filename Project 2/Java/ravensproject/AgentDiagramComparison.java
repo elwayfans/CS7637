@@ -91,8 +91,8 @@ public class AgentDiagramComparison {
 		 //NOTE: THE ABOVE SCENARIO ONLY HAPPENS IF THERE ARE MORE THAN ONE DUMMY OBJECT
 
 //		2015-06-04 THINGS ARE JUST TAKING WAY TOO LONG. C4 HAS 300K+ MAPPINGS.  REMOVING THIS STILL YIELDS ALL B PROBLEMS WORKING AND C1 AND C2.  REMOVING FOR EFFICIENCY		
-//		if(dummyCount > 1)
-//			removeExtraDummyMappings();
+		if(dummyCount > 1)
+			removeExtraDummyMappings();
 
 		
 		//NOW WE NEED TO IDENTIFY WHICH TRANSFORMATIONS TOOK PLACE FOR EACH MAPPING PERMUTATION
@@ -141,68 +141,146 @@ public class AgentDiagramComparison {
 		}			
 	}
 	
-	public void getAllPossibleMappings(int index, AgentShapeMapping theMapping) {
-		if(theMapping == null) {
-			theMapping = new AgentShapeMapping(debugPrinting, problemName, comparisonName, Integer.toString(numMappingsGenerated));
+	public void getAllPossibleMappings(int index, ArrayList<Map.Entry<String, RavensObject>> fig2ObjectsBuilder) {
+		
+		for(int i = 0; i < figure2RevisedObjectList.size(); ++i) {
+			if(fig2ObjectsBuilder != null) {
+				for(int j = index; j < fig2ObjectsBuilder.size(); ++j) {
+					fig2ObjectsBuilder.remove(index);
+				}
+			}
 			
-			//FILL THE MAP WITH FIGURE1 OBJECTS IN ORDER
-			for(int i = 0; i < figure1RevisedObjectList.size(); ++i) {
-				//********************
-				//THIS WAS KIND OF WORKING BUT FAILED ON DUMMY OBJECTS (getFigureObjectByIndex pulled
-				//from the original figure array and would return null on dummy objects)
-				//********************
-				//Map.Entry<String, RavensObject> temp =getFigureObjectByIndex(figure1, i);
-				Map.Entry<String, RavensObject> temp =getObjectByIndex(figure1RevisedObjectList, i);
+			if(fig2ObjectsBuilder == null) {
+				fig2ObjectsBuilder = new ArrayList<Map.Entry<String, RavensObject>>();
 				
-				theMapping.figure1Objects.add(temp);
+				fig2ObjectsBuilder.add(index, getObjectByIndex(figure2RevisedObjectList, i));
+				
+				if(fig2ObjectsBuilder.size() == figure2RevisedObjectList.size()) {
+
+					AgentShapeMapping newby = createMappingWithFig1ListInOrder(fig2ObjectsBuilder);
+					allPossibleMappings.add(newby);
+				
+				}
+				else 
+					getAllPossibleMappings(index + 1, copyFigureList(fig2ObjectsBuilder));
+			}
+//			else if(!fig2ObjectsBuilder.contains(figure2RevisedObjectList.get(i))) {
+			else if (!arrayListOfMapEntrysContainsRavensObject(fig2ObjectsBuilder, getObjectByIndex(figure2RevisedObjectList, i))) {
+			
+				fig2ObjectsBuilder.add(index, getObjectByIndex(figure2RevisedObjectList, i));
+				
+				if(fig2ObjectsBuilder.size() == figure2RevisedObjectList.size()) {
+				
+					AgentShapeMapping newby = createMappingWithFig1ListInOrder(fig2ObjectsBuilder);
+					allPossibleMappings.add(newby);
+
+				}
+				else
+					getAllPossibleMappings(index + 1, copyFigureList(fig2ObjectsBuilder));
 			}
 		}
 
-		//NOW FILL THE MAP WITH ALL POSSIBLE COMBINATIONS OF FIGURE2 STUFF
-		for(int i = 0; i < figure2RevisedObjectList.size(); ++i) {
-			
-			Map.Entry<String, RavensObject> temp = getObjectByIndex(figure2RevisedObjectList, i);
-			
-			//HAVE WE ALREADY ADDED THIS OBJECT TO THE ARRAY? IF SO, DON'T ADD AGAIN, JUST 
-			//USE A continue TO GO TO THE NEXT OBJECT
-			if(theMapping.keyAlreadyUsed(theMapping.figure2Objects, temp.getKey())) {
-				continue;
-			}
-			
-			//IF SOMETHING IS ALREADY IN THIS SPOT, NUKE IT. THEN ADD INTO THAT INDEX
-			if(theMapping.figure2Objects.size() > index) {
-				theMapping.figure2Objects.remove(index);
-			}
-			theMapping.figure2Objects.add(index, temp);
-			
-			
-			if(index == figure2RevisedObjectList.size() - 1) {
-				//DONE! FOUND A MAP
-				
-				//***************************************************************************************************
-				//SOMEHOW WE NEED TO LIMIT THE NUMBER OF MAPPINGS WE ADD. PROBLEM C3 HAS 300,000+ AND IT'S KILLING US
-				//***************************************************************************************************
-				
-//				//MAKE SURE THE MAP DOESN'T ALREADY EXIST. IF IT DOESN'T, ADD IT
-//				boolean dupeFound = false;
-//				AgentShapeMapping newby = new AgentShapeMapping(problemName, comparisonName, Integer.toString(++numMappingsGenerated), theMapping);
-//				for(int mapIndex = 0; mapIndex < allPossibleMappings.size() && !dupeFound; ++mapIndex) {
-//					if(newby.hasSameMappingsIgnoringDummys(allPossibleMappings.get(mapIndex)))
-//						dupeFound = true;
-//				}
-//				if(!dupeFound)
-//					allPossibleMappings.add(newby);
-				
-				AgentShapeMapping newby = new AgentShapeMapping(problemName, comparisonName, Integer.toString(++numMappingsGenerated), theMapping);
-				if(allPossibleMappings.size() < abortMappingThreshold)
-					allPossibleMappings.add(newby);
-			}
-			else {
-				//CALL SELF WITH AN INCREMENTED INDEX
-				getAllPossibleMappings(index + 1, new AgentShapeMapping(problemName, comparisonName, theMapping.mappingName, theMapping));
-			}
-		}
 	}
+	
+	public boolean arrayListOfMapEntrysContainsRavensObject(ArrayList<Map.Entry<String, RavensObject>> theList, Map.Entry<String, RavensObject> theObject) {
+		
+		for(int i = 0; i < theList.size(); ++i) {
+			if(theList.get(i).getValue().getName().equals(theObject.getValue().getName()))
+				return true;
+		}
+		
+		return false;
+	}
+	
+	public AgentShapeMapping createMappingWithFig1ListInOrder(ArrayList<Map.Entry<String, RavensObject>> list2) {
+
+		AgentShapeMapping newMap = new AgentShapeMapping(debugPrinting, problemName, comparisonName, Integer.toString(++numMappingsGenerated));
+
+		for(int i = 0; i < figure1RevisedObjectList.size(); ++i) {
+			newMap.figure1Objects.add(getObjectByIndex(figure1RevisedObjectList, i));
+		}
+		
+		for(int i = 0; i < list2.size(); ++i) {
+			newMap.figure2Objects.add(list2.get(i));
+		}
+
+		
+		return newMap;
+	}
+
+	public ArrayList<Map.Entry<String, RavensObject>> copyFigureList(ArrayList<Map.Entry<String, RavensObject>> origList) {
+		ArrayList<Map.Entry<String, RavensObject>> retval = new ArrayList<Map.Entry<String, RavensObject>>();
+		
+		for(int i = 0; i < origList.size(); ++i){
+			retval.add(origList.get(i));
+		}
+
+		
+		return retval;
+	}
+
+//	public void getAllPossibleMappingsOriginal(int index, AgentShapeMapping theMapping) {
+//		if(theMapping == null) {
+//			theMapping = new AgentShapeMapping(debugPrinting, problemName, comparisonName, Integer.toString(numMappingsGenerated));
+//			
+//			//FILL THE MAP WITH FIGURE1 OBJECTS IN ORDER
+//			for(int i = 0; i < figure1RevisedObjectList.size(); ++i) {
+//				//********************
+//				//THIS WAS KIND OF WORKING BUT FAILED ON DUMMY OBJECTS (getFigureObjectByIndex pulled
+//				//from the original figure array and would return null on dummy objects)
+//				//********************
+//				//Map.Entry<String, RavensObject> temp =getFigureObjectByIndex(figure1, i);
+//				Map.Entry<String, RavensObject> temp =getObjectByIndex(figure1RevisedObjectList, i);
+//				
+//				theMapping.figure1Objects.add(temp);
+//			}
+//		}
+//
+//		//NOW FILL THE MAP WITH ALL POSSIBLE COMBINATIONS OF FIGURE2 STUFF
+//		for(int i = 0; i < figure2RevisedObjectList.size(); ++i) {
+//			
+//			Map.Entry<String, RavensObject> temp = getObjectByIndex(figure2RevisedObjectList, i);
+//			
+//			//HAVE WE ALREADY ADDED THIS OBJECT TO THE ARRAY? IF SO, DON'T ADD AGAIN, JUST 
+//			//USE A continue TO GO TO THE NEXT OBJECT
+//			if(theMapping.keyAlreadyUsed(theMapping.figure2Objects, temp.getKey())) {
+//				continue;
+//			}
+//			
+//			//IF SOMETHING IS ALREADY IN THIS SPOT, NUKE IT. THEN ADD INTO THAT INDEX
+//			if(theMapping.figure2Objects.size() > index) {
+//				theMapping.figure2Objects.remove(index);
+//			}
+//			theMapping.figure2Objects.add(index, temp);
+//			
+//			
+//			if(index == figure2RevisedObjectList.size() - 1) {
+//				//DONE! FOUND A MAP
+//				
+//				//***************************************************************************************************
+//				//SOMEHOW WE NEED TO LIMIT THE NUMBER OF MAPPINGS WE ADD. PROBLEM C3 HAS 300,000+ AND IT'S KILLING US
+//				//***************************************************************************************************
+//				
+////				//MAKE SURE THE MAP DOESN'T ALREADY EXIST. IF IT DOESN'T, ADD IT
+////				boolean dupeFound = false;
+////				AgentShapeMapping newby = new AgentShapeMapping(problemName, comparisonName, Integer.toString(++numMappingsGenerated), theMapping);
+////				for(int mapIndex = 0; mapIndex < allPossibleMappings.size() && !dupeFound; ++mapIndex) {
+////					if(newby.hasSameMappingsIgnoringDummys(allPossibleMappings.get(mapIndex)))
+////						dupeFound = true;
+////				}
+////				if(!dupeFound)
+////					allPossibleMappings.add(newby);
+//				
+//				AgentShapeMapping newby = new AgentShapeMapping(problemName, comparisonName, Integer.toString(++numMappingsGenerated), theMapping);
+//				if(allPossibleMappings.size() < abortMappingThreshold)
+//					allPossibleMappings.add(newby);
+//			}
+//			else {
+//				//CALL SELF WITH AN INCREMENTED INDEX
+//				getAllPossibleMappingsOriginal(index + 1, new AgentShapeMapping(problemName, comparisonName, theMapping.mappingName, theMapping));
+//			}
+//		}
+//	}
 	
 	
 	public String getFigureName(int figure) {

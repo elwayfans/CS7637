@@ -29,6 +29,8 @@ public class Agent {
 	
 	enum debugPrintType { NONE, SOME, ALL };
 	debugPrintType debugPrinting = debugPrintType.SOME;
+	String onlyDoThisProblem = ""; //"Basic Problem C-03";
+
 	
 	int problemsCorrect2x2 = 0;
 	int problemsIncorrect2x2 = 0;
@@ -36,6 +38,8 @@ public class Agent {
 	int problemsCorrect3x3 = 0;
 	int problemsIncorrect3x3 = 0;
 	int problemsSkipped3x3 = 0;
+
+	int maxObjectsAllowed = 7;
 	
 	int unlikelyAnglePrediction = -9999;
     /**
@@ -84,54 +88,88 @@ public class Agent {
     	if(type.equals("3x3"))
     		numAnswers = 8;
 
-    	if(debugPrinting == debugPrintType.SOME || debugPrinting == debugPrintType.ALL) {
-	    	System.out.println("************************");
-	    	System.out.println("Here we go for " + name);
-	    	System.out.println("************************");
-    	}
     	
     	int answer = -1;
     	
-
-    	if(type.equals("2x2")) {
-	    	if(problem.hasVerbal()) {
-	    		
-	    		answer = do2x2Verbal(problem, name, numAnswers);
-	    	}
-	    	else {
-	
-	    		if(debugPrinting == debugPrintType.SOME || debugPrinting == debugPrintType.ALL) {
-	    	    	System.out.println("No verbal data available");
-	    	    	++problemsSkipped2x2;
-	        	}
-	    	}
-    	}
-    	else {//3x3
-	    	if(problem.hasVerbal()) {
-	    		
-	    		answer = do3x3Verbal(problem, name, numAnswers);
-	    	}
-	    	else {
-	
-	    		if(debugPrinting == debugPrintType.SOME || debugPrinting == debugPrintType.ALL) {
-	    	    	System.out.println("No verbal data available");
-	    	    	++problemsSkipped3x3;
-	        	}
-	    	}
-    	}
+    	//USED ONLY FOR DEBUGGING - SET TO A SPECIFIC PROBLEM TO TEST ONLY THAT PROBLEM
     	
-		if(debugPrinting == debugPrintType.SOME || debugPrinting == debugPrintType.ALL) {
-			System.out.println("################################################################################################");
-			System.out.println("2x2 problems: Correct:" + problemsCorrect2x2 + " Incorrect: " + problemsIncorrect2x2 + " Skipped:" + problemsSkipped2x2);
-			System.out.println("3x3 problems: Correct:" + problemsCorrect3x3 + " Incorrect: " + problemsIncorrect3x3 + " Skipped:" + problemsSkipped3x3);
-			System.out.println("################################################################################################");
+
+    	if(onlyDoThisProblem.equals("") || name.equals(onlyDoThisProblem)) {
+
+        	if(debugPrinting == debugPrintType.SOME || debugPrinting == debugPrintType.ALL) {
+    	    	System.out.println("************************");
+    	    	System.out.println("Here we go for " + name);
+    	    	System.out.println("************************");
+        	}
+
+	    	
+	    	if(type.equals("2x2")) {
+		    	if(problem.hasVerbal()) {
+		    		
+		    		answer = do2x2Verbal(problem, name, numAnswers);
+		    		if(answer == -1)
+		    			++problemsSkipped2x2;
+		    	}
+		    	else {
+		
+		    		if(debugPrinting == debugPrintType.SOME || debugPrinting == debugPrintType.ALL) {
+		    	    	System.out.println("No verbal data available");
+		    	    	++problemsSkipped2x2;
+		        	}
+		    	}
+	    	}
+	    	else {//3x3
+		    	if(problem.hasVerbal()) {
+		    		
+		    		answer = do3x3Verbal(problem, name, numAnswers);
+		    		if(answer == -1)
+		    			++problemsSkipped3x3;
+		    	}
+		    	else {
+		
+		    		if(debugPrinting == debugPrintType.SOME || debugPrinting == debugPrintType.ALL) {
+		    	    	System.out.println("No verbal data available");
+		    	    	++problemsSkipped3x3;
+		        	}
+		    	}
+	    	}
+	    	
+	    	if(debugPrinting == debugPrintType.SOME || debugPrinting == debugPrintType.ALL) {
+				System.out.println("################################################################################################");
+				System.out.println("2x2 problems: Correct:" + problemsCorrect2x2 + " Incorrect: " + problemsIncorrect2x2 + " Skipped:" + problemsSkipped2x2);
+				System.out.println("3x3 problems: Correct:" + problemsCorrect3x3 + " Incorrect: " + problemsIncorrect3x3 + " Skipped:" + problemsSkipped3x3);
+				System.out.println("################################################################################################");
+			}
+
+    	}
+    		
+
+	
+		return answer;
+    }
+    
+    public int getMaxObjectCountInAllFigures(RavensProblem problem) {
+    	int maxObjects = -1;
+
+    	
+		for(HashMap.Entry<String, RavensFigure> RFentry : problem.getFigures().entrySet()){
+
+			if(RFentry.getValue().getObjects().size() > maxObjects)
+				maxObjects = RFentry.getValue().getObjects().size(); 	
+			
+			
 		}
     	
-        return answer;
+    	return maxObjects;
     }
     
 	public int do3x3Verbal(RavensProblem problem, String name, int numAnswers) {
+		
+		if(getMaxObjectCountInAllFigures(problem) > maxObjectsAllowed) 
+			return -1;
+		
 		int answer;
+
 		//CHECK FOR SPECIAL CASES (LIKE REFLECTION ROTATIONS, ETC)
 		ArrayList<AgentSpecialHandling> dailySpecials = checkForSpecialness3x3(problem);
 		
@@ -194,6 +232,11 @@ public class Agent {
 	}
     
 	public int do2x2Verbal(RavensProblem problem, String name, int numAnswers) {
+		
+		if(getMaxObjectCountInAllFigures(problem) > maxObjectsAllowed) 
+			return -1;
+				
+		
 		int answer;
 		//CHECK FOR SPECIAL CASES (LIKE REFLECTION ROTATIONS, ETC)
 		ArrayList<AgentSpecialHandling> dailySpecials = checkForSpecialness2x2(problem);
