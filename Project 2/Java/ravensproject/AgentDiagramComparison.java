@@ -90,9 +90,10 @@ public class AgentDiagramComparison {
 		 * WE SHOULD NUKE THEM UNTIL WE HAVE ONLY ONE REMAINING */
 		 //NOTE: THE ABOVE SCENARIO ONLY HAPPENS IF THERE ARE MORE THAN ONE DUMMY OBJECT
 
-//		2015-06-04 THINGS ARE JUST TAKING WAY TOO LONG. C4 HAS 300K+ MAPPINGS.  REMOVING THIS STILL YIELDS ALL B PROBLEMS WORKING AND C1 AND C2.  REMOVING FOR EFFICIENCY		
-		if(dummyCount > 1)
-			removeExtraDummyMappings();
+//		2015-06-06 I'M USING THE uniqueMappingKeys ARRAY TO TRACK KEYS WHEN WE ADD MAPS
+//		BELIEVING THAT IT WILL PREVENT THE ABOVE FROM HAPPENING AND WE CAN REMOVE THE CALL TO removeExtraDummyMappings
+//		if(dummyCount > 1)
+//			removeExtraDummyMappings();
 
 		
 		//NOW WE NEED TO IDENTIFY WHICH TRANSFORMATIONS TOOK PLACE FOR EACH MAPPING PERMUTATION
@@ -158,7 +159,7 @@ public class AgentDiagramComparison {
 				if(fig2ObjectsBuilder.size() == figure2RevisedObjectList.size()) {
 
 					AgentShapeMapping newby = createMappingWithFig1ListInOrder(fig2ObjectsBuilder);
-					allPossibleMappings.add(newby);
+					addMappingIfNotAlreadyThere(newby);
 				
 				}
 				else 
@@ -172,7 +173,7 @@ public class AgentDiagramComparison {
 				if(fig2ObjectsBuilder.size() == figure2RevisedObjectList.size()) {
 				
 					AgentShapeMapping newby = createMappingWithFig1ListInOrder(fig2ObjectsBuilder);
-					allPossibleMappings.add(newby);
+					addMappingIfNotAlreadyThere(newby);
 
 				}
 				else
@@ -180,6 +181,15 @@ public class AgentDiagramComparison {
 			}
 		}
 
+	}
+	
+	public void addMappingIfNotAlreadyThere(AgentShapeMapping theMapping) {
+		String key = theMapping.generateUniqueMappingKey();
+		
+		if(!uniqueMappingKeys.contains(key)) {
+			uniqueMappingKeys.add(key);
+			allPossibleMappings.add(theMapping);
+		}
 	}
 	
 	public boolean arrayListOfMapEntrysContainsRavensObject(ArrayList<Map.Entry<String, RavensObject>> theList, Map.Entry<String, RavensObject> theObject) {

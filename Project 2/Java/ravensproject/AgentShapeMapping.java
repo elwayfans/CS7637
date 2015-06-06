@@ -531,10 +531,21 @@ public class AgentShapeMapping {
 		//USED TO CREATE A UNIQUE MAPPING KEY TO DETERMINE WHETHER WE HAVE A DUPLICATE KEY QUICKLY OR NOT
 		//SOMEHOW WE NEED TO NOT ADD SO MANY OPTIONS (PROBLEM C4 HAS 300,000+ COMBINATIONS)
 		String key = "";
-		
+
+		for(int i = 0; i < figure1Objects.size(); ++i) {
+			key += generateObjectNameForUniqueMappingKey(figure1Objects.get(i).getValue().getName());
+			key += "-";
+			key += generateObjectNameForUniqueMappingKey(figure2Objects.get(i).getValue().getName());
+			key += "|";
+		}
 	
 		return key;
 	}
-	
+
+	private String generateObjectNameForUniqueMappingKey(String theName) {
+		if(theName.contains(AgentDiagramComparison.dummyRavensObjectString))
+			return "DUMMY";
+		return theName;
+	}
 	
 }
