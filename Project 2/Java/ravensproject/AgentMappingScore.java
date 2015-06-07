@@ -22,6 +22,8 @@ public class AgentMappingScore {
 
 	static int transformShapeChangeCost = 2; //DELETE AND CREATE - COUNT AS TWO
 	static int transformSizeChangeCost = 2; //DELETE AND CREATE - COUNT AS TWO
+	static int transformWidthChangeCost = 2; //DELETE AND CREATE - COUNT AS TWO
+	static int transformHeightChangeCost = 2; //DELETE AND CREATE - COUNT AS TWO
 	static int transformAboveChangeCost = 1;
 	static int transformLeftofChangeCost = 1;
 	static int transformOverlapChangeCost = 1;
@@ -119,6 +121,12 @@ public class AgentMappingScore {
 			return transformDeletedCost;
 		if(transformation.theTransformation == mappingTransformations.EXPECTEDANGLE_CHANGE)
 			return transformExpectedAngleChangeCost;
+		if(transformation.theTransformation == mappingTransformations.SIZE_CHANGE)
+			return transformSizeChangeCost;
+		if(transformation.theTransformation == mappingTransformations.WIDTH_CHANGE)
+			return transformWidthChangeCost;
+		if(transformation.theTransformation == mappingTransformations.HEIGHT_CHANGE)
+			return transformHeightChangeCost;
 		
 		return transformUndefinedChangeCost;
 	}

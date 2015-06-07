@@ -13,6 +13,8 @@ public class AgentShapeMapping {
 
 	static String attribKey_shape = "shape";
 	static String attribKey_size = "size";
+	static String attribKey_width = "width";
+	static String attribKey_height = "height";
 	static String attribKey_above = "above";
 	static String attribKey_leftof = "left-of";
 	static String attribKey_overlaps = "overlaps";
@@ -193,6 +195,10 @@ public class AgentShapeMapping {
 			return new AgentTransformation(mappingTransformations.SHAPE_CHANGE, value);
 		if(key.equals(attribKey_size))
 			return new AgentTransformation(mappingTransformations.SIZE_CHANGE, parseSizeKey(value));
+		if(key.equals(attribKey_width))
+			return new AgentTransformation(mappingTransformations.WIDTH_CHANGE, parseSizeKey(value));		
+		if(key.equals(attribKey_height))
+			return new AgentTransformation(mappingTransformations.HEIGHT_CHANGE, parseSizeKey(value));
 		if(key.equals(attribKey_above))
 			return new AgentTransformation(mappingTransformations.ABOVE_CHANGE, value);
 		if(key.equals(attribKey_leftof))
@@ -229,6 +235,8 @@ public class AgentShapeMapping {
 		return transformationSizes.UNDEFINED;
 		
 	}
+	
+
 	
 	/*******************************************************************************
 	 * SOME TRANSFORMATIONS REFERENCE OTHER OBJECTS IN THEIR VALUES SO THEY WILL 

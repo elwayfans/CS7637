@@ -30,7 +30,7 @@ public class Agent {
 	
 	enum debugPrintType { NONE, SOME, ALL };
 	debugPrintType debugPrinting = debugPrintType.SOME;
-	String onlyDoThisProblem = "";//"Basic Problem C-04";
+	String onlyDoThisProblem = "";//Basic Problem C-06";
 	
 	ArrayList<AgentScoreKeep> scoreArray = new ArrayList<AgentScoreKeep>();
 	
