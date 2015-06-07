@@ -43,7 +43,7 @@ public class AgentDiagramComparison {
 		problemName = problem;
 		this.debugPrinting = debugPrinting;
 		
-		int dummyCount = 0;
+//		int dummyCount = 0;
 		
 		//COPY THE OBJECT LISTS INTO THE INTERNAL HASHMAPS FOR THIS CLASS
 		//SO WE CAN ADD DUMMY VALUES TO MAKE THEM THE SAME SIZE
@@ -59,11 +59,11 @@ public class AgentDiagramComparison {
 		//NOW MAKE THE TWO INTERNAL OBJECT ARRAYS BE THE SAME SIZE
 		for(int i = figure1RevisedObjectList.size(); i < figure2RevisedObjectList.size(); ++i) {
 			figure1RevisedObjectList.put(dummyRavensObjectString + "_" + i, new RavensObject(dummyRavensObjectString + "_" + i));
-			dummyCount++;
+//			dummyCount++;
 		}
 		for(int i = figure2RevisedObjectList.size(); i < figure1RevisedObjectList.size(); ++i) {
 			figure2RevisedObjectList.put(dummyRavensObjectString + "_" + i, new RavensObject(dummyRavensObjectString + "_" + i));
-			dummyCount++;
+//			dummyCount++;
 		}
 			
 		
@@ -130,17 +130,17 @@ public class AgentDiagramComparison {
 	 * BECAUSE THIS MAY SCREW UP THE LEARNING OF THE MACHINE.  ANYWHERE WE HAVE TWO DIFFERENT MAPPINS
 	 * AND THE ONLY DIFFERNCE BETWEEN THEM IS THAT THEY HAVE DIFFERENT MAPS TO DUMMY OBJECTS
 	 * WE SHOULD NUKE THEM UNTIL WE HAVE ONLY ONE REMAINING */	
-	private void removeExtraDummyMappings() {
-		for(int i =0; i < allPossibleMappings.size(); ++i) {
-			for(int j = i + 1; j < allPossibleMappings.size(); ++j) {
-
-				if(allPossibleMappings.get(i).hasSameMappingsIgnoringDummys(allPossibleMappings.get(j))) {
-					allPossibleMappings.remove(j);
-					j--;
-				}
-			}
-		}			
-	}
+//	private void removeExtraDummyMappings() {
+//		for(int i =0; i < allPossibleMappings.size(); ++i) {
+//			for(int j = i + 1; j < allPossibleMappings.size(); ++j) {
+//
+//				if(allPossibleMappings.get(i).hasSameMappingsIgnoringDummys(allPossibleMappings.get(j))) {
+//					allPossibleMappings.remove(j);
+//					j--;
+//				}
+//			}
+//		}			
+//	}
 	
 	public void getAllPossibleMappings(int index, ArrayList<Map.Entry<String, RavensObject>> fig2ObjectsBuilder) {
 		

@@ -14,6 +14,7 @@ public class AgentShapeMapping {
 	static String attribKey_shape = "shape";
 	static String attribKey_size = "size";
 	static String attribKey_above = "above";
+	static String attribKey_leftof = "left-of";
 	static String attribKey_overlaps = "overlaps";
 	static String attribKey_angle = "angle";
 	static String attribKey_fill = "fill";
@@ -194,6 +195,8 @@ public class AgentShapeMapping {
 			return new AgentTransformation(mappingTransformations.SIZE_CHANGE, parseSizeKey(value));
 		if(key.equals(attribKey_above))
 			return new AgentTransformation(mappingTransformations.ABOVE_CHANGE, value);
+		if(key.equals(attribKey_leftof))
+			return new AgentTransformation(mappingTransformations.LEFT_OF_CHANGE, value);
 		if(key.equals(attribKey_overlaps))
 			return new AgentTransformation(mappingTransformations.OVERLAP_CHANGE, value);
 		if(key.equals(attribKey_angle))
@@ -234,6 +237,8 @@ public class AgentShapeMapping {
 	 ****************************************************************************/
 	private boolean treatAllInstancesOfThisTransformAsEqual(AgentTransformation trans) {
 		if(trans.theTransformation == mappingTransformations.ABOVE_CHANGE)
+			return true;
+		if(trans.theTransformation == mappingTransformations.LEFT_OF_CHANGE)
 			return true;
 		if(trans.theTransformation == mappingTransformations.INSIDE_CHANGE)
 			return true;
