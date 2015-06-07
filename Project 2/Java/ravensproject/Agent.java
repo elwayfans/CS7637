@@ -30,7 +30,7 @@ public class Agent {
 	
 	enum debugPrintType { NONE, SOME, ALL };
 	debugPrintType debugPrinting = debugPrintType.SOME;
-	String onlyDoThisProblem = "";//Basic Problem C-06";
+	String onlyDoThisProblem = "";//Basic Problem C-07";
 	
 	ArrayList<AgentScoreKeep> scoreArray = new ArrayList<AgentScoreKeep>();
 	
@@ -317,15 +317,18 @@ public class Agent {
     	return theList;
     }
     
-    public int getMaxObjectCountInAllFigures(RavensProblem problem) {
+    public int getMaxObjectCountInAllFigures(RavensProblem problem, String includeThese, String excludeThese) {
     	int maxObjects = -1;
 
     	
 		for(HashMap.Entry<String, RavensFigure> RFentry : problem.getFigures().entrySet()){
 
-			if(RFentry.getValue().getObjects().size() > maxObjects)
-				maxObjects = RFentry.getValue().getObjects().size(); 	
-			
+			if((includeThese.length() == 0 || includeThese.contains(RFentry.getValue().getName())) &&
+					(excludeThese.length() == 0 || !excludeThese.contains(RFentry.getValue().getName())))
+			{
+				if(RFentry.getValue().getObjects().size() > maxObjects)
+					maxObjects = RFentry.getValue().getObjects().size(); 	
+			}
 			
 		}
     	
@@ -333,9 +336,36 @@ public class Agent {
     }
 
         
+    public String ignoreAnswersBasedOnObjectCount(RavensProblem problem) {
+    	String ignoreList = "";
+    	
+    	int maxObjectsInProblem = getMaxObjectCountInAllFigures(problem, "ABCDEFGH", ignoreList);
+    	
+    	if(problem.getFigures().get("1").getObjects().size() >= maxObjectsInProblem * 2) 
+    		ignoreList += "1";
+    	if(problem.getFigures().get("2").getObjects().size() >= maxObjectsInProblem * 2) 
+    		ignoreList += "2";
+    	if(problem.getFigures().get("3").getObjects().size() >= maxObjectsInProblem * 2) 
+    		ignoreList += "3";
+    	if(problem.getFigures().get("4").getObjects().size() >= maxObjectsInProblem * 2) 
+    		ignoreList += "4";
+    	if(problem.getFigures().get("5").getObjects().size() >= maxObjectsInProblem * 2) 
+    		ignoreList += "5";
+    	if(problem.getFigures().get("6").getObjects().size() >= maxObjectsInProblem * 2) 
+    		ignoreList += "6";
+    	if(problem.getFigures().get("7").getObjects().size() >= maxObjectsInProblem * 2) 
+    		ignoreList += "7";
+    	if(problem.getFigures().get("8").getObjects().size() >= maxObjectsInProblem * 2) 
+    		ignoreList += "8";
+    	
+    	return ignoreList;
+    }
+    
 	public int do3x3Verbal(RavensProblem problem, String name, int numAnswers) {
 		
-		if(getMaxObjectCountInAllFigures(problem) > maxObjectsAllowed) 
+		String ignoreTheseAnswers = ignoreAnswersBasedOnObjectCount(problem);
+		
+		if(getMaxObjectCountInAllFigures(problem, "", ignoreTheseAnswers) > maxObjectsAllowed) 
 			return -1;
 		
 		int answer;
@@ -349,7 +379,8 @@ public class Agent {
 		//BUILD COMPARISON MAPPINGS FOR H AND EACH TEST CASE
 		ArrayList<AgentDiagramComparison> compHTests = new ArrayList<AgentDiagramComparison>();
 		for(int i = 0; i < numAnswers; ++i) {
-			compHTests.add(new AgentDiagramComparison(name, "H" + Integer.toString(i + 1), problem.getFigures().get("H"), problem.getFigures().get(Integer.toString(i + 1)), debugPrinting));    		
+			if(!ignoreTheseAnswers.contains(Integer.toString(i + 1)))			
+				compHTests.add(new AgentDiagramComparison(name, "H" + Integer.toString(i + 1), problem.getFigures().get("H"), problem.getFigures().get(Integer.toString(i + 1)), debugPrinting));    		
 		}
 		
 		//BUILD COMPARISON MAPPINGS FOR E AND H
@@ -358,7 +389,8 @@ public class Agent {
 		//BUILD COMPARISON MAPPINGS FOR F AND EACH TEST CASE
 		ArrayList<AgentDiagramComparison> compFTests = new ArrayList<AgentDiagramComparison>();
 		for(int i = 0; i < numAnswers; ++i) {
-			compFTests.add(new AgentDiagramComparison(name, "F" + Integer.toString(i + 1), problem.getFigures().get("F"), problem.getFigures().get(Integer.toString(i + 1)), debugPrinting));    		
+			if(!ignoreTheseAnswers.contains(Integer.toString(i + 1)))
+				compFTests.add(new AgentDiagramComparison(name, "F" + Integer.toString(i + 1), problem.getFigures().get("F"), problem.getFigures().get(Integer.toString(i + 1)), debugPrinting));    		
 		}
 		
 		//GO THROUGH EACH MAPPING IN EACH OF THE SOLUTION COMPARISONS IN compHTests.  ASSIGN EACH 
@@ -389,7 +421,7 @@ public class Agent {
     
 	public int do2x2Verbal(RavensProblem problem, String name, int numAnswers) {
 		
-		if(getMaxObjectCountInAllFigures(problem) > maxObjectsAllowed) 
+		if(getMaxObjectCountInAllFigures(problem, "", "") > maxObjectsAllowed) 
 			return -1;
 				
 		
