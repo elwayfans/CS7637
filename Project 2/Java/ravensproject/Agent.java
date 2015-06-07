@@ -30,7 +30,7 @@ public class Agent {
 	
 	enum debugPrintType { NONE, SOME, ALL };
 	debugPrintType debugPrinting = debugPrintType.SOME;
-	String onlyDoThisProblem = ""; //"Basic Problem C-03";
+	String onlyDoThisProblem = "";//"Basic Problem C-04";
 	
 	ArrayList<AgentScoreKeep> scoreArray = new ArrayList<AgentScoreKeep>();
 	
@@ -251,7 +251,7 @@ public class Agent {
         			return -1;
         		
         		if(numObjectsInFigure("F", problem) - numObjectsInFigure("C", problem) == numObjectsInFigure("H", problem) - numObjectsInFigure("G", problem))
-        			return numObjectsInFigure("F", problem) - numObjectsInFigure("C", problem);
+        			return numObjectsInFigure("F", problem) + (numObjectsInFigure("F", problem) - numObjectsInFigure("C", problem));
         			
     		}
     	}

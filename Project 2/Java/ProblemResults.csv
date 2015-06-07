@@ -14,7 +14,7 @@ Basic Problem B-12,1,Correct,1
 Basic Problem C-01,3,Correct,3
 Basic Problem C-02,4,Correct,4
 Basic Problem C-03,4,Correct,4
-Basic Problem C-04,4,Incorrect,8
+Basic Problem C-04,8,Correct,8
 Basic Problem C-05,3,Correct,3
 Basic Problem C-06,-1,Error,7
 Basic Problem C-07,-1,Skipped,2
