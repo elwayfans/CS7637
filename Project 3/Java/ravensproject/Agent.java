@@ -5,9 +5,14 @@ package ravensproject;
 //import java.io.File;
 //import javax.imageio.ImageIO;
 
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
+
+import javax.imageio.ImageIO;
 
 import ravensproject.AgentScoreKeep.scoreStatus;
 import ravensproject.AgentTransformation.mappingTransformations;
@@ -37,9 +42,14 @@ public class Agent {
 	int problemsCorrect2x2 = 0;
 	int problemsIncorrect2x2 = 0;
 	int problemsSkipped2x2 = 0;
+
 	int problemsCorrect3x3 = 0;
 	int problemsIncorrect3x3 = 0;
 	int problemsSkipped3x3 = 0;
+
+	int problemsCorrectVisual = 0;
+	int problemsIncorrectVisual = 0;
+	int problemsSkippedVisual = 0;
 
 	int maxObjectsAllowed = 7;
 	
@@ -151,10 +161,11 @@ public class Agent {
 		    	}
 		    	else {
 		
-		    		if(debugPrinting == debugPrintType.SOME || debugPrinting == debugPrintType.ALL) {
-		    	    	System.out.println("No verbal data available");
-		    	    	++problemsSkipped3x3;
-		        	}
+	    			answer = do3x3Visual(problem, name, numAnswers);
+	    			
+	    			if(answer == -1)
+	    				++problemsSkippedVisual;
+		        	
 		    	}
 	    	}
 	    	
@@ -171,8 +182,10 @@ public class Agent {
 					
 					if(type.equalsIgnoreCase("2x2")) 
 						++problemsCorrect2x2;
-					else
+					else if(problem.hasVerbal())
 						++problemsCorrect3x3;
+					else
+						++problemsCorrectVisual;
 				}
 				else {
 					
@@ -180,8 +193,10 @@ public class Agent {
 					
 					if(type.equalsIgnoreCase("2x2"))
 						++problemsIncorrect2x2;
-					else
+					else if(problem.hasVerbal())
 						++problemsIncorrect3x3;
+					else
+						++problemsIncorrectVisual;
 					
 				}
 
@@ -203,6 +218,7 @@ public class Agent {
 				System.out.println("################################################################################################");
 				System.out.println("2x2 problems: Correct:" + problemsCorrect2x2 + " Incorrect: " + problemsIncorrect2x2 + " Skipped:" + problemsSkipped2x2);
 				System.out.println("3x3 problems: Correct:" + problemsCorrect3x3 + " Incorrect: " + problemsIncorrect3x3 + " Skipped:" + problemsSkipped3x3);
+				System.out.println("Vis problems: Correct:" + problemsCorrectVisual + " Incorrect: " + problemsIncorrectVisual + " Skipped:" + problemsSkippedVisual);
 				System.out.println("################################################################################################");
 			}
 
@@ -360,6 +376,7 @@ public class Agent {
     	
     	return ignoreList;
     }
+    
     
 	public int do3x3Verbal(RavensProblem problem, String name, int numAnswers) {
 		
@@ -628,5 +645,24 @@ public class Agent {
     	if(!added)
     		theArray.add(theScore);
     }
+    
+/****************************************************************************************************************
+ * START VISUAL STUFF
+****************************************************************************************************************/
+ 	public int do3x3Visual(RavensProblem problem, String name, int numAnswers) {
+
+ 		int answer = -1;
+    
+ 		AgentVisualProblem elProblemo = new AgentVisualProblem(problem);
+ 		
+ 		answer = elProblemo.isItLikeBasicD01();
+
+ 		if(answer == -1)
+ 			answer = elProblemo.isItLikeBasicD02();
+ 		
+    	return answer;    	
+    }
+    
+    
 }
 
