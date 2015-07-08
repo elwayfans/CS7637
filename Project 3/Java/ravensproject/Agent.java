@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
 
+import ravensproject.AgentScoreKeep.scoreStatus;
 import ravensproject.AgentTransformation.mappingTransformations;
 import ravensproject.AgentSpecialHandling.specialType;
 
@@ -29,6 +30,9 @@ public class Agent {
 	
 	enum debugPrintType { NONE, SOME, ALL };
 	debugPrintType debugPrinting = debugPrintType.SOME;
+	String onlyDoThisProblem = "";//Basic Problem C-07";
+	
+	ArrayList<AgentScoreKeep> scoreArray = new ArrayList<AgentScoreKeep>();
 	
 	int problemsCorrect2x2 = 0;
 	int problemsIncorrect2x2 = 0;
@@ -36,6 +40,8 @@ public class Agent {
 	int problemsCorrect3x3 = 0;
 	int problemsIncorrect3x3 = 0;
 	int problemsSkipped3x3 = 0;
+
+	int maxObjectsAllowed = 7;
 	
 	int unlikelyAnglePrediction = -9999;
     /**
@@ -80,58 +86,290 @@ public class Agent {
     	String name = problem.getName();
     	String type = problem.getProblemType();
 
+    	AgentScoreKeep thisScore = new AgentScoreKeep(name);
+    	
     	int numAnswers = 6;
     	if(type.equals("3x3"))
     		numAnswers = 8;
 
-    	if(debugPrinting == debugPrintType.SOME || debugPrinting == debugPrintType.ALL) {
-	    	System.out.println("************************");
-	    	System.out.println("Here we go for " + name);
-	    	System.out.println("************************");
-    	}
     	
     	int answer = -1;
     	
+    	//USED ONLY FOR DEBUGGING - SET TO A SPECIFIC PROBLEM TO TEST ONLY THAT PROBLEM
+    	
 
-    	if(type.equals("2x2")) {
-	    	if(problem.hasVerbal()) {
-	    		
-	    		answer = do2x2Verbal(problem, name, numAnswers);
+    	if(onlyDoThisProblem.equals("") || name.equals(onlyDoThisProblem)) {
+
+        	if(debugPrinting == debugPrintType.SOME || debugPrinting == debugPrintType.ALL) {
+    	    	System.out.println("************************");
+    	    	System.out.println("Here we go for " + name);
+    	    	System.out.println("************************");
+        	}
+
+	    	
+	    	if(type.equals("2x2")) {
+		    	if(problem.hasVerbal()) {
+		    		
+		    		answer = do2x2Verbal(problem, name, numAnswers);
+		    		if(answer == -1)
+		    			++problemsSkipped2x2;
+		    	}
+		    	else {
+		
+		    		if(debugPrinting == debugPrintType.SOME || debugPrinting == debugPrintType.ALL) {
+		    	    	System.out.println("No verbal data available");
+		    	    	++problemsSkipped2x2;
+		        	}
+		    	}
 	    	}
-	    	else {
-	
-	    		if(debugPrinting == debugPrintType.SOME || debugPrinting == debugPrintType.ALL) {
-	    	    	System.out.println("No verbal data available");
-	    	    	++problemsSkipped2x2;
-	        	}
+	    	else {//3x3
+		    	if(problem.hasVerbal()) {
+		    	
+		    		//MY MAPPING ROUTE WASN'T WORKING ON CASES WHERE THE RESULT WAS BASED ON THE NUMBER OF 
+		    		//SHAPES PREDICTIBLY CHANGING.  tHIS IS MEANT TO CATCH THOSE SITUATIONS
+		    		int predictedNumShapes = isShapeNumberPredictable(problem);
+		    		
+		    		if(predictedNumShapes > -1) {
+		    			ArrayList<RavensFigure> matchingFigures = getFiguresWithMatchingObjectCount(predictedNumShapes, problem);
+		    			if(matchingFigures.size() == 1) {
+		    				answer = Integer.parseInt(matchingFigures.get(0).getName());
+		    			}
+		    			else if(matchingFigures.size() > 1) {
+		    				answer = getBestGuessFromThesePossibleAnswers(matchingFigures, problem);
+		    				
+		    			}		    			
+		    		}
+
+		    		//STILL NO ANSWER - TRY THE ORIGINAL WAY
+		    		if(answer == -1){		    			
+		    		
+			    		answer = do3x3Verbal(problem, name, numAnswers);
+		    		}
+
+		    		if(answer == -1)
+		    			++problemsSkipped3x3;
+		    	}
+		    	else {
+		
+		    		if(debugPrinting == debugPrintType.SOME || debugPrinting == debugPrintType.ALL) {
+		    	    	System.out.println("No verbal data available");
+		    	    	++problemsSkipped3x3;
+		        	}
+		    	}
 	    	}
+	    	
+			if(answer != -1) {
+
+				if(debugPrinting == debugPrintType.SOME || debugPrinting == debugPrintType.ALL) 
+					System.out.println("Guess: " + (answer));
+				
+				int realAnswer = problem.checkAnswer(answer);
+				
+				if(realAnswer == answer) {
+
+					thisScore.status = scoreStatus.CORRECT;
+					
+					if(type.equalsIgnoreCase("2x2")) 
+						++problemsCorrect2x2;
+					else
+						++problemsCorrect3x3;
+				}
+				else {
+					
+					thisScore.status = scoreStatus.INCORRECT;
+					
+					if(type.equalsIgnoreCase("2x2"))
+						++problemsIncorrect2x2;
+					else
+						++problemsIncorrect3x3;
+					
+				}
+
+				
+				if(debugPrinting == debugPrintType.SOME || debugPrinting == debugPrintType.ALL) {
+					System.out.println("Answer: " + realAnswer);
+				}
+			}
+			else {
+				if(debugPrinting == debugPrintType.SOME || debugPrinting == debugPrintType.ALL) 
+					System.out.println("Skipping");
+			}
+				
+			scoreArray.add(thisScore);
+
+			
+			if(debugPrinting == debugPrintType.SOME || debugPrinting == debugPrintType.ALL) {
+				//PrintSummary();
+				System.out.println("################################################################################################");
+				System.out.println("2x2 problems: Correct:" + problemsCorrect2x2 + " Incorrect: " + problemsIncorrect2x2 + " Skipped:" + problemsSkipped2x2);
+				System.out.println("3x3 problems: Correct:" + problemsCorrect3x3 + " Incorrect: " + problemsIncorrect3x3 + " Skipped:" + problemsSkipped3x3);
+				System.out.println("################################################################################################");
+			}
+
     	}
-    	else {//3x3
-	    	if(problem.hasVerbal()) {
-	    		
-	    		answer = do3x3Verbal(problem, name, numAnswers);
-	    	}
-	    	else {
+    		
+
 	
-	    		if(debugPrinting == debugPrintType.SOME || debugPrinting == debugPrintType.ALL) {
-	    	    	System.out.println("No verbal data available");
-	    	    	++problemsSkipped3x3;
-	        	}
-	    	}
+		return answer;
+    }
+    
+    public int getBestGuessFromThesePossibleAnswers(ArrayList<RavensFigure> possibleAnswers, RavensProblem problem) {
+    	
+    	return 4;
+    }
+    
+    public void PrintSummary() {
+    
+    	System.out.println("**** Summary ****");
+    	for(int i = 0; i < scoreArray.size(); ++i) {
+    		scoreArray.get(i).Print();
+    	}
+    }
+    
+    public int isShapeNumberPredictable(RavensProblem problem) {
+    	
+    	int prediction = isItASimpleAddition(problem);
+    	
+    	if(prediction == -1) {
+    		//CHECK FOR MORE COMPLICATED ISSUES LIKE BASIC PROBLEM C03
+    		prediction = isItAMultiplier(problem);    		
+    	}
+    	    	
+    	return prediction;
+    }
+    
+    public int isItAMultiplier(RavensProblem problem) {
+    	int shapeCountPatternModifierABC = getShapeCountPatternModifier(numObjectsInFigure("A", problem), numObjectsInFigure("B", problem), numObjectsInFigure("C", problem));
+    	 
+    	if(shapeCountPatternModifierABC > 0) {
+    		if(!validateShapeCountModifier(shapeCountPatternModifierABC, numObjectsInFigure("A", problem), numObjectsInFigure("D", problem), numObjectsInFigure("G", problem)))
+    			return -1;
+    		
+    		int shapeCountPatternModifierDEF = getShapeCountPatternModifier(numObjectsInFigure("D", problem), numObjectsInFigure("E", problem), numObjectsInFigure("F", problem));
+    		if(shapeCountPatternModifierDEF > 0) {
+        		if(!validateShapeCountModifier(shapeCountPatternModifierDEF, numObjectsInFigure("B", problem), numObjectsInFigure("E", problem), numObjectsInFigure("H", problem)))
+        			return -1;
+        		
+        		if(numObjectsInFigure("F", problem) - numObjectsInFigure("C", problem) == numObjectsInFigure("H", problem) - numObjectsInFigure("G", problem))
+        			return numObjectsInFigure("F", problem) + (numObjectsInFigure("F", problem) - numObjectsInFigure("C", problem));
+        			
+    		}
     	}
     	
-		if(debugPrinting == debugPrintType.SOME || debugPrinting == debugPrintType.ALL) {
-			System.out.println("################################################################################################");
-			System.out.println("2x2 problems: Correct:" + problemsCorrect2x2 + " Incorrect: " + problemsIncorrect2x2 + " Skipped:" + problemsSkipped2x2);
-			System.out.println("3x3 problems: Correct:" + problemsCorrect3x3 + " Incorrect: " + problemsIncorrect3x3 + " Skipped:" + problemsSkipped3x3);
-			System.out.println("################################################################################################");
+    	
+    	
+    	return -1;
+    	
+    }
+    
+    public int isItASimpleAddition(RavensProblem problem) {
+    	int shapeCountPatternModifier = getShapeCountPatternModifier(numObjectsInFigure("A", problem), numObjectsInFigure("B", problem), numObjectsInFigure("C", problem));
+    	
+    	if(shapeCountPatternModifier > 0) {
+    		if(!validateShapeCountModifier(shapeCountPatternModifier, numObjectsInFigure("D", problem), numObjectsInFigure("E", problem), numObjectsInFigure("F", problem)))
+    			return -1;
+    		if(!validateShapeCountModifier(shapeCountPatternModifier, numObjectsInFigure("A", problem), numObjectsInFigure("D", problem), numObjectsInFigure("G", problem)))
+    			return -1;
+    		if(!validateShapeCountModifier(shapeCountPatternModifier, numObjectsInFigure("B", problem), numObjectsInFigure("E", problem), numObjectsInFigure("H", problem)))
+    			return -1;
+    		
+    		return problem.getFigures().get("H").getObjects().size() + shapeCountPatternModifier;
+    	}
+    	
+    	return -1;
+    }
+    
+    public int numObjectsInFigure(String figureName, RavensProblem problem) {
+    	return problem.getFigures().get(figureName).getObjects().size();
+    }
+    
+    public boolean validateShapeCountModifier(int modifier, int shapes1, int shapes2, int shapes3) {
+    	if(shapes1 + modifier == shapes2 && shapes2 + modifier == shapes3)
+    		return true;
+    	
+    	
+    	
+    	return false;
+    }
+    
+    public int getShapeCountPatternModifier(int shapes1, int shapes2, int shapes3) {
+    	    	
+    	if(shapes2 - shapes1 == shapes3 - shapes2 && shapes2 - shapes1 > 0)
+    		return shapes2 - shapes1;
+    	
+    	return -1;
+    		
+    }
+    
+
+    public ArrayList<RavensFigure> getFiguresWithMatchingObjectCount(int predictedObjectCount, RavensProblem problem) {
+
+    	ArrayList<RavensFigure> theList = new ArrayList<RavensFigure>();
+    	
+		for(HashMap.Entry<String, RavensFigure> RFentry : problem.getFigures().entrySet()){
+
+			if(RFentry.getValue().getObjects().size() == predictedObjectCount)
+				theList.add(RFentry.getValue());
+			
+			
 		}
     	
-        return answer;
+    	return theList;
+    }
+    
+    public int getMaxObjectCountInAllFigures(RavensProblem problem, String includeThese, String excludeThese) {
+    	int maxObjects = -1;
+
+    	
+		for(HashMap.Entry<String, RavensFigure> RFentry : problem.getFigures().entrySet()){
+
+			if((includeThese.length() == 0 || includeThese.contains(RFentry.getValue().getName())) &&
+					(excludeThese.length() == 0 || !excludeThese.contains(RFentry.getValue().getName())))
+			{
+				if(RFentry.getValue().getObjects().size() > maxObjects)
+					maxObjects = RFentry.getValue().getObjects().size(); 	
+			}
+			
+		}
+    	
+    	return maxObjects;
+    }
+
+        
+    public String ignoreAnswersBasedOnObjectCount(RavensProblem problem) {
+    	String ignoreList = "";
+    	
+    	int maxObjectsInProblem = getMaxObjectCountInAllFigures(problem, "ABCDEFGH", ignoreList);
+    	
+    	if(problem.getFigures().get("1").getObjects().size() >= maxObjectsInProblem * 2) 
+    		ignoreList += "1";
+    	if(problem.getFigures().get("2").getObjects().size() >= maxObjectsInProblem * 2) 
+    		ignoreList += "2";
+    	if(problem.getFigures().get("3").getObjects().size() >= maxObjectsInProblem * 2) 
+    		ignoreList += "3";
+    	if(problem.getFigures().get("4").getObjects().size() >= maxObjectsInProblem * 2) 
+    		ignoreList += "4";
+    	if(problem.getFigures().get("5").getObjects().size() >= maxObjectsInProblem * 2) 
+    		ignoreList += "5";
+    	if(problem.getFigures().get("6").getObjects().size() >= maxObjectsInProblem * 2) 
+    		ignoreList += "6";
+    	if(problem.getFigures().get("7").getObjects().size() >= maxObjectsInProblem * 2) 
+    		ignoreList += "7";
+    	if(problem.getFigures().get("8").getObjects().size() >= maxObjectsInProblem * 2) 
+    		ignoreList += "8";
+    	
+    	return ignoreList;
     }
     
 	public int do3x3Verbal(RavensProblem problem, String name, int numAnswers) {
+		
+		String ignoreTheseAnswers = ignoreAnswersBasedOnObjectCount(problem);
+		
+		if(getMaxObjectCountInAllFigures(problem, "", ignoreTheseAnswers) > maxObjectsAllowed) 
+			return -1;
+		
 		int answer;
+
 		//CHECK FOR SPECIAL CASES (LIKE REFLECTION ROTATIONS, ETC)
 		ArrayList<AgentSpecialHandling> dailySpecials = checkForSpecialness3x3(problem);
 		
@@ -141,7 +379,8 @@ public class Agent {
 		//BUILD COMPARISON MAPPINGS FOR H AND EACH TEST CASE
 		ArrayList<AgentDiagramComparison> compHTests = new ArrayList<AgentDiagramComparison>();
 		for(int i = 0; i < numAnswers; ++i) {
-			compHTests.add(new AgentDiagramComparison(name, "H" + Integer.toString(i + 1), problem.getFigures().get("H"), problem.getFigures().get(Integer.toString(i + 1)), debugPrinting));    		
+			if(!ignoreTheseAnswers.contains(Integer.toString(i + 1)))			
+				compHTests.add(new AgentDiagramComparison(name, "H" + Integer.toString(i + 1), problem.getFigures().get("H"), problem.getFigures().get(Integer.toString(i + 1)), debugPrinting));    		
 		}
 		
 		//BUILD COMPARISON MAPPINGS FOR E AND H
@@ -150,7 +389,8 @@ public class Agent {
 		//BUILD COMPARISON MAPPINGS FOR F AND EACH TEST CASE
 		ArrayList<AgentDiagramComparison> compFTests = new ArrayList<AgentDiagramComparison>();
 		for(int i = 0; i < numAnswers; ++i) {
-			compFTests.add(new AgentDiagramComparison(name, "F" + Integer.toString(i + 1), problem.getFigures().get("F"), problem.getFigures().get(Integer.toString(i + 1)), debugPrinting));    		
+			if(!ignoreTheseAnswers.contains(Integer.toString(i + 1)))
+				compFTests.add(new AgentDiagramComparison(name, "F" + Integer.toString(i + 1), problem.getFigures().get("F"), problem.getFigures().get(Integer.toString(i + 1)), debugPrinting));    		
 		}
 		
 		//GO THROUGH EACH MAPPING IN EACH OF THE SOLUTION COMPARISONS IN compHTests.  ASSIGN EACH 
@@ -176,24 +416,15 @@ public class Agent {
 		
 		answer = index + 1;
 		
-		if(debugPrinting == debugPrintType.SOME || debugPrinting == debugPrintType.ALL) {
-			System.out.println("Guess: " + (answer));
-		}
-		
-		int realAnswer = problem.checkAnswer(answer);
-		
-		if(realAnswer == answer)
-			++problemsCorrect3x3;
-		else
-			++problemsIncorrect3x3;
-		
-		if(debugPrinting == debugPrintType.SOME || debugPrinting == debugPrintType.ALL) {
-			System.out.println("Answer: " + realAnswer);
-		}
 		return answer;
 	}
     
 	public int do2x2Verbal(RavensProblem problem, String name, int numAnswers) {
+		
+		if(getMaxObjectCountInAllFigures(problem, "", "") > maxObjectsAllowed) 
+			return -1;
+				
+		
 		int answer;
 		//CHECK FOR SPECIAL CASES (LIKE REFLECTION ROTATIONS, ETC)
 		ArrayList<AgentSpecialHandling> dailySpecials = checkForSpecialness2x2(problem);
@@ -239,20 +470,6 @@ public class Agent {
 		
 		answer = index + 1;
 		
-		if(debugPrinting == debugPrintType.SOME || debugPrinting == debugPrintType.ALL) {
-			System.out.println("Guess: " + (answer));
-		}
-		
-		int realAnswer = problem.checkAnswer(answer);
-		
-		if(realAnswer == answer)
-			++problemsCorrect2x2;
-		else
-			++problemsIncorrect2x2;
-		
-		if(debugPrinting == debugPrintType.SOME || debugPrinting == debugPrintType.ALL) {
-			System.out.println("Answer: " + realAnswer);
-		}
 		return answer;
 	}
     

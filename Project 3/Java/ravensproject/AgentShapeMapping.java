@@ -13,7 +13,10 @@ public class AgentShapeMapping {
 
 	static String attribKey_shape = "shape";
 	static String attribKey_size = "size";
+	static String attribKey_width = "width";
+	static String attribKey_height = "height";
 	static String attribKey_above = "above";
+	static String attribKey_leftof = "left-of";
 	static String attribKey_overlaps = "overlaps";
 	static String attribKey_angle = "angle";
 	static String attribKey_fill = "fill";
@@ -30,7 +33,8 @@ public class AgentShapeMapping {
 	ArrayList<Map.Entry<String, RavensObject>> figure1Objects = new ArrayList<Map.Entry<String, RavensObject>>();
 	ArrayList<Map.Entry<String, RavensObject>> figure2Objects = new ArrayList<Map.Entry<String, RavensObject>>();
 	
-	ArrayList<ArrayList<AgentTransformation>> mapTransformations = new ArrayList<ArrayList<AgentTransformation>>(); 
+	ArrayList<ArrayList<AgentTransformation>> mapTransformations = new ArrayList<ArrayList<AgentTransformation>>();
+	int totalTransformationCount = -1;
 	AgentMappingScore mapScore = null;
 	
 	String comparisonName = "";
@@ -191,8 +195,14 @@ public class AgentShapeMapping {
 			return new AgentTransformation(mappingTransformations.SHAPE_CHANGE, value);
 		if(key.equals(attribKey_size))
 			return new AgentTransformation(mappingTransformations.SIZE_CHANGE, parseSizeKey(value));
+		if(key.equals(attribKey_width))
+			return new AgentTransformation(mappingTransformations.WIDTH_CHANGE, parseSizeKey(value));		
+		if(key.equals(attribKey_height))
+			return new AgentTransformation(mappingTransformations.HEIGHT_CHANGE, parseSizeKey(value));
 		if(key.equals(attribKey_above))
 			return new AgentTransformation(mappingTransformations.ABOVE_CHANGE, value);
+		if(key.equals(attribKey_leftof))
+			return new AgentTransformation(mappingTransformations.LEFT_OF_CHANGE, value);
 		if(key.equals(attribKey_overlaps))
 			return new AgentTransformation(mappingTransformations.OVERLAP_CHANGE, value);
 		if(key.equals(attribKey_angle))
@@ -226,6 +236,8 @@ public class AgentShapeMapping {
 		
 	}
 	
+
+	
 	/*******************************************************************************
 	 * SOME TRANSFORMATIONS REFERENCE OTHER OBJECTS IN THEIR VALUES SO THEY WILL 
 	 * ALWAYS BE "DIFFERENT" WHEN COMPARING THEIR VALUES
@@ -233,6 +245,8 @@ public class AgentShapeMapping {
 	 ****************************************************************************/
 	private boolean treatAllInstancesOfThisTransformAsEqual(AgentTransformation trans) {
 		if(trans.theTransformation == mappingTransformations.ABOVE_CHANGE)
+			return true;
+		if(trans.theTransformation == mappingTransformations.LEFT_OF_CHANGE)
 			return true;
 		if(trans.theTransformation == mappingTransformations.INSIDE_CHANGE)
 			return true;
@@ -504,6 +518,47 @@ public class AgentShapeMapping {
 			return AName;
 		
 		return BName; 
+	}
+	
+	public boolean mappingIsAtLeastSomewhatLikelyToBeUsed() {
+		//USED TO DETERMINE WHETHER THIS MAPPING SHOULD BE SAVED OR DELETED WHEN FIRST IDENTIFIED.
+		//SOMEHOW WE NEED TO NOT ADD SO MANY OPTIONS (PROBLEM C4 HAS 300,000+ COMBINATIONS)
+
+		int fig1Count = figure1Objects.size();
+		int fig2Count = figure2Objects.size();
+		
+		if(totalTransformationCount == -1) {
+			for(int i =0; i < mapTransformations.size(); ++i) {
+				totalTransformationCount += mapTransformations.get(i).size();
+			}
+		}
+		
+		if(totalTransformationCount > (fig1Count + fig2Count) )
+			return false;
+		
+		return true;
+		
+	}
+	
+	public String generateUniqueMappingKey() {
+		//USED TO CREATE A UNIQUE MAPPING KEY TO DETERMINE WHETHER WE HAVE A DUPLICATE KEY QUICKLY OR NOT
+		//SOMEHOW WE NEED TO NOT ADD SO MANY OPTIONS (PROBLEM C4 HAS 300,000+ COMBINATIONS)
+		String key = "";
+
+		for(int i = 0; i < figure1Objects.size(); ++i) {
+			key += generateObjectNameForUniqueMappingKey(figure1Objects.get(i).getValue().getName());
+			key += "-";
+			key += generateObjectNameForUniqueMappingKey(figure2Objects.get(i).getValue().getName());
+			key += "|";
+		}
+	
+		return key;
+	}
+
+	private String generateObjectNameForUniqueMappingKey(String theName) {
+		if(theName.contains(AgentDiagramComparison.dummyRavensObjectString))
+			return "DUMMY";
+		return theName;
 	}
 	
 }

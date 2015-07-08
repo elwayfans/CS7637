@@ -22,7 +22,10 @@ public class AgentMappingScore {
 
 	static int transformShapeChangeCost = 2; //DELETE AND CREATE - COUNT AS TWO
 	static int transformSizeChangeCost = 2; //DELETE AND CREATE - COUNT AS TWO
+	static int transformWidthChangeCost = 2; //DELETE AND CREATE - COUNT AS TWO
+	static int transformHeightChangeCost = 2; //DELETE AND CREATE - COUNT AS TWO
 	static int transformAboveChangeCost = 1;
+	static int transformLeftofChangeCost = 1;
 	static int transformOverlapChangeCost = 1;
 	static int transformAngleChangeCost = 1; //MAYBE 2???
 	static int transformExpectedAngleChangeCost = 0; //SPECIAL CASES IN ROTATION/REFLECTION WHERE A SPECIFIC ANGLE CHANGE IS EXPECTED
@@ -100,6 +103,8 @@ public class AgentMappingScore {
 			return transformShapeChangeCost;
 		if(transformation.theTransformation == mappingTransformations.ABOVE_CHANGE)
 			return transformAboveChangeCost;
+		if(transformation.theTransformation == mappingTransformations.LEFT_OF_CHANGE)
+			return transformLeftofChangeCost;
 		if(transformation.theTransformation == mappingTransformations.OVERLAP_CHANGE)
 			return transformOverlapChangeCost;
 		if(transformation.theTransformation == mappingTransformations.ANGLE_CHANGE)
@@ -116,6 +121,12 @@ public class AgentMappingScore {
 			return transformDeletedCost;
 		if(transformation.theTransformation == mappingTransformations.EXPECTEDANGLE_CHANGE)
 			return transformExpectedAngleChangeCost;
+		if(transformation.theTransformation == mappingTransformations.SIZE_CHANGE)
+			return transformSizeChangeCost;
+		if(transformation.theTransformation == mappingTransformations.WIDTH_CHANGE)
+			return transformWidthChangeCost;
+		if(transformation.theTransformation == mappingTransformations.HEIGHT_CHANGE)
+			return transformHeightChangeCost;
 		
 		return transformUndefinedChangeCost;
 	}

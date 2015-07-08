@@ -4,7 +4,7 @@ package ravensproject;
 public class AgentTransformation {
 
 	//EXPECTED_ANGLE_CHANGE IS FOR SPECIAL CASE ROTATION/REFLECTIONS WHERE CERTAIN ANGLE ROTATIONS ARE EXPECTED
-	enum mappingTransformations { UNDEFINED, /*NO_CHANGE,*/ SHAPE_CHANGE, SIZE_CHANGE, ABOVE_CHANGE, OVERLAP_CHANGE, EXPECTEDANGLE_CHANGE, ANGLE_CHANGE, FILL_CHANGE, INSIDE_CHANGE, ALIGNMENT_CHANGE, CREATED, DELETED	}
+	enum mappingTransformations { UNDEFINED, /*NO_CHANGE,*/ SHAPE_CHANGE, SIZE_CHANGE, ABOVE_CHANGE, OVERLAP_CHANGE, EXPECTEDANGLE_CHANGE, ANGLE_CHANGE, FILL_CHANGE, INSIDE_CHANGE, ALIGNMENT_CHANGE, CREATED, DELETED, LEFT_OF_CHANGE, WIDTH_CHANGE, HEIGHT_CHANGE	}
 
 	enum transformationSizes { UNDEFINED, VERY_SMALL, SMALL, MEDIUM, LARGE, VERY_LARGE, HUGE }
 	
@@ -34,8 +34,12 @@ public class AgentTransformation {
 		
 		//ARE THE CHANGES BOTH SIZE CHANGES WITH THE SAME SIZE MODIFIER VALUE?
 		if(uno.theTransformation == dos.theTransformation && uno.theTransformation == mappingTransformations.SIZE_CHANGE) {
-			if((Integer)uno.theValue == (Integer)dos.theValue)
-				return uno;
+			
+			if(uno.theValue.getClass().equals(Integer.class) && dos.theValue.getClass().equals(Integer.class)) { 
+			
+				if((Integer)uno.theValue == (Integer)dos.theValue)
+					return uno;
+			}
 		}
 		
 		return null;
