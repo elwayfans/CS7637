@@ -18,6 +18,8 @@ public class AgentVisualProblem {
 	AgentVisualFigure fig6;   	
 	AgentVisualFigure fig7;  	
 	AgentVisualFigure fig8;
+	
+	int percentageToDeemEquivalent = 3;
 
 	public AgentVisualProblem(RavensProblem problem) {
 		
@@ -48,11 +50,11 @@ public class AgentVisualProblem {
 		int similarityEF = figE.percentSimilarToOtherFigure(figF);
 		int similarityGH = figG.percentSimilarToOtherFigure(figH);
 		
-		if(similarityAB >= 95 && similarityBC >= 95) { 
+		if(areTheseNumbersEquivalent(similarityAB, 100, percentageToDeemEquivalent) && areTheseNumbersEquivalent(similarityBC, 100, percentageToDeemEquivalent)) { 
 			//THE FIRST ROW IS VIRTUALLY THE SAME ACROSS
-			if(similarityDE >= 95 && similarityEF >= 95) { 
+			if(areTheseNumbersEquivalent(similarityDE, 100, percentageToDeemEquivalent) && areTheseNumbersEquivalent(similarityEF, 100, percentageToDeemEquivalent)) { 
 				//THE SECOND ROW IS VIRTUALLY THE SAME ACROSS
-				if(similarityGH >= 95) {
+				if(areTheseNumbersEquivalent(similarityGH, 100, percentageToDeemEquivalent)) {
 					//THE FIRST PART OF THE THIRD ROW IS VIRTUALLY THE SAME, FIND THE ANSWER WHICH WILL BE VIRTUALLY THE SAME AS WELL
 					
 					return getBestAnswerIndexAboveThreshold(figH,  95);
@@ -72,9 +74,9 @@ public class AgentVisualProblem {
 		int similarityDH = figD.percentSimilarToOtherFigure(figH);
 		int similarityBF = figB.percentSimilarToOtherFigure(figF);
 		
-		if(similarityAE >= 95) { 
+		if(areTheseNumbersEquivalent(similarityAE, 100, percentageToDeemEquivalent)) { 
 			//THE DIAGONAL TOP-LEFT/BOTTOM-RIGHT ARE VIRTUALLY THE SAME 
-			if(similarityDH >= 95 && similarityBF >= 95) { 
+			if(areTheseNumbersEquivalent(similarityDH, 100, percentageToDeemEquivalent) && areTheseNumbersEquivalent(similarityBF, 100, percentageToDeemEquivalent)) { 
 				//THE DH AND BF DIAGONALS ARE VIRTUALLY THE SAME.  SEE IF THERE IS A MATCH TO E AMONG THE ANSWERS 
 					
 				return getBestAnswerIndexAboveThreshold(figE,  95);
@@ -83,6 +85,55 @@ public class AgentVisualProblem {
 			
 		
 		return answer;
+	}
+	
+	public int isItLikeBasicD04() {
+		int answer = -1;
+		
+		int similarityAB = figA.percentSimilarToOtherFigure(figB);
+		int similarityDE = figD.percentSimilarToOtherFigure(figE);
+		int similarityGH = figG.percentSimilarToOtherFigure(figH);
+		if(areTheseNumbersEquivalent(similarityAB, similarityDE, percentageToDeemEquivalent) && areTheseNumbersEquivalent(similarityAB, similarityGH, percentageToDeemEquivalent)) {
+			//DIFFERENCE BETWEEN A AND B IS SAME AS DIFFERENCE BETWEEN D AND E AND THAT OF G AND H
+
+			int similarityBC = figB.percentSimilarToOtherFigure(figC);
+			int similarityEF = figE.percentSimilarToOtherFigure(figF);
+			if(areTheseNumbersEquivalent(similarityBC, similarityEF, percentageToDeemEquivalent)) {
+				//DIFFERENCE BETWEEN B AND C IS SAME AS DIFFERENCE BETWEEN E AND F
+				
+				if(areTheseNumbersEquivalent(similarityEF, figH.percentSimilarToOtherFigure(fig1), percentageToDeemEquivalent))
+					return 1;
+				if(areTheseNumbersEquivalent(similarityEF, figH.percentSimilarToOtherFigure(fig2), percentageToDeemEquivalent))
+					return 2;
+				if(areTheseNumbersEquivalent(similarityEF, figH.percentSimilarToOtherFigure(fig3), percentageToDeemEquivalent))
+					return 3;
+				if(areTheseNumbersEquivalent(similarityEF, figH.percentSimilarToOtherFigure(fig4), percentageToDeemEquivalent))
+					return 4;
+				if(areTheseNumbersEquivalent(similarityEF, figH.percentSimilarToOtherFigure(fig5), percentageToDeemEquivalent))
+					return 5;
+				if(areTheseNumbersEquivalent(similarityEF, figH.percentSimilarToOtherFigure(fig6), percentageToDeemEquivalent))
+					return 6;
+				if(areTheseNumbersEquivalent(similarityEF, figH.percentSimilarToOtherFigure(fig7), percentageToDeemEquivalent))
+					return 7;
+				if(areTheseNumbersEquivalent(similarityEF, figH.percentSimilarToOtherFigure(fig8), percentageToDeemEquivalent))
+					return 8;
+			}			
+		}
+			
+		
+		return answer;
+	}
+	
+	public boolean areTheseNumbersEquivalent(int a, int b, int percentage) {
+		float percent = (float)percentage / 100;
+		
+		float min = (float)b * (1 - percent);
+		float max = (float)b * (1 + percent);
+		
+		if(a >= min && a <= max)
+			return true;
+		
+		return false;
 	}
 	
 	public int getBestAnswerIndexAboveThreshold(AgentVisualFigure figure, int threshold) {
