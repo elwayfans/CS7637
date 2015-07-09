@@ -55,22 +55,7 @@ public class AgentVisualProblem {
 				if(similarityGH >= 95) {
 					//THE FIRST PART OF THE THIRD ROW IS VIRTUALLY THE SAME, FIND THE ANSWER WHICH WILL BE VIRTUALLY THE SAME AS WELL
 					
-					if(fig1.percentSimilarToOtherFigure(figH) >= 95)
-						return 1;
-					if(fig2.percentSimilarToOtherFigure(figH) >= 95)
-						return 2;
-					if(fig3.percentSimilarToOtherFigure(figH) >= 95)
-						return 3;
-					if(fig4.percentSimilarToOtherFigure(figH) >= 95)
-						return 4;
-					if(fig5.percentSimilarToOtherFigure(figH) >= 95)
-						return 5;
-					if(fig6.percentSimilarToOtherFigure(figH) >= 95)
-						return 6;
-					if(fig7.percentSimilarToOtherFigure(figH) >= 95)
-						return 7;
-					if(fig8.percentSimilarToOtherFigure(figH) >= 95)
-						return 8;
+					return getBestAnswerIndexAboveThreshold(figH,  95);
 					
 				}
 			}
@@ -92,29 +77,68 @@ public class AgentVisualProblem {
 			if(similarityDH >= 95 && similarityBF >= 95) { 
 				//THE DH AND BF DIAGONALS ARE VIRTUALLY THE SAME.  SEE IF THERE IS A MATCH TO E AMONG THE ANSWERS 
 					
-				if(fig1.percentSimilarToOtherFigure(figE) >= 95)
-					return 1;
-				if(fig2.percentSimilarToOtherFigure(figE) >= 95)
-					return 2;
-				if(fig3.percentSimilarToOtherFigure(figE) >= 95)
-					return 3;
-				if(fig4.percentSimilarToOtherFigure(figE) >= 95)
-					return 4;
-				if(fig5.percentSimilarToOtherFigure(figE) >= 95)
-					return 5;
-				if(fig6.percentSimilarToOtherFigure(figE) >= 95)
-					return 6;
-				if(fig7.percentSimilarToOtherFigure(figE) >= 95)
-					return 7;
-				if(fig8.percentSimilarToOtherFigure(figE) >= 95)
-					return 8;
-					
-				
+				return getBestAnswerIndexAboveThreshold(figE,  95);
 			}
 		}
 			
 		
 		return answer;
+	}
+	
+	public int getBestAnswerIndexAboveThreshold(AgentVisualFigure figure, int threshold) {
+		int index = -1;
+		int highestPercentage = -1;
+		
+		
+		int temp = fig1.percentSimilarToOtherFigure(figure);
+		if(temp >= threshold) {
+			index = 1;
+			highestPercentage = temp;
+		}
+			
+		temp = fig2.percentSimilarToOtherFigure(figure);
+		if(temp >= threshold && temp > highestPercentage) {
+			index = 2;
+			highestPercentage = temp;
+		}
+			
+		temp = fig3.percentSimilarToOtherFigure(figure);
+		if(temp >= threshold && temp > highestPercentage) {
+			index = 3;
+			highestPercentage = temp;
+		}
+
+		temp = fig4.percentSimilarToOtherFigure(figure);
+		if(temp >= threshold && temp > highestPercentage) {
+			index = 4;
+			highestPercentage = temp;
+		}
+
+		temp = fig5.percentSimilarToOtherFigure(figure);
+		if(temp >= threshold && temp > highestPercentage) {
+			index = 5;
+			highestPercentage = temp;
+		}
+
+		temp = fig6.percentSimilarToOtherFigure(figure);
+		if(temp >= threshold && temp > highestPercentage) {
+			index = 6;
+			highestPercentage = temp;
+		}
+
+		temp = fig7.percentSimilarToOtherFigure(figure);
+		if(temp >= threshold && temp > highestPercentage) {
+			index = 7;
+			highestPercentage = temp;
+		}
+
+		temp = fig8.percentSimilarToOtherFigure(figure);
+		if(temp >= threshold && temp > highestPercentage) {
+			index = 8;
+			highestPercentage = temp;
+		}
+
+		return index;
 	}
 
 }
