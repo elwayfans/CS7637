@@ -1,5 +1,6 @@
 package ravensproject;
 
+import java.awt.Color;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -10,11 +11,12 @@ import javax.imageio.ImageIO;
 public class AgentVisualFigure {
 
 	String filename = "";
+	BufferedImage image = null;
+	
 	float percentBlack = 0f;
 	int numberBlackPixels = 0;
 	Point centerOfBlack = new Point(0,0);
 	int numPixels = 0;
-	BufferedImage image;
 	
 	public AgentVisualFigure(RavensFigure figure) {
 		filename = figure.getVisual();
@@ -27,7 +29,31 @@ public class AgentVisualFigure {
     		
     	}
     	
-    	
+		getImageData();
+	}
+	
+	/*
+	 * COMBINES TWO FIGURES INTO A NEW FIGURE. ALL BLACK PIXELS IN DAD OR MOM ARE COUNTED AS BLACK IN THIS NEW FIGURE
+	 */
+	public AgentVisualFigure(AgentVisualFigure dad, AgentVisualFigure mom) {
+
+		
+		image = new BufferedImage(Math.max(dad.image.getWidth(), mom.image.getWidth()), 
+				Math.max(dad.image.getHeight(), mom.image.getHeight()), dad.image.getType());
+		
+		  for(int x = 0; x < image.getWidth(); ++x) {
+			  for(int y = 0; y < image.getHeight(); ++y) {
+			
+				  if(dad.image.getWidth() > x && dad.image.getHeight() > x && !dad.isPixelWhite(x, y))
+					  image.setRGB(x, y, new Color(0,0,0).getRGB());
+				  else if(mom.image.getWidth() > x && mom.image.getHeight() > x && !mom.isPixelWhite(x, y))
+					  image.setRGB(x, y, new Color(0,0,0).getRGB());
+				  else
+					  image.setRGB(x, y, new Color(255,255,255).getRGB());
+			  }
+		  }
+		
+		
 		getImageData();
 	}
 	
@@ -39,8 +65,6 @@ public class AgentVisualFigure {
     	int blackXSum = 0;
     	int blackYSum = 0;
     	
-    	
-		  
 		  for(int x = 0; x < image.getWidth(); ++x) {
 			  for(int y = 0; y < image.getHeight(); ++y) {
 				  
@@ -79,8 +103,8 @@ public class AgentVisualFigure {
 		return false;
     }
     
-    public int percentSimilarToOtherFigure(AgentVisualFigure compareTo) {
-    	int percent = 0;
+    public float percentSimilarToOtherFigure(AgentVisualFigure compareTo) {
+    	float percent = 0;
     	
     	int sameCount = 0;
     	int diffCount = 0;
@@ -99,7 +123,7 @@ public class AgentVisualFigure {
 			}
 		}
 		
-		percent = (int)( (float)(sameCount * 100) / (float)(sameCount + diffCount));
+		percent = ( (float)(sameCount * 100) / (float)(sameCount + diffCount));
     	
     	
     	return percent;

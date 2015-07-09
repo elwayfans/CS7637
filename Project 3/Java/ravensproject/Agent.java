@@ -655,7 +655,10 @@ public class Agent {
     
  		AgentVisualProblem elProblemo = new AgentVisualProblem(problem);
  		
- 		answer = elProblemo.isItLikeBasicD01();
+ 		answer = elProblemo.isItLikeBasicE03();
+ 		
+ 		if(answer == -1)
+ 			answer = elProblemo.isItLikeBasicD01();
 
  		if(answer == -1)
  			answer = elProblemo.isItLikeBasicD02();

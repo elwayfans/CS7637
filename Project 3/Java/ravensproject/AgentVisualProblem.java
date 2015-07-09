@@ -44,11 +44,11 @@ public class AgentVisualProblem {
 	public int isItLikeBasicD01() {
 		int answer = -1;
 		
-		int similarityAB = figA.percentSimilarToOtherFigure(figB);
-		int similarityBC = figB.percentSimilarToOtherFigure(figC);
-		int similarityDE = figD.percentSimilarToOtherFigure(figE);
-		int similarityEF = figE.percentSimilarToOtherFigure(figF);
-		int similarityGH = figG.percentSimilarToOtherFigure(figH);
+		float similarityAB = figA.percentSimilarToOtherFigure(figB);
+		float similarityBC = figB.percentSimilarToOtherFigure(figC);
+		float similarityDE = figD.percentSimilarToOtherFigure(figE);
+		float similarityEF = figE.percentSimilarToOtherFigure(figF);
+		float similarityGH = figG.percentSimilarToOtherFigure(figH);
 		
 		if(areTheseNumbersEquivalent(similarityAB, 100, percentageToDeemEquivalent) && areTheseNumbersEquivalent(similarityBC, 100, percentageToDeemEquivalent)) { 
 			//THE FIRST ROW IS VIRTUALLY THE SAME ACROSS
@@ -70,9 +70,9 @@ public class AgentVisualProblem {
 	public int isItLikeBasicD02() {
 		int answer = -1;
 		
-		int similarityAE = figA.percentSimilarToOtherFigure(figE);
-		int similarityDH = figD.percentSimilarToOtherFigure(figH);
-		int similarityBF = figB.percentSimilarToOtherFigure(figF);
+		float similarityAE = figA.percentSimilarToOtherFigure(figE);
+		float similarityDH = figD.percentSimilarToOtherFigure(figH);
+		float similarityBF = figB.percentSimilarToOtherFigure(figF);
 		
 		if(areTheseNumbersEquivalent(similarityAE, 100, percentageToDeemEquivalent)) { 
 			//THE DIAGONAL TOP-LEFT/BOTTOM-RIGHT ARE VIRTUALLY THE SAME 
@@ -90,14 +90,14 @@ public class AgentVisualProblem {
 	public int isItLikeBasicD04() {
 		int answer = -1;
 		
-		int similarityAB = figA.percentSimilarToOtherFigure(figB);
-		int similarityDE = figD.percentSimilarToOtherFigure(figE);
-		int similarityGH = figG.percentSimilarToOtherFigure(figH);
+		float similarityAB = figA.percentSimilarToOtherFigure(figB);
+		float similarityDE = figD.percentSimilarToOtherFigure(figE);
+		float similarityGH = figG.percentSimilarToOtherFigure(figH);
 		if(areTheseNumbersEquivalent(similarityAB, similarityDE, percentageToDeemEquivalent) && areTheseNumbersEquivalent(similarityAB, similarityGH, percentageToDeemEquivalent)) {
 			//DIFFERENCE BETWEEN A AND B IS SAME AS DIFFERENCE BETWEEN D AND E AND THAT OF G AND H
 
-			int similarityBC = figB.percentSimilarToOtherFigure(figC);
-			int similarityEF = figE.percentSimilarToOtherFigure(figF);
+			float similarityBC = figB.percentSimilarToOtherFigure(figC);
+			float similarityEF = figE.percentSimilarToOtherFigure(figF);
 			if(areTheseNumbersEquivalent(similarityBC, similarityEF, percentageToDeemEquivalent)) {
 				//DIFFERENCE BETWEEN B AND C IS SAME AS DIFFERENCE BETWEEN E AND F
 				
@@ -124,7 +124,97 @@ public class AgentVisualProblem {
 		return answer;
 	}
 	
-	public boolean areTheseNumbersEquivalent(int a, int b, int percentage) {
+	public int isItLikeBasicE03() {
+		int answer = -1;
+		
+		AgentVisualFigure combinationOfAB = new AgentVisualFigure(figA, figB);
+		float similarityC = combinationOfAB.percentSimilarToOtherFigure(figC);
+		
+		if(areTheseNumbersEquivalent(similarityC, 100, percentageToDeemEquivalent)) {
+			//COMBO OF A AND B IS EQUIVALENT TO C
+			
+			AgentVisualFigure combinationOfDE = new AgentVisualFigure(figD, figE);
+			float similarityF = combinationOfDE.percentSimilarToOtherFigure(figF);
+			
+			if(areTheseNumbersEquivalent(similarityF, 100, percentageToDeemEquivalent)) {
+				//COMBO OF D AND E IS EQUIVALENT TO F
+
+				AgentVisualFigure combinationOfAD = new AgentVisualFigure(figA, figD);
+				float similarityG = combinationOfAD.percentSimilarToOtherFigure(figG);
+				
+				if(areTheseNumbersEquivalent(similarityG, 100, percentageToDeemEquivalent)) {
+					//COMBO OF A AND D IS EQUIVALENT TO G
+
+					AgentVisualFigure combinationOfBE = new AgentVisualFigure(figB, figE);
+					float similarityH = combinationOfBE.percentSimilarToOtherFigure(figH);
+					
+					if(areTheseNumbersEquivalent(similarityH, 100, percentageToDeemEquivalent)) {
+						//COMBO OF B AND E IS EQUIVALENT TO H
+						
+						AgentVisualFigure combinationOfCF = new AgentVisualFigure(figC, figF);
+						AgentVisualFigure combinationOfGH = new AgentVisualFigure(figG, figH);
+						
+						float combinedSimilarity1 = combinationOfCF.percentSimilarToOtherFigure(fig1);
+						combinedSimilarity1 += combinationOfGH.percentSimilarToOtherFigure(fig1);
+						float combinedSimilarity2 = combinationOfCF.percentSimilarToOtherFigure(fig2);
+						combinedSimilarity2 += combinationOfGH.percentSimilarToOtherFigure(fig2);
+						float combinedSimilarity3 = combinationOfCF.percentSimilarToOtherFigure(fig3);
+						combinedSimilarity3 += combinationOfGH.percentSimilarToOtherFigure(fig3);
+						float combinedSimilarity4 = combinationOfCF.percentSimilarToOtherFigure(fig4);
+						combinedSimilarity4 += combinationOfGH.percentSimilarToOtherFigure(fig4);
+						float combinedSimilarity5 = combinationOfCF.percentSimilarToOtherFigure(fig5);
+						combinedSimilarity5 += combinationOfGH.percentSimilarToOtherFigure(fig5);
+						float combinedSimilarity6 = combinationOfCF.percentSimilarToOtherFigure(fig6);
+						combinedSimilarity6 += combinationOfGH.percentSimilarToOtherFigure(fig6);
+						float combinedSimilarity7 = combinationOfCF.percentSimilarToOtherFigure(fig7);
+						combinedSimilarity7 += combinationOfGH.percentSimilarToOtherFigure(fig7);
+						float combinedSimilarity8 = combinationOfCF.percentSimilarToOtherFigure(fig8);
+						combinedSimilarity8 += combinationOfGH.percentSimilarToOtherFigure(fig8);
+
+						int bestIndex = 1;
+						float bestVal = combinedSimilarity1;
+						
+						if(combinedSimilarity2 > bestVal) {
+							bestVal = combinedSimilarity2;
+							bestIndex = 2;
+						}
+						if(combinedSimilarity3 > bestVal) {
+							bestVal = combinedSimilarity3;
+							bestIndex = 3;
+						}
+						if(combinedSimilarity4 > bestVal) {
+							bestVal = combinedSimilarity4;
+							bestIndex = 4;
+						}
+						if(combinedSimilarity5 > bestVal) {
+							bestVal = combinedSimilarity5;
+							bestIndex = 5;
+						}
+						if(combinedSimilarity6 > bestVal) {
+							bestVal = combinedSimilarity6;
+							bestIndex = 6;
+						}
+						if(combinedSimilarity7 > bestVal) {
+							bestVal = combinedSimilarity7;
+							bestIndex = 7;
+						}
+						if(combinedSimilarity8 > bestVal) {
+							bestVal = combinedSimilarity8;
+							bestIndex = 8;
+						}
+							
+						if(areTheseNumbersEquivalent(bestVal, 200, percentageToDeemEquivalent))
+							return bestIndex;
+						
+					}
+				}
+			}
+		}
+		
+		return answer;
+	}
+	
+	public boolean areTheseNumbersEquivalent(float a, float b, int percentage) {
 		float percent = (float)percentage / 100;
 		
 		float min = (float)b * (1 - percent);
@@ -138,10 +228,10 @@ public class AgentVisualProblem {
 	
 	public int getBestAnswerIndexAboveThreshold(AgentVisualFigure figure, int threshold) {
 		int index = -1;
-		int highestPercentage = -1;
+		float highestPercentage = -1;
 		
 		
-		int temp = fig1.percentSimilarToOtherFigure(figure);
+		float temp = fig1.percentSimilarToOtherFigure(figure);
 		if(temp >= threshold) {
 			index = 1;
 			highestPercentage = temp;
