@@ -45,7 +45,7 @@ public class AgentVisualProblem {
 	    	fig8 = new AgentVisualFigure(problem.getFigures().get("8"));   
     	}
 	
-	public int isItLikeBasicD01() {
+	public int areShapesEquvalentAlongRows() {  //LIKE BASIC D-01
 		int answer = -1;
 		
 		float similarityAB = figA.percentSimilarToOtherFigure(figB);
@@ -71,7 +71,7 @@ public class AgentVisualProblem {
 		return answer;
 	}
 
-	public int isItLikeBasicD12() {
+	public int areTheNumberOfShapesTheSameDiagonally() { //LIKE BASIC D-12
 		int answer = -1;
 		
 		if(figD.numShapes == figH.numShapes && figD.numShapes != figG.numShapes) {
@@ -189,7 +189,7 @@ public class AgentVisualProblem {
 		return answer;
 	}
 	
-	public int isItLikeBasicD02() {
+	public int areShapesEquivalentAlongDiagonals() { //LIKE BASIC D-02
 		int answer = -1;
 		
 		float similarityAE = figA.percentSimilarToOtherFigure(figE);
@@ -209,7 +209,7 @@ public class AgentVisualProblem {
 		return answer;
 	}
 	
-	public int isItLikeBasicD04() {
+	public int isTheChangeInShapeConsitentAcrossRowsColumns() {  //LIKE BASIC D-04
 		int answer = -1;
 		
 		float similarityAB = figA.percentSimilarToOtherFigure(figB);
@@ -246,7 +246,7 @@ public class AgentVisualProblem {
 		return answer;
 	}
 	
-	public int isItLikeBasicE06() {
+	public int isTheORComboOfRowColumnEndsEquivalentToTheMiddle() { //LIKE BASIC E-06
 		int answer = -1;
 		
 		AgentVisualFigure combinationOfAG = new AgentVisualFigure(figA, figG, combinationMethod.OR);
@@ -341,7 +341,7 @@ public class AgentVisualProblem {
 	}
 		
 	
-	public int isItLikeBasicE10() {
+	public int IsTheOrComboOfTheFirstTwoEquivalentToTheLast() { //LIKE BASIC E-10
 		int answer = -1;
 		
 		AgentVisualFigure combinationOfAD = new AgentVisualFigure(figA, figD, combinationMethod.AND);
@@ -384,7 +384,7 @@ public class AgentVisualProblem {
 		return answer;
 	}
 	
-	public int isItLikeBasicE09() {
+	public int isTopOfFirstAndBottomOfSecondEquivalentToThird() { //LIKE BASIC E-09
 		int answer = -1;
 		
 		AgentVisualFigure combinationOfAD = new AgentVisualFigure(figA, figD, combinationMethod.TOPBOTTOM);
@@ -427,7 +427,7 @@ public class AgentVisualProblem {
 		return answer;
 	}
 	
-	public int isItLikeBasicE05() {
+	public int isTheXorComboOfTheFirstAndSecondEquivalentToTheThird() { //LIKE BASIC E-05
 		int answer = -1;
 		
 		AgentVisualFigure combinationOfAD = new AgentVisualFigure(figA, figD, combinationMethod.XOR);
@@ -472,7 +472,7 @@ public class AgentVisualProblem {
 		return answer;
 	}
 	
-	public int isItLikeBasicE03() {
+	public int isTheOrComboOfTheFirstAndSecondEquivalentToTheThird() { //LIKE BASIC E-03
 		int answer = -1;
 		
 		AgentVisualFigure combinationOfAB = new AgentVisualFigure(figA, figB, combinationMethod.OR);
@@ -568,7 +568,7 @@ public class AgentVisualProblem {
 	 * NOT THE SAME AS A AND NOT THE SAME AS E AND HAS A SIGNIFICANTLY SIMILAR DIFFERENCE 
 	 * BETWEEN E AND ITSELF TO THAT OF A AND E
 	 */
-	public int isItLikeBasicD07() {
+	public int isItFunkyAndHardToGuessButSimilaritiesInDifferencesMightPredictIt() { //LIKE D-07
 		int answer = -1;
 		
 		float similarityAB = figA.percentSimilarToOtherFigure(figB);

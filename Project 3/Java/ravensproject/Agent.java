@@ -655,34 +655,34 @@ public class Agent {
     
  		AgentVisualProblem elProblemo = new AgentVisualProblem(problem);
  		
- 		answer = elProblemo.isItLikeBasicE03();
+ 		answer = elProblemo.isTheOrComboOfTheFirstAndSecondEquivalentToTheThird(); //SUCH AS BASIC E-03
  		
  		if(answer == -1)
- 			answer = elProblemo.isItLikeBasicE09();
+ 			answer = elProblemo.isTopOfFirstAndBottomOfSecondEquivalentToThird(); //SUCH AS BASIC E-09
 
  		if(answer == -1)
- 			answer = elProblemo.isItLikeBasicE10();
+ 			answer = elProblemo.IsTheOrComboOfTheFirstTwoEquivalentToTheLast(); //SUCH AS BASIC E-10
  		
  		if(answer == -1)
- 			answer = elProblemo.isItLikeBasicD12();
+ 			answer = elProblemo.areTheNumberOfShapesTheSameDiagonally(); //SUCH AS BASIC D-12
  		
  		if(answer == -1)
- 			answer = elProblemo.isItLikeBasicD01();
+ 			answer = elProblemo.areShapesEquvalentAlongRows(); //SUCH AS BASIC D-01
 
  		if(answer == -1)
- 			answer = elProblemo.isItLikeBasicD02();
+ 			answer = elProblemo.areShapesEquivalentAlongDiagonals(); //SUCH AS BASIC D-02
  		
  		if(answer == -1)
- 			answer = elProblemo.isItLikeBasicD04();
+ 			answer = elProblemo.isTheChangeInShapeConsitentAcrossRowsColumns(); //SUCH AS BASIC D-04
 
  		if(answer == -1)
- 			answer = elProblemo.isItLikeBasicE05();
+ 			answer = elProblemo.isTheXorComboOfTheFirstAndSecondEquivalentToTheThird(); //SUCH AS BASIC D-05
  			
  		if(answer == -1)
- 			answer = elProblemo.isItLikeBasicD07();
+ 			answer = elProblemo.isItFunkyAndHardToGuessButSimilaritiesInDifferencesMightPredictIt(); //SUCH AS BASIC D-07
 
  		if(answer == -1)
- 			answer = elProblemo.isItLikeBasicE06();
+ 			answer = elProblemo.isTheORComboOfRowColumnEndsEquivalentToTheMiddle();  //SUCH AS BASIC E-06
 
  		return answer;    	
     }
