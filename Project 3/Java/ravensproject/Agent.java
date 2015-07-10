@@ -666,6 +666,9 @@ public class Agent {
  		if(answer == -1)
  			answer = elProblemo.isItLikeBasicD04();
 
+ 		if(answer == -1)
+ 			answer = elProblemo.isItLikeBasicD07();
+
  		return answer;    	
     }
     

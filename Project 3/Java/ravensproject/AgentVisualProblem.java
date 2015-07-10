@@ -214,6 +214,204 @@ public class AgentVisualProblem {
 		return answer;
 	}
 	
+	/*
+	 * THIS IS A LAST RESORT ONE. I'M NOT SURE WHAT THE ANSWERS ARE REALLY EVEN ABOUT
+	 * BUT I'M GOING TO SAY THAT IF A AND E ARE DIFFERENT THEN FIND AN ANSWER WHICH IS 
+	 * NOT THE SAME AS A AND NOT THE SAME AS E AND HAS A SIGNIFICANTLY SIMILAR DIFFERENCE 
+	 * BETWEEN E AND ITSELF TO THAT OF A AND E
+	 */
+	public int isItLikeBasicD07() {
+		int answer = -1;
+		
+		float similarityAB = figA.percentSimilarToOtherFigure(figB);
+		float similarityBC = figB.percentSimilarToOtherFigure(figC);
+		float similarityAD = figA.percentSimilarToOtherFigure(figD);
+		float similarityDG = figD.percentSimilarToOtherFigure(figG);
+		float similarityAE = figA.percentSimilarToOtherFigure(figE);
+		if(!areTheseNumbersEquivalent(similarityAB, 100, percentageToDeemEquivalent) &&
+				!areTheseNumbersEquivalent(similarityBC, 100, percentageToDeemEquivalent) &&
+				!areTheseNumbersEquivalent(similarityAD, 100, percentageToDeemEquivalent) &&
+				!areTheseNumbersEquivalent(similarityDG, 100, percentageToDeemEquivalent) &&
+				!areTheseNumbersEquivalent(similarityAE, 100, percentageToDeemEquivalent)) {
+
+			boolean answer1 = true;
+			boolean answer2 = true;
+			boolean answer3 = true;
+			boolean answer4 = true;
+			boolean answer5 = true;
+			boolean answer6 = true;
+			boolean answer7 = true;
+			boolean answer8 = true;
+			
+			//NOT MUCH IS SIMILAR ANYWHERE HERE SO ELIMINATE ANYTHING THAT'S TOO SIMILAR TO E
+			float similarityE1 = figE.percentSimilarToOtherFigure(fig1);
+			float similarityE2 = figE.percentSimilarToOtherFigure(fig2);
+			float similarityE3 = figE.percentSimilarToOtherFigure(fig3);
+			float similarityE4 = figE.percentSimilarToOtherFigure(fig4);
+			float similarityE5 = figE.percentSimilarToOtherFigure(fig5);
+			float similarityE6 = figE.percentSimilarToOtherFigure(fig6);
+			float similarityE7 = figE.percentSimilarToOtherFigure(fig7);
+			float similarityE8 = figE.percentSimilarToOtherFigure(fig8);
+
+			if(areTheseNumbersEquivalent(similarityE1, 100, percentageToDeemEquivalent))
+				answer1 = false;
+			if(areTheseNumbersEquivalent(similarityE2, 100, percentageToDeemEquivalent))
+				answer2 = false;
+			if(areTheseNumbersEquivalent(similarityE3, 100, percentageToDeemEquivalent))
+				answer3 = false;
+			if(areTheseNumbersEquivalent(similarityE4, 100, percentageToDeemEquivalent))
+				answer4 = false;
+			if(areTheseNumbersEquivalent(similarityE5, 100, percentageToDeemEquivalent))
+				answer5 = false;
+			if(areTheseNumbersEquivalent(similarityE6, 100, percentageToDeemEquivalent))
+				answer6 = false;
+			if(areTheseNumbersEquivalent(similarityE7, 100, percentageToDeemEquivalent))
+				answer7 = false;
+			if(areTheseNumbersEquivalent(similarityE8, 100, percentageToDeemEquivalent))
+				answer8 = false;
+
+			float similarityA1 = -1000;
+			float similarityA2 = -1000;
+			float similarityA3 = -1000;
+			float similarityA4 = -1000;
+			float similarityA5 = -1000;
+			float similarityA6 = -1000;
+			float similarityA7 = -1000;
+			float similarityA8 = -1000;
+			
+			//NOT MUCH IS SIMILAR ANYWHERE HERE SO ELIMINATE ANYTHING THAT'S TOO SIMILAR TO A
+			if(answer1) {
+				similarityA1 = figA.percentSimilarToOtherFigure(fig1);
+				if(areTheseNumbersEquivalent(similarityA1, 100, percentageToDeemEquivalent))
+					answer1 = false;
+			}
+			if(answer2) {
+				similarityA2 = figA.percentSimilarToOtherFigure(fig2);
+				if(areTheseNumbersEquivalent(similarityA2, 100, percentageToDeemEquivalent))
+					answer2 = false;
+			}				
+			if(answer3) {
+				similarityA3 = figA.percentSimilarToOtherFigure(fig3);
+				if(areTheseNumbersEquivalent(similarityA3, 100, percentageToDeemEquivalent))
+					answer3 = false;
+			}				
+			if(answer4) {
+				similarityA4 = figA.percentSimilarToOtherFigure(fig4);
+				if(areTheseNumbersEquivalent(similarityA4, 100, percentageToDeemEquivalent))
+					answer4 = false;
+			}				
+			if(answer5) {
+				similarityA5 = figA.percentSimilarToOtherFigure(fig5);
+				if(areTheseNumbersEquivalent(similarityA5, 100, percentageToDeemEquivalent))
+					answer5 = false;
+			}				
+			if(answer6) {
+				similarityA6 = figA.percentSimilarToOtherFigure(fig6);
+				if(areTheseNumbersEquivalent(similarityA6, 100, percentageToDeemEquivalent))
+					answer6 = false;
+			}				
+			if(answer7) {
+				similarityA7 = figA.percentSimilarToOtherFigure(fig7);
+				if(areTheseNumbersEquivalent(similarityA7, 100, percentageToDeemEquivalent))
+					answer7 = false;
+			}				
+			if(answer8) {
+				similarityA8 = figA.percentSimilarToOtherFigure(fig8);
+				if(areTheseNumbersEquivalent(similarityA8, 100, percentageToDeemEquivalent))
+					answer8 = false;
+			}				
+
+			
+			//NOW ELIMINATE ANYTHING THAT IS JUST LIKE ANYTHING A-H
+			if(answer1 && isThisAnswerTheSameAsAnyNonAnswer(fig1) > -1)
+					answer1 = false;
+			if(answer2 && isThisAnswerTheSameAsAnyNonAnswer(fig2) > -1)
+					answer2 = false;
+			if(answer3 && isThisAnswerTheSameAsAnyNonAnswer(fig3) > -1)
+					answer3 = false;
+			if(answer4 && isThisAnswerTheSameAsAnyNonAnswer(fig4) > -1)
+					answer4 = false;
+			if(answer5 && isThisAnswerTheSameAsAnyNonAnswer(fig5) > -1)
+					answer5 = false;
+			if(answer6 && isThisAnswerTheSameAsAnyNonAnswer(fig6) > -1)
+					answer6 = false;
+			if(answer7 && isThisAnswerTheSameAsAnyNonAnswer(fig7) > -1)
+					answer7 = false;
+			if(answer8 && isThisAnswerTheSameAsAnyNonAnswer(fig8) > -1)
+					answer8 = false;
+			
+
+			//NOW FIND THE ANSWER WHICH HAS THE DIFFERENCE TO E WHICH IS MOST CLOSE TO THE DIFFERENCE BETWEEN A AND E 
+			int bestIndex = -1;
+			float bestVal = -1000;
+
+			if(answer1 && Math.abs((similarityE1 + similarityA1) - (similarityAE * 2)) < Math.abs(bestVal - (similarityAE * 2))) {
+				bestIndex = 1;
+				bestVal = similarityE1 + similarityA1;
+			}
+			if(answer2 && Math.abs((similarityE2 + similarityA2) - (similarityAE * 2)) < Math.abs(bestVal - (similarityAE * 2))) {
+				bestIndex = 2;
+				bestVal = similarityE2 + similarityA2;
+			}
+			if(answer3 && Math.abs((similarityE3 + similarityA3) - (similarityAE * 2)) < Math.abs(bestVal - (similarityAE * 2))) {
+				bestIndex = 3;
+				bestVal = similarityE3 + similarityA3;
+			}
+			if(answer4 && Math.abs((similarityE4 + similarityA4) - (similarityAE * 2)) < Math.abs(bestVal - (similarityAE * 2))) {
+				bestIndex = 4;
+				bestVal = similarityE4 + similarityA4;
+			}
+			if(answer5 && Math.abs((similarityE5 + similarityA5) - (similarityAE * 2)) < Math.abs(bestVal - (similarityAE * 2))) {
+				bestIndex = 5;
+				bestVal = similarityE5 + similarityA5;
+			}
+			if(answer6 && Math.abs((similarityE6 + similarityA6) - (similarityAE * 2)) < Math.abs(bestVal - (similarityAE * 2))) {
+				bestIndex = 6;
+				bestVal = similarityE6 + similarityA6;
+			}
+			if(answer7 && Math.abs((similarityE7 + similarityA7) - (similarityAE * 2)) < Math.abs(bestVal - (similarityAE * 2))) {
+				bestIndex = 7;
+				bestVal = similarityE7 + similarityA7;
+			}
+			if(answer8 && Math.abs((similarityE8 + similarityA8) - (similarityAE * 2)) < Math.abs(bestVal - (similarityAE * 2))) {
+				bestIndex = 8;
+				bestVal = similarityE8 + similarityA8;
+			}
+				
+			
+			
+			//NOW SEE IF THE NUMBER OF THE BEST ANSWER IS CLOSE ENOUGH TO THE DIFF BETWEEN A AND E TO COUNT
+			if(areTheseNumbersEquivalent(bestVal, similarityAE * 2, percentageToDeemEquivalent))
+				return bestIndex;
+			
+		}
+		
+		
+		return answer;
+	}
+	
+	public int isThisAnswerTheSameAsAnyNonAnswer(AgentVisualFigure answer) {
+		
+		if(areTheseNumbersEquivalent(answer.percentSimilarToOtherFigure(figA),  100,  percentageToDeemEquivalent))
+			return 1; 
+		if(areTheseNumbersEquivalent(answer.percentSimilarToOtherFigure(figB),  100,  percentageToDeemEquivalent))
+			return 2; 
+		if(areTheseNumbersEquivalent(answer.percentSimilarToOtherFigure(figC),  100,  percentageToDeemEquivalent))
+			return 3; 
+		if(areTheseNumbersEquivalent(answer.percentSimilarToOtherFigure(figD),  100,  percentageToDeemEquivalent))
+			return 4; 
+		if(areTheseNumbersEquivalent(answer.percentSimilarToOtherFigure(figE),  100,  percentageToDeemEquivalent))
+			return 5; 
+		if(areTheseNumbersEquivalent(answer.percentSimilarToOtherFigure(figF),  100,  percentageToDeemEquivalent))
+			return 6; 
+		if(areTheseNumbersEquivalent(answer.percentSimilarToOtherFigure(figG),  100,  percentageToDeemEquivalent))
+			return 7; 
+		if(areTheseNumbersEquivalent(answer.percentSimilarToOtherFigure(figH),  100,  percentageToDeemEquivalent))
+			return 8; 
+		
+		return -1;
+	}
+	
 	public boolean areTheseNumbersEquivalent(float a, float b, int percentage) {
 		float percent = (float)percentage / 100;
 		
