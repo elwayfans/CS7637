@@ -71,6 +71,124 @@ public class AgentVisualProblem {
 		return answer;
 	}
 
+	public int isItLikeBasicD12() {
+		int answer = -1;
+		
+		if(figD.numShapes == figH.numShapes && figD.numShapes != figG.numShapes) {
+			//MIGHT HAVE A DIAGONAL SHAPE COUNT DEALIO GOING
+			if(figA.numShapes == figE.numShapes && figA.numShapes != figD.numShapes) {
+				//STILL LOOKS LIKE WE MIGHT HAVE A DIAGONAL SHAPE COUNT DEALIO GOING
+				if(figB.numShapes == figF.numShapes && figB.numShapes != figC.numShapes && figB.numShapes != figA.numShapes) {
+					//I THINK WE HAVE A DIAGONAL SHAPE COUNT DEALIO GOING
+					
+					//REMOVE ANY ANSWERS WHICH ARE THE SAME AS A-H
+					boolean answer1 = true;
+					boolean answer2 = true;
+					boolean answer3 = true;
+					boolean answer4 = true;
+					boolean answer5 = true;
+					boolean answer6 = true;
+					boolean answer7 = true;
+					boolean answer8 = true;
+					
+					if(isThisAnswerTheSameAsAnyNonAnswer(fig1, percentageToDeemEquivalent_Exactly) > -1)
+						answer1 = false;
+					if(isThisAnswerTheSameAsAnyNonAnswer(fig2, percentageToDeemEquivalent_Exactly) > -1)
+						answer2 = false;
+					if(isThisAnswerTheSameAsAnyNonAnswer(fig3, percentageToDeemEquivalent_Exactly) > -1)
+						answer3 = false;
+					if(isThisAnswerTheSameAsAnyNonAnswer(fig4, percentageToDeemEquivalent_Exactly) > -1)
+						answer4 = false;
+					if(isThisAnswerTheSameAsAnyNonAnswer(fig5, percentageToDeemEquivalent_Exactly) > -1)
+						answer5 = false;
+					if(isThisAnswerTheSameAsAnyNonAnswer(fig6, percentageToDeemEquivalent_Exactly) > -1)
+						answer6 = false;
+					if(isThisAnswerTheSameAsAnyNonAnswer(fig7, percentageToDeemEquivalent_Exactly) > -1)
+						answer7 = false;
+					if(isThisAnswerTheSameAsAnyNonAnswer(fig8, percentageToDeemEquivalent_Exactly) > -1)
+						answer8 = false;
+
+					int indexChoice = -1;
+					if(answer1 && fig1.numShapes == figE.numShapes) {
+						if(indexChoice == -1)
+							indexChoice = 1;
+						else //MULTIPLE ANSWERS - NOT SURE HOW TO DECIDE
+							return -1;
+					}
+					else
+						answer1 = false;
+					
+					if(answer2 && fig2.numShapes == figE.numShapes) {
+						if(indexChoice == -1)
+							indexChoice = 2;
+						else //MULTIPLE ANSWERS - NOT SURE HOW TO DECIDE
+							return -1;
+					}
+					else
+						answer2 = false;
+
+					if(answer3 && fig3.numShapes == figE.numShapes) {
+						if(indexChoice == -1)
+							indexChoice = 3;
+						else //MULTIPLE ANSWERS - NOT SURE HOW TO DECIDE
+							return -1;
+					}
+					else
+						answer3 = false;
+
+					if(answer4 && fig4.numShapes == figE.numShapes) {
+						if(indexChoice == -1)
+							indexChoice = 4;
+						else //MULTIPLE ANSWERS - NOT SURE HOW TO DECIDE
+							return -1;
+					}
+					else
+						answer4 = false;
+
+					if(answer5 && fig5.numShapes == figE.numShapes) {
+						if(indexChoice == -1)
+							indexChoice = 5;
+						else //MULTIPLE ANSWERS - NOT SURE HOW TO DECIDE
+							return -1;
+					}
+					else
+						answer5 = false;
+
+					if(answer6 && fig6.numShapes == figE.numShapes) {
+						if(indexChoice == -1)
+							indexChoice = 6;
+						else //MULTIPLE ANSWERS - NOT SURE HOW TO DECIDE
+							return -1;
+					}
+					else
+						answer6 = false;
+
+					if(answer7 && fig7.numShapes == figE.numShapes) {
+						if(indexChoice == -1)
+							indexChoice = 7;
+						else //MULTIPLE ANSWERS - NOT SURE HOW TO DECIDE
+							return -1;
+					}
+					else
+						answer7 = false;
+
+					if(answer8 && fig8.numShapes == figE.numShapes) {
+						if(indexChoice == -1)
+							indexChoice = 8;
+						else //MULTIPLE ANSWERS - NOT SURE HOW TO DECIDE
+							return -1;
+					}
+					else
+						answer8 = false;
+
+					
+				}
+			}
+		}
+		
+		return answer;
+	}
+	
 	public int isItLikeBasicD02() {
 		int answer = -1;
 		
