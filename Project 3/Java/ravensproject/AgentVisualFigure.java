@@ -19,7 +19,7 @@ public class AgentVisualFigure {
 	int numPixels = 0;
 	int numShapes = 0;
 	
-	enum combinationMethod { OR, AND, XOR }
+	enum combinationMethod { OR, AND, XOR, TOPBOTTOM }
 	
 	public AgentVisualFigure(RavensFigure figure) {
 		filename = figure.getVisual();
@@ -55,6 +55,13 @@ public class AgentVisualFigure {
 					  else
 						  image.setRGB(x, y, new Color(255,255,255).getRGB());
 				  }
+				  if(method == combinationMethod.AND) {
+					  if((dad.image.getWidth() > x && dad.image.getHeight() > x && !dad.isPixelWhite(x, y)) &&
+							  (mom.image.getWidth() > x && mom.image.getHeight() > x && !mom.isPixelWhite(x, y)))
+						  image.setRGB(x, y, new Color(0,0,0).getRGB());
+					  else
+						  image.setRGB(x, y, new Color(255,255,255).getRGB());
+				  }
 				  else if(method == combinationMethod.XOR) {
 					  boolean dadsBlack = false;
 					  boolean momsBlack = false;
@@ -66,6 +73,26 @@ public class AgentVisualFigure {
 					  if((dadsBlack && !momsBlack)  || (!dadsBlack && momsBlack))
 						  image.setRGB(x, y, new Color(0,0,0).getRGB());
 					  else
+						  image.setRGB(x, y, new Color(255,255,255).getRGB());
+				  }
+				  else if(method == combinationMethod.TOPBOTTOM) {
+
+					  boolean setBlack = false;
+					  
+					  if(y <= image.getHeight() / 2) {
+						  if(dad.image.getWidth() > x && dad.image.getHeight() > x && !dad.isPixelWhite(x, y)) {
+							  image.setRGB(x, y, new Color(0,0,0).getRGB());							  
+							  setBlack = true;
+						  }
+					  }
+					  else {
+						  if(mom.image.getWidth() > x && mom.image.getHeight() > x && !mom.isPixelWhite(x, y)) {
+							  image.setRGB(x, y, new Color(0,0,0).getRGB());
+							  setBlack = true;
+						  }
+					  }
+					  
+					  if(!setBlack)
 						  image.setRGB(x, y, new Color(255,255,255).getRGB());
 				  }
 			  }

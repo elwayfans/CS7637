@@ -658,6 +658,12 @@ public class Agent {
  		answer = elProblemo.isItLikeBasicE03();
  		
  		if(answer == -1)
+ 			answer = elProblemo.isItLikeBasicE09();
+
+ 		if(answer == -1)
+ 			answer = elProblemo.isItLikeBasicE10();
+ 		
+ 		if(answer == -1)
  			answer = elProblemo.isItLikeBasicD01();
 
  		if(answer == -1)
@@ -667,11 +673,11 @@ public class Agent {
  			answer = elProblemo.isItLikeBasicD04();
 
  		if(answer == -1)
+ 			answer = elProblemo.isItLikeBasicE05();
+ 			
+ 		if(answer == -1)
  			answer = elProblemo.isItLikeBasicD07();
 
- 		if(answer == -1)
- 			answer = elProblemo.isItLikeBasicE05();
- 		
  		if(answer == -1)
  			answer = elProblemo.isItLikeBasicE06();
 

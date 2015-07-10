@@ -222,12 +222,99 @@ public class AgentVisualProblem {
 		return answer;
 	}
 		
+	
+	public int isItLikeBasicE10() {
+		int answer = -1;
+		
+		AgentVisualFigure combinationOfAD = new AgentVisualFigure(figA, figD, combinationMethod.AND);
+		float similarityG = combinationOfAD.percentSimilarToOtherFigure(figG);
+		if(areTheseNumbersEquivalent(similarityG, 100, percentageToDeemEquivalent_KindOf)) { //HAD TO MAKE THIS "KIND OF" BECAUSE PROBLEM E-07'S AD->G IS NOT A TRUE XOR
+			//THE TOP/BOTTOM MERGER OF A AND D EQUALS G
+			AgentVisualFigure combinationOfBE = new AgentVisualFigure(figB, figE, combinationMethod.AND);
+			float similarityH = combinationOfBE.percentSimilarToOtherFigure(figH);
+			if(areTheseNumbersEquivalent(similarityH, 100, percentageToDeemEquivalent)) {
+				//THE TOP/BOTTOM MERGER OF B AND E EQUALS H
+
+				AgentVisualFigure combinationOfCF = new AgentVisualFigure(figC, figF, combinationMethod.AND);
+				float similarity1 = combinationOfCF.percentSimilarToOtherFigure(fig1);
+				if(areTheseNumbersEquivalent(similarity1, 100, percentageToDeemEquivalent_Exactly))
+					return 1;
+				float similarity2 = combinationOfCF.percentSimilarToOtherFigure(fig2);
+				if(areTheseNumbersEquivalent(similarity2, 100, percentageToDeemEquivalent_Exactly))
+					return 2;
+				float similarity3 = combinationOfCF.percentSimilarToOtherFigure(fig3);
+				if(areTheseNumbersEquivalent(similarity3, 100, percentageToDeemEquivalent_Exactly))
+					return 3;
+				float similarity4 = combinationOfCF.percentSimilarToOtherFigure(fig4);
+				if(areTheseNumbersEquivalent(similarity4, 100, percentageToDeemEquivalent_Exactly))
+					return 4;
+				float similarity5 = combinationOfCF.percentSimilarToOtherFigure(fig5);
+				if(areTheseNumbersEquivalent(similarity5, 100, percentageToDeemEquivalent_Exactly))
+					return 5;
+				float similarity6 = combinationOfCF.percentSimilarToOtherFigure(fig6);
+				if(areTheseNumbersEquivalent(similarity6, 100, percentageToDeemEquivalent_Exactly))
+					return 6;
+				float similarity7 = combinationOfCF.percentSimilarToOtherFigure(fig7);
+				if(areTheseNumbersEquivalent(similarity7, 100, percentageToDeemEquivalent_Exactly))
+					return 7;
+				float similarity8 = combinationOfCF.percentSimilarToOtherFigure(fig8);
+				if(areTheseNumbersEquivalent(similarity8, 100, percentageToDeemEquivalent))
+					return 8;			
+			}
+		}
+		
+		return answer;
+	}
+	
+	public int isItLikeBasicE09() {
+		int answer = -1;
+		
+		AgentVisualFigure combinationOfAD = new AgentVisualFigure(figA, figD, combinationMethod.TOPBOTTOM);
+		float similarityG = combinationOfAD.percentSimilarToOtherFigure(figG);
+		if(areTheseNumbersEquivalent(similarityG, 100, percentageToDeemEquivalent_KindOf)) { //HAD TO MAKE THIS "KIND OF" BECAUSE PROBLEM E-07'S AD->G IS NOT A TRUE XOR
+			//THE TOP/BOTTOM MERGER OF A AND D EQUALS G
+			AgentVisualFigure combinationOfBE = new AgentVisualFigure(figB, figE, combinationMethod.TOPBOTTOM);
+			float similarityH = combinationOfBE.percentSimilarToOtherFigure(figH);
+			if(areTheseNumbersEquivalent(similarityH, 100, percentageToDeemEquivalent)) {
+				//THE TOP/BOTTOM MERGER OF B AND E EQUALS H
+
+				AgentVisualFigure combinationOfCF = new AgentVisualFigure(figC, figF, combinationMethod.TOPBOTTOM);
+				float similarity1 = combinationOfCF.percentSimilarToOtherFigure(fig1);
+				if(areTheseNumbersEquivalent(similarity1, 100, percentageToDeemEquivalent_Exactly))
+					return 1;
+				float similarity2 = combinationOfCF.percentSimilarToOtherFigure(fig2);
+				if(areTheseNumbersEquivalent(similarity2, 100, percentageToDeemEquivalent_Exactly))
+					return 2;
+				float similarity3 = combinationOfCF.percentSimilarToOtherFigure(fig3);
+				if(areTheseNumbersEquivalent(similarity3, 100, percentageToDeemEquivalent_Exactly))
+					return 3;
+				float similarity4 = combinationOfCF.percentSimilarToOtherFigure(fig4);
+				if(areTheseNumbersEquivalent(similarity4, 100, percentageToDeemEquivalent_Exactly))
+					return 4;
+				float similarity5 = combinationOfCF.percentSimilarToOtherFigure(fig5);
+				if(areTheseNumbersEquivalent(similarity5, 100, percentageToDeemEquivalent_Exactly))
+					return 5;
+				float similarity6 = combinationOfCF.percentSimilarToOtherFigure(fig6);
+				if(areTheseNumbersEquivalent(similarity6, 100, percentageToDeemEquivalent_Exactly))
+					return 6;
+				float similarity7 = combinationOfCF.percentSimilarToOtherFigure(fig7);
+				if(areTheseNumbersEquivalent(similarity7, 100, percentageToDeemEquivalent_Exactly))
+					return 7;
+				float similarity8 = combinationOfCF.percentSimilarToOtherFigure(fig8);
+				if(areTheseNumbersEquivalent(similarity8, 100, percentageToDeemEquivalent))
+					return 8;			
+			}
+		}
+		
+		return answer;
+	}
+	
 	public int isItLikeBasicE05() {
 		int answer = -1;
 		
 		AgentVisualFigure combinationOfAD = new AgentVisualFigure(figA, figD, combinationMethod.XOR);
 		float similarityG = combinationOfAD.percentSimilarToOtherFigure(figG);
-		if(areTheseNumbersEquivalent(similarityG, 100, percentageToDeemEquivalent)) {
+		if(areTheseNumbersEquivalent(similarityG, 100, percentageToDeemEquivalent_KindOf)) { //HAD TO MAKE THIS "KIND OF" BECAUSE PROBLEM E-07'S AD->G IS NOT A TRUE XOR
 			//THE XOR OF A AND D EQUALS G
 			AgentVisualFigure combinationOfBE = new AgentVisualFigure(figB, figE, combinationMethod.XOR);
 			float similarityH = combinationOfBE.percentSimilarToOtherFigure(figH);
