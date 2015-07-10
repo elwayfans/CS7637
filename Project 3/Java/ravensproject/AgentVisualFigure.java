@@ -17,6 +17,9 @@ public class AgentVisualFigure {
 	int numberBlackPixels = 0;
 	Point centerOfBlack = new Point(0,0);
 	int numPixels = 0;
+	int numShapes = 0;
+	
+	enum combinationMethod { OR, AND, XOR }
 	
 	public AgentVisualFigure(RavensFigure figure) {
 		filename = figure.getVisual();
@@ -35,7 +38,7 @@ public class AgentVisualFigure {
 	/*
 	 * COMBINES TWO FIGURES INTO A NEW FIGURE. ALL BLACK PIXELS IN DAD OR MOM ARE COUNTED AS BLACK IN THIS NEW FIGURE
 	 */
-	public AgentVisualFigure(AgentVisualFigure dad, AgentVisualFigure mom) {
+	public AgentVisualFigure(AgentVisualFigure dad, AgentVisualFigure mom, combinationMethod method) {
 
 		
 		image = new BufferedImage(Math.max(dad.image.getWidth(), mom.image.getWidth()), 
@@ -44,12 +47,27 @@ public class AgentVisualFigure {
 		  for(int x = 0; x < image.getWidth(); ++x) {
 			  for(int y = 0; y < image.getHeight(); ++y) {
 			
-				  if(dad.image.getWidth() > x && dad.image.getHeight() > x && !dad.isPixelWhite(x, y))
-					  image.setRGB(x, y, new Color(0,0,0).getRGB());
-				  else if(mom.image.getWidth() > x && mom.image.getHeight() > x && !mom.isPixelWhite(x, y))
-					  image.setRGB(x, y, new Color(0,0,0).getRGB());
-				  else
-					  image.setRGB(x, y, new Color(255,255,255).getRGB());
+				  if(method == combinationMethod.OR) {
+					  if(dad.image.getWidth() > x && dad.image.getHeight() > x && !dad.isPixelWhite(x, y))
+						  image.setRGB(x, y, new Color(0,0,0).getRGB());
+					  else if(mom.image.getWidth() > x && mom.image.getHeight() > x && !mom.isPixelWhite(x, y))
+						  image.setRGB(x, y, new Color(0,0,0).getRGB());
+					  else
+						  image.setRGB(x, y, new Color(255,255,255).getRGB());
+				  }
+				  else if(method == combinationMethod.XOR) {
+					  boolean dadsBlack = false;
+					  boolean momsBlack = false;
+					  if(dad.image.getWidth() > x && dad.image.getHeight() > x && !dad.isPixelWhite(x, y))
+						  dadsBlack = true;
+					  if(mom.image.getWidth() > x && mom.image.getHeight() > x && !mom.isPixelWhite(x, y))
+						  momsBlack = true;
+					  
+					  if((dadsBlack && !momsBlack)  || (!dadsBlack && momsBlack))
+						  image.setRGB(x, y, new Color(0,0,0).getRGB());
+					  else
+						  image.setRGB(x, y, new Color(255,255,255).getRGB());
+				  }
 			  }
 		  }
 		
@@ -58,6 +76,8 @@ public class AgentVisualFigure {
 	}
 	
     private void getImageData() {
+    	
+    	ensureBlackAndWhiteOnly();
     	
     	int numWhite = 0;
     	int numBlack = 0;
@@ -88,6 +108,96 @@ public class AgentVisualFigure {
 		  percentBlack = (float)(numBlack * 100) / (float)(numBlack + numWhite);
 		  centerOfBlack = new Point(blackXSum / numBlack, blackYSum / numBlack);
 		  
+		  //countShapes();
+		  //ensureBlackAndWhiteOnly();
+    }
+    
+    public void countShapes() {
+    	for(int x = 0; x < image.getWidth(); ++x) {
+    		for(int y = 0; y < image.getHeight(); ++y) {
+    			
+    			if(image.getRGB(x,  y) == new Color(0,0,0).getRGB()) {
+    				traceNewShape(x, y);
+    			}
+    			
+    		}
+    	}
+    }
+    
+    public void traceNewShape(int x, int y) {
+    	++numShapes;
+    	
+    	setPixelAndPeersToNearBlack(x, y);
+    }
+    
+    public void setPixelAndPeersToNearBlack(int x, int y) {
+    	image.setRGB(x,  y,  new Color(50,50,50).getRGB());
+    	
+    	//TOP LEFT PIXEL
+    	Point point = new Point(x-1, y-1);
+    	if(isPointValidCoordinate(point) && image.getRGB((int)point.getX(), (int)point.getY()) == new Color(0,0,0).getRGB())
+    		setPixelAndPeersToNearBlack((int)point.getX(), (int)point.getY());
+
+    	//TOP MIDDLE PIXEL
+    	point = new Point(x, y-1);
+    	if(isPointValidCoordinate(point) && image.getRGB((int)point.getX(), (int)point.getY()) == new Color(0,0,0).getRGB())
+    		setPixelAndPeersToNearBlack((int)point.getX(), (int)point.getY());
+
+    	//TOP RIGHT PIXEL
+    	point = new Point(x+1, y-1);
+    	if(isPointValidCoordinate(point) && image.getRGB((int)point.getX(), (int)point.getY()) == new Color(0,0,0).getRGB())
+    		setPixelAndPeersToNearBlack((int)point.getX(), (int)point.getY());
+
+    	//LEFT PIXEL
+    	point = new Point(x-1, y);
+    	if(isPointValidCoordinate(point) && image.getRGB((int)point.getX(), (int)point.getY()) == new Color(0,0,0).getRGB())
+    		setPixelAndPeersToNearBlack((int)point.getX(), (int)point.getY());
+
+    	//RIGHT PIXEL
+    	point = new Point(x+1, y);
+    	if(isPointValidCoordinate(point) && image.getRGB((int)point.getX(), (int)point.getY()) == new Color(0,0,0).getRGB())
+    		setPixelAndPeersToNearBlack((int)point.getX(), (int)point.getY());
+
+    	//BOTTOM LEFT PIXEL
+    	point = new Point(x-1, y+1);
+    	if(isPointValidCoordinate(point) && image.getRGB((int)point.getX(), (int)point.getY()) == new Color(0,0,0).getRGB())
+    		setPixelAndPeersToNearBlack((int)point.getX(), (int)point.getY());
+
+    	//BOTTOM MIDDLE PIXEL
+    	point = new Point(x, y+1);
+    	if(isPointValidCoordinate(point) && image.getRGB((int)point.getX(), (int)point.getY()) == new Color(0,0,0).getRGB())
+    		setPixelAndPeersToNearBlack((int)point.getX(), (int)point.getY());
+
+    	//BOTTOM RIGHT PIXEL
+    	point = new Point(x+1, y+1);
+    	if(isPointValidCoordinate(point) && image.getRGB((int)point.getX(), (int)point.getY()) == new Color(0,0,0).getRGB())
+    		setPixelAndPeersToNearBlack((int)point.getX(), (int)point.getY());
+
+    }
+    
+    public boolean isPointValidCoordinate(Point point) {
+    	if(point.getX() < 0)
+    		return false;
+    	if(point.getX() >= image.getWidth())
+    		return false;
+    	if(point.getY() < 0)
+    		return false;
+    	if(point.getY() >= image.getHeight())
+    		return false;
+    	
+    	
+    	return true;
+    }
+    
+    public void ensureBlackAndWhiteOnly() {
+    	for(int x = 0; x < image.getWidth(); ++x) {
+    		for(int y = 0; y < image.getHeight(); ++y) {
+    			if(isPixelWhite(x, y))
+    				image.setRGB(x,  y, new Color(255,255,255).getRGB());
+    			else
+    				image.setRGB(x,  y, new Color(0,0,0).getRGB());
+    		}    		
+    	}
     }
 
     public boolean isPixelWhite(int x, int y) {

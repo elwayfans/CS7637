@@ -1,5 +1,7 @@
 package ravensproject;
 
+import ravensproject.AgentVisualFigure.combinationMethod;
+
 public class AgentVisualProblem {
 
 	AgentVisualFigure figA;    	
@@ -19,7 +21,9 @@ public class AgentVisualProblem {
 	AgentVisualFigure fig7;  	
 	AgentVisualFigure fig8;
 	
-	int percentageToDeemEquivalent = 3;
+	float percentageToDeemEquivalent = 3;
+	float percentageToDeemEquivalent_Exactly = 1.5f;
+	float percentageToDeemEquivalent_KindOf = 6;
 
 	public AgentVisualProblem(RavensProblem problem) {
 		
@@ -124,35 +128,174 @@ public class AgentVisualProblem {
 		return answer;
 	}
 	
+	public int isItLikeBasicE06() {
+		int answer = -1;
+		
+		AgentVisualFigure combinationOfAG = new AgentVisualFigure(figA, figG, combinationMethod.OR);
+		float similarityD = combinationOfAG.percentSimilarToOtherFigure(figD);
+		if(areTheseNumbersEquivalent(similarityD, 100, percentageToDeemEquivalent)) {
+			//THE OR OF A AND G EQUALS D
+			AgentVisualFigure combinationOfBH = new AgentVisualFigure(figB, figH, combinationMethod.OR);
+			float similarityE = combinationOfBH.percentSimilarToOtherFigure(figE);
+			if(areTheseNumbersEquivalent(similarityE, 100, percentageToDeemEquivalent)) {
+				//THE OR OF B AND H EQUALS E
+				
+				//REMOVE ANY ANSWERS WHICH ARE THE SAME AS A-H
+				boolean answer1 = true;
+				boolean answer2 = true;
+				boolean answer3 = true;
+				boolean answer4 = true;
+				boolean answer5 = true;
+				boolean answer6 = true;
+				boolean answer7 = true;
+				boolean answer8 = true;
+				
+				if(isThisAnswerTheSameAsAnyNonAnswer(fig1, percentageToDeemEquivalent_Exactly) > -1)
+					answer1 = false;
+				if(isThisAnswerTheSameAsAnyNonAnswer(fig2, percentageToDeemEquivalent_Exactly) > -1)
+					answer2 = false;
+				if(isThisAnswerTheSameAsAnyNonAnswer(fig3, percentageToDeemEquivalent_Exactly) > -1)
+					answer3 = false;
+				if(isThisAnswerTheSameAsAnyNonAnswer(fig4, percentageToDeemEquivalent_Exactly) > -1)
+					answer4 = false;
+				if(isThisAnswerTheSameAsAnyNonAnswer(fig5, percentageToDeemEquivalent_Exactly) > -1)
+					answer5 = false;
+				if(isThisAnswerTheSameAsAnyNonAnswer(fig6, percentageToDeemEquivalent_Exactly) > -1)
+					answer6 = false;
+				if(isThisAnswerTheSameAsAnyNonAnswer(fig7, percentageToDeemEquivalent_Exactly) > -1)
+					answer7 = false;
+				if(isThisAnswerTheSameAsAnyNonAnswer(fig8, percentageToDeemEquivalent_Exactly) > -1)
+					answer8 = false;
+				
+
+				if(answer1) {
+					AgentVisualFigure combinationOf1C = new AgentVisualFigure(fig1, figC, combinationMethod.OR);
+					float similarityF = combinationOf1C.percentSimilarToOtherFigure(figF);
+					if(areTheseNumbersEquivalent(similarityF, 100, percentageToDeemEquivalent))
+						return 1;
+				}
+				if(answer2) {
+					AgentVisualFigure combinationOf2C = new AgentVisualFigure(fig2, figC, combinationMethod.OR);
+					float similarityF = combinationOf2C.percentSimilarToOtherFigure(figF);
+					if(areTheseNumbersEquivalent(similarityF, 100, percentageToDeemEquivalent))
+						return 2;
+				}
+				if(answer3) {
+					AgentVisualFigure combinationOf3C = new AgentVisualFigure(fig3, figC, combinationMethod.OR);
+					float similarityF = combinationOf3C.percentSimilarToOtherFigure(figF);
+					if(areTheseNumbersEquivalent(similarityF, 100, percentageToDeemEquivalent))
+						return 3;
+				}
+				if(answer4) {
+					AgentVisualFigure combinationOf4C = new AgentVisualFigure(fig4, figC, combinationMethod.OR);
+					float similarityF = combinationOf4C.percentSimilarToOtherFigure(figF);
+					if(areTheseNumbersEquivalent(similarityF, 100, percentageToDeemEquivalent))
+						return 4;
+				}
+				if(answer5) {
+					AgentVisualFigure combinationOf5C = new AgentVisualFigure(fig5, figC, combinationMethod.OR);
+					float similarityF = combinationOf5C.percentSimilarToOtherFigure(figF);
+					if(areTheseNumbersEquivalent(similarityF, 100, percentageToDeemEquivalent))
+						return 5;
+				}
+				if(answer6) {
+					AgentVisualFigure combinationOf6C = new AgentVisualFigure(fig6, figC, combinationMethod.OR);
+					float similarityF = combinationOf6C.percentSimilarToOtherFigure(figF);
+					if(areTheseNumbersEquivalent(similarityF, 100, percentageToDeemEquivalent))
+						return 6;
+				}
+				if(answer7) {
+					AgentVisualFigure combinationOf7C = new AgentVisualFigure(fig7, figC, combinationMethod.OR);
+					float similarityF = combinationOf7C.percentSimilarToOtherFigure(figF);
+					if(areTheseNumbersEquivalent(similarityF, 100, percentageToDeemEquivalent))
+						return 7;
+				}
+				if(answer8) {
+					AgentVisualFigure combinationOf8C = new AgentVisualFigure(fig8, figC, combinationMethod.OR);
+					float similarityF = combinationOf8C.percentSimilarToOtherFigure(figF);
+					if(areTheseNumbersEquivalent(similarityF, 100, percentageToDeemEquivalent))
+						return 8;
+				}
+			}		
+		}		
+		
+		return answer;
+	}
+		
+	public int isItLikeBasicE05() {
+		int answer = -1;
+		
+		AgentVisualFigure combinationOfAD = new AgentVisualFigure(figA, figD, combinationMethod.XOR);
+		float similarityG = combinationOfAD.percentSimilarToOtherFigure(figG);
+		if(areTheseNumbersEquivalent(similarityG, 100, percentageToDeemEquivalent)) {
+			//THE XOR OF A AND D EQUALS G
+			AgentVisualFigure combinationOfBE = new AgentVisualFigure(figB, figE, combinationMethod.XOR);
+			float similarityH = combinationOfBE.percentSimilarToOtherFigure(figH);
+			if(areTheseNumbersEquivalent(similarityH, 100, percentageToDeemEquivalent)) {
+				//THE XOR OF B AND E EQUALS H
+
+				AgentVisualFigure combinationOfCF = new AgentVisualFigure(figC, figF, combinationMethod.XOR);
+				float similarity1 = combinationOfCF.percentSimilarToOtherFigure(fig1);
+				if(areTheseNumbersEquivalent(similarity1, 100, percentageToDeemEquivalent))
+					return 1;
+				float similarity2 = combinationOfCF.percentSimilarToOtherFigure(fig2);
+				if(areTheseNumbersEquivalent(similarity2, 100, percentageToDeemEquivalent))
+					return 2;
+				float similarity3 = combinationOfCF.percentSimilarToOtherFigure(fig3);
+				if(areTheseNumbersEquivalent(similarity3, 100, percentageToDeemEquivalent))
+					return 3;
+				float similarity4 = combinationOfCF.percentSimilarToOtherFigure(fig4);
+				if(areTheseNumbersEquivalent(similarity4, 100, percentageToDeemEquivalent))
+					return 4;
+				float similarity5 = combinationOfCF.percentSimilarToOtherFigure(fig5);
+				if(areTheseNumbersEquivalent(similarity5, 100, percentageToDeemEquivalent))
+					return 5;
+				float similarity6 = combinationOfCF.percentSimilarToOtherFigure(fig6);
+				if(areTheseNumbersEquivalent(similarity6, 100, percentageToDeemEquivalent))
+					return 6;
+				float similarity7 = combinationOfCF.percentSimilarToOtherFigure(fig7);
+				if(areTheseNumbersEquivalent(similarity7, 100, percentageToDeemEquivalent))
+					return 7;
+				float similarity8 = combinationOfCF.percentSimilarToOtherFigure(fig8);
+				if(areTheseNumbersEquivalent(similarity8, 100, percentageToDeemEquivalent))
+					return 8;
+					
+
+			}
+		}
+		
+		return answer;
+	}
+	
 	public int isItLikeBasicE03() {
 		int answer = -1;
 		
-		AgentVisualFigure combinationOfAB = new AgentVisualFigure(figA, figB);
+		AgentVisualFigure combinationOfAB = new AgentVisualFigure(figA, figB, combinationMethod.OR);
 		float similarityC = combinationOfAB.percentSimilarToOtherFigure(figC);
 		
 		if(areTheseNumbersEquivalent(similarityC, 100, percentageToDeemEquivalent)) {
 			//COMBO OF A AND B IS EQUIVALENT TO C
 			
-			AgentVisualFigure combinationOfDE = new AgentVisualFigure(figD, figE);
+			AgentVisualFigure combinationOfDE = new AgentVisualFigure(figD, figE, combinationMethod.OR);
 			float similarityF = combinationOfDE.percentSimilarToOtherFigure(figF);
 			
 			if(areTheseNumbersEquivalent(similarityF, 100, percentageToDeemEquivalent)) {
 				//COMBO OF D AND E IS EQUIVALENT TO F
 
-				AgentVisualFigure combinationOfAD = new AgentVisualFigure(figA, figD);
+				AgentVisualFigure combinationOfAD = new AgentVisualFigure(figA, figD, combinationMethod.OR);
 				float similarityG = combinationOfAD.percentSimilarToOtherFigure(figG);
 				
 				if(areTheseNumbersEquivalent(similarityG, 100, percentageToDeemEquivalent)) {
 					//COMBO OF A AND D IS EQUIVALENT TO G
 
-					AgentVisualFigure combinationOfBE = new AgentVisualFigure(figB, figE);
+					AgentVisualFigure combinationOfBE = new AgentVisualFigure(figB, figE, combinationMethod.OR);
 					float similarityH = combinationOfBE.percentSimilarToOtherFigure(figH);
 					
 					if(areTheseNumbersEquivalent(similarityH, 100, percentageToDeemEquivalent)) {
 						//COMBO OF B AND E IS EQUIVALENT TO H
 						
-						AgentVisualFigure combinationOfCF = new AgentVisualFigure(figC, figF);
-						AgentVisualFigure combinationOfGH = new AgentVisualFigure(figG, figH);
+						AgentVisualFigure combinationOfCF = new AgentVisualFigure(figC, figF, combinationMethod.OR);
+						AgentVisualFigure combinationOfGH = new AgentVisualFigure(figG, figH, combinationMethod.OR);
 						
 						float combinedSimilarity1 = combinationOfCF.percentSimilarToOtherFigure(fig1);
 						combinedSimilarity1 += combinationOfGH.percentSimilarToOtherFigure(fig1);
@@ -323,21 +466,21 @@ public class AgentVisualProblem {
 
 			
 			//NOW ELIMINATE ANYTHING THAT IS JUST LIKE ANYTHING A-H
-			if(answer1 && isThisAnswerTheSameAsAnyNonAnswer(fig1) > -1)
+			if(answer1 && isThisAnswerTheSameAsAnyNonAnswer(fig1, percentageToDeemEquivalent_Exactly) > -1)
 					answer1 = false;
-			if(answer2 && isThisAnswerTheSameAsAnyNonAnswer(fig2) > -1)
+			if(answer2 && isThisAnswerTheSameAsAnyNonAnswer(fig2, percentageToDeemEquivalent_Exactly) > -1)
 					answer2 = false;
-			if(answer3 && isThisAnswerTheSameAsAnyNonAnswer(fig3) > -1)
+			if(answer3 && isThisAnswerTheSameAsAnyNonAnswer(fig3, percentageToDeemEquivalent_Exactly) > -1)
 					answer3 = false;
-			if(answer4 && isThisAnswerTheSameAsAnyNonAnswer(fig4) > -1)
+			if(answer4 && isThisAnswerTheSameAsAnyNonAnswer(fig4, percentageToDeemEquivalent_Exactly) > -1)
 					answer4 = false;
-			if(answer5 && isThisAnswerTheSameAsAnyNonAnswer(fig5) > -1)
+			if(answer5 && isThisAnswerTheSameAsAnyNonAnswer(fig5, percentageToDeemEquivalent_Exactly) > -1)
 					answer5 = false;
-			if(answer6 && isThisAnswerTheSameAsAnyNonAnswer(fig6) > -1)
+			if(answer6 && isThisAnswerTheSameAsAnyNonAnswer(fig6, percentageToDeemEquivalent_Exactly) > -1)
 					answer6 = false;
-			if(answer7 && isThisAnswerTheSameAsAnyNonAnswer(fig7) > -1)
+			if(answer7 && isThisAnswerTheSameAsAnyNonAnswer(fig7, percentageToDeemEquivalent_Exactly) > -1)
 					answer7 = false;
-			if(answer8 && isThisAnswerTheSameAsAnyNonAnswer(fig8) > -1)
+			if(answer8 && isThisAnswerTheSameAsAnyNonAnswer(fig8, percentageToDeemEquivalent_Exactly) > -1)
 					answer8 = false;
 			
 
@@ -381,7 +524,7 @@ public class AgentVisualProblem {
 			
 			
 			//NOW SEE IF THE NUMBER OF THE BEST ANSWER IS CLOSE ENOUGH TO THE DIFF BETWEEN A AND E TO COUNT
-			if(areTheseNumbersEquivalent(bestVal, similarityAE * 2, percentageToDeemEquivalent))
+			if(areTheseNumbersEquivalent(bestVal, similarityAE * 2, percentageToDeemEquivalent_KindOf))
 				return bestIndex;
 			
 		}
@@ -390,29 +533,29 @@ public class AgentVisualProblem {
 		return answer;
 	}
 	
-	public int isThisAnswerTheSameAsAnyNonAnswer(AgentVisualFigure answer) {
+	public int isThisAnswerTheSameAsAnyNonAnswer(AgentVisualFigure answer, float percentage) {
 		
-		if(areTheseNumbersEquivalent(answer.percentSimilarToOtherFigure(figA),  100,  percentageToDeemEquivalent))
+		if(areTheseNumbersEquivalent(answer.percentSimilarToOtherFigure(figA),  100,  percentage))
 			return 1; 
-		if(areTheseNumbersEquivalent(answer.percentSimilarToOtherFigure(figB),  100,  percentageToDeemEquivalent))
+		if(areTheseNumbersEquivalent(answer.percentSimilarToOtherFigure(figB),  100,  percentage))
 			return 2; 
-		if(areTheseNumbersEquivalent(answer.percentSimilarToOtherFigure(figC),  100,  percentageToDeemEquivalent))
+		if(areTheseNumbersEquivalent(answer.percentSimilarToOtherFigure(figC),  100,  percentage))
 			return 3; 
-		if(areTheseNumbersEquivalent(answer.percentSimilarToOtherFigure(figD),  100,  percentageToDeemEquivalent))
+		if(areTheseNumbersEquivalent(answer.percentSimilarToOtherFigure(figD),  100,  percentage))
 			return 4; 
-		if(areTheseNumbersEquivalent(answer.percentSimilarToOtherFigure(figE),  100,  percentageToDeemEquivalent))
+		if(areTheseNumbersEquivalent(answer.percentSimilarToOtherFigure(figE),  100,  percentage))
 			return 5; 
-		if(areTheseNumbersEquivalent(answer.percentSimilarToOtherFigure(figF),  100,  percentageToDeemEquivalent))
+		if(areTheseNumbersEquivalent(answer.percentSimilarToOtherFigure(figF),  100,  percentage))
 			return 6; 
-		if(areTheseNumbersEquivalent(answer.percentSimilarToOtherFigure(figG),  100,  percentageToDeemEquivalent))
+		if(areTheseNumbersEquivalent(answer.percentSimilarToOtherFigure(figG),  100,  percentage))
 			return 7; 
-		if(areTheseNumbersEquivalent(answer.percentSimilarToOtherFigure(figH),  100,  percentageToDeemEquivalent))
+		if(areTheseNumbersEquivalent(answer.percentSimilarToOtherFigure(figH),  100,  percentage))
 			return 8; 
 		
 		return -1;
 	}
 	
-	public boolean areTheseNumbersEquivalent(float a, float b, int percentage) {
+	public boolean areTheseNumbersEquivalent(float a, float b, float percentage) {
 		float percent = (float)percentage / 100;
 		
 		float min = (float)b * (1 - percent);
