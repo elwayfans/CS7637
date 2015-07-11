@@ -24,6 +24,7 @@ public class AgentVisualProblem {
 	float percentageToDeemEquivalent = 3;
 	float percentageToDeemEquivalent_Exactly = 1.5f;
 	float percentageToDeemEquivalent_KindOf = 6;
+	float percentageToDeemEquivalent_PreciselyExactly = .5f;
 
 	public AgentVisualProblem(RavensProblem problem) {
 		
@@ -108,83 +109,143 @@ public class AgentVisualProblem {
 					if(isThisAnswerTheSameAsAnyNonAnswer(fig8, percentageToDeemEquivalent_Exactly) > -1)
 						answer8 = false;
 
-					int indexChoice = -1;
-					if(answer1 && fig1.numShapes == figE.numShapes) {
-						if(indexChoice == -1)
-							indexChoice = 1;
-						else //MULTIPLE ANSWERS - NOT SURE HOW TO DECIDE
-							return -1;
-					}
-					else
+					if(answer1 && fig1.numShapes != figE.numShapes) 
 						answer1 = false;
 					
-					if(answer2 && fig2.numShapes == figE.numShapes) {
-						if(indexChoice == -1)
-							indexChoice = 2;
-						else //MULTIPLE ANSWERS - NOT SURE HOW TO DECIDE
-							return -1;
-					}
-					else
+					if(answer2 && fig2.numShapes != figE.numShapes) 
 						answer2 = false;
 
-					if(answer3 && fig3.numShapes == figE.numShapes) {
-						if(indexChoice == -1)
-							indexChoice = 3;
-						else //MULTIPLE ANSWERS - NOT SURE HOW TO DECIDE
-							return -1;
-					}
-					else
+					if(answer3 && fig3.numShapes != figE.numShapes) 
 						answer3 = false;
 
-					if(answer4 && fig4.numShapes == figE.numShapes) {
-						if(indexChoice == -1)
-							indexChoice = 4;
-						else //MULTIPLE ANSWERS - NOT SURE HOW TO DECIDE
-							return -1;
-					}
-					else
+					if(answer4 && fig4.numShapes != figE.numShapes) 
 						answer4 = false;
 
-					if(answer5 && fig5.numShapes == figE.numShapes) {
-						if(indexChoice == -1)
-							indexChoice = 5;
-						else //MULTIPLE ANSWERS - NOT SURE HOW TO DECIDE
-							return -1;
-					}
-					else
+					if(answer5 && fig5.numShapes != figE.numShapes) 
 						answer5 = false;
 
-					if(answer6 && fig6.numShapes == figE.numShapes) {
-						if(indexChoice == -1)
-							indexChoice = 6;
-						else //MULTIPLE ANSWERS - NOT SURE HOW TO DECIDE
-							return -1;
-					}
-					else
+					if(answer6 && fig6.numShapes != figE.numShapes) 
 						answer6 = false;
 
-					if(answer7 && fig7.numShapes == figE.numShapes) {
-						if(indexChoice == -1)
-							indexChoice = 7;
-						else //MULTIPLE ANSWERS - NOT SURE HOW TO DECIDE
-							return -1;
-					}
-					else
+					if(answer7 && fig7.numShapes != figE.numShapes) 
 						answer7 = false;
 
-					if(answer8 && fig8.numShapes == figE.numShapes) {
-						if(indexChoice == -1)
-							indexChoice = 8;
-						else //MULTIPLE ANSWERS - NOT SURE HOW TO DECIDE
-							return -1;
-					}
-					else
+					if(answer8 && fig8.numShapes != figE.numShapes) 
 						answer8 = false;
 
-					
+					//IF A AND E ARE NOT THE SAME, THE ANSWER SHOULD NOT BE THE SAME EITHER
+					if(!areTheseNumbersEquivalent(figA.numberBlackPixels,  figE.numberBlackPixels, percentageToDeemEquivalent_Exactly)) {
+						//for any answer left, remove them if they are the same as A or E
+						if(answer1) {
+							if(areTheseNumbersEquivalent(figA.numberBlackPixels,  fig1.numberBlackPixels, percentageToDeemEquivalent_Exactly) ||
+									areTheseNumbersEquivalent(figE.numberBlackPixels,  fig1.numberBlackPixels, percentageToDeemEquivalent_Exactly))
+								answer1 = false;
+						}
+						if(answer2) {
+							if(areTheseNumbersEquivalent(figA.numberBlackPixels,  fig2.numberBlackPixels, percentageToDeemEquivalent_Exactly) ||
+									areTheseNumbersEquivalent(figE.numberBlackPixels,  fig2.numberBlackPixels, percentageToDeemEquivalent_Exactly))
+								answer2 = false;
+						}
+						if(answer3) {
+							if(areTheseNumbersEquivalent(figA.numberBlackPixels,  fig3.numberBlackPixels, percentageToDeemEquivalent_Exactly) ||
+									areTheseNumbersEquivalent(figE.numberBlackPixels,  fig3.numberBlackPixels, percentageToDeemEquivalent_Exactly))
+								answer3 = false;
+						}
+						if(answer4) {
+							if(areTheseNumbersEquivalent(figA.numberBlackPixels,  fig4.numberBlackPixels, percentageToDeemEquivalent_Exactly) ||
+									areTheseNumbersEquivalent(figE.numberBlackPixels,  fig4.numberBlackPixels, percentageToDeemEquivalent_Exactly))
+								answer4 = false;
+						}
+						if(answer5) {
+							if(areTheseNumbersEquivalent(figA.numberBlackPixels,  fig5.numberBlackPixels, percentageToDeemEquivalent_Exactly) ||
+									areTheseNumbersEquivalent(figE.numberBlackPixels,  fig5.numberBlackPixels, percentageToDeemEquivalent_Exactly))
+								answer5 = false;
+						}
+						if(answer6) {
+							if(areTheseNumbersEquivalent(figA.numberBlackPixels,  fig6.numberBlackPixels, percentageToDeemEquivalent_Exactly) ||
+									areTheseNumbersEquivalent(figE.numberBlackPixels,  fig6.numberBlackPixels, percentageToDeemEquivalent_Exactly))
+								answer6 = false;
+						}
+						if(answer7) {
+							if(areTheseNumbersEquivalent(figA.numberBlackPixels,  fig7.numberBlackPixels, percentageToDeemEquivalent_Exactly) ||
+									areTheseNumbersEquivalent(figE.numberBlackPixels,  fig7.numberBlackPixels, percentageToDeemEquivalent_Exactly))
+								answer7 = false;
+						}
+						if(answer8) {
+							if(areTheseNumbersEquivalent(figA.numberBlackPixels,  fig8.numberBlackPixels, percentageToDeemEquivalent_Exactly) ||
+									areTheseNumbersEquivalent(figE.numberBlackPixels,  fig8.numberBlackPixels, percentageToDeemEquivalent_Exactly))
+								answer8 = false;
+						}
+						
+						//if any answer still exists, it's right
+						if(answer1)
+							return 1;
+						if(answer2)
+							return 2;
+						if(answer3)
+							return 3;
+						if(answer4)
+							return 4;
+						if(answer5)
+							return 5;
+						if(answer6)
+							return 6;
+						if(answer7)
+							return 7;
+						if(answer8)
+							return 8;
+					}
+
+
 				}
 			}
 		}
+		
+		return answer;
+	}
+	
+	public int isItAPixelSum() { //LIKE BASIC E-04
+		int answer = -1;
+		
+		if(areTheseNumbersEquivalent(figD.numberBlackPixels + figG.numberBlackPixels,  figA.numberBlackPixels, percentageToDeemEquivalent_Exactly)) {
+			//G+D=A
+			if(areTheseNumbersEquivalent(figE.numberBlackPixels + figH.numberBlackPixels,  figB.numberBlackPixels, percentageToDeemEquivalent_Exactly)) {
+				//E+H=B
+				if(areTheseNumbersEquivalent(figB.numberBlackPixels + figC.numberBlackPixels,  figA.numberBlackPixels, percentageToDeemEquivalent_Exactly)) {
+					//B+C=A
+					if(areTheseNumbersEquivalent(figF.numberBlackPixels + figE.numberBlackPixels,  figD.numberBlackPixels, percentageToDeemEquivalent_Exactly)) {
+						//F+E=D
+
+						//IF AN ANSWER+F=C AND +H=G, THAT'S IT!
+						if(areTheseNumbersEquivalent(fig1.numberBlackPixels + figF.numberBlackPixels,  figC.numberBlackPixels, percentageToDeemEquivalent_Exactly) &&
+								areTheseNumbersEquivalent(fig1.numberBlackPixels + figH.numberBlackPixels,  figG.numberBlackPixels, percentageToDeemEquivalent_Exactly))
+							return 1;
+						if(areTheseNumbersEquivalent(fig2.numberBlackPixels + figF.numberBlackPixels,  figC.numberBlackPixels, percentageToDeemEquivalent_Exactly) &&
+								areTheseNumbersEquivalent(fig2.numberBlackPixels + figH.numberBlackPixels,  figG.numberBlackPixels, percentageToDeemEquivalent_Exactly))
+							return 2;
+						if(areTheseNumbersEquivalent(fig3.numberBlackPixels + figF.numberBlackPixels,  figC.numberBlackPixels, percentageToDeemEquivalent_Exactly) &&
+								areTheseNumbersEquivalent(fig3.numberBlackPixels + figH.numberBlackPixels,  figG.numberBlackPixels, percentageToDeemEquivalent_Exactly))
+							return 3;
+						if(areTheseNumbersEquivalent(fig4.numberBlackPixels + figF.numberBlackPixels,  figC.numberBlackPixels, percentageToDeemEquivalent_Exactly) &&
+								areTheseNumbersEquivalent(fig4.numberBlackPixels + figH.numberBlackPixels,  figG.numberBlackPixels, percentageToDeemEquivalent_Exactly))
+							return 4;
+						if(areTheseNumbersEquivalent(fig5.numberBlackPixels + figF.numberBlackPixels,  figC.numberBlackPixels, percentageToDeemEquivalent_Exactly) &&
+								areTheseNumbersEquivalent(fig5.numberBlackPixels + figH.numberBlackPixels,  figG.numberBlackPixels, percentageToDeemEquivalent_Exactly))
+							return 5;
+						if(areTheseNumbersEquivalent(fig6.numberBlackPixels + figF.numberBlackPixels,  figC.numberBlackPixels, percentageToDeemEquivalent_Exactly) &&
+								areTheseNumbersEquivalent(fig6.numberBlackPixels + figH.numberBlackPixels,  figG.numberBlackPixels, percentageToDeemEquivalent_Exactly))
+							return 6;
+						if(areTheseNumbersEquivalent(fig7.numberBlackPixels + figF.numberBlackPixels,  figC.numberBlackPixels, percentageToDeemEquivalent_Exactly) &&
+								areTheseNumbersEquivalent(fig7.numberBlackPixels + figH.numberBlackPixels,  figG.numberBlackPixels, percentageToDeemEquivalent_Exactly))
+							return 7;
+						if(areTheseNumbersEquivalent(fig8.numberBlackPixels + figF.numberBlackPixels,  figC.numberBlackPixels, percentageToDeemEquivalent_Exactly) &&
+								areTheseNumbersEquivalent(fig8.numberBlackPixels + figH.numberBlackPixels,  figG.numberBlackPixels, percentageToDeemEquivalent_Exactly))
+							return 8;
+					}
+				}
+			}
+		}
+			
 		
 		return answer;
 	}

@@ -172,8 +172,22 @@ public class AgentVisualFigure {
     		Point newPoint = null;
     		
 
+        	//TOP LEFT PIXEL
+        	newPoint = new Point((int)currentPoint.getX()-1, (int)currentPoint.getY()-1);
+        	if(isPixelBlack_ForShapeTracing(newPoint)) {
+        		if(!pointsList.contains(newPoint))
+        			pointsList.add(newPoint);
+        	}
+        		
         	//TOP MIDDLE PIXEL
         	newPoint = new Point((int)currentPoint.getX(), (int)currentPoint.getY()-1);
+        	if(isPixelBlack_ForShapeTracing(newPoint)) {
+        		if(!pointsList.contains(newPoint))
+        			pointsList.add(newPoint);
+        	}
+        		
+        	//TOP RIGHT PIXEL
+        	newPoint = new Point((int)currentPoint.getX()+1, (int)currentPoint.getY()-1);
         	if(isPixelBlack_ForShapeTracing(newPoint)) {
         		if(!pointsList.contains(newPoint))
         			pointsList.add(newPoint);
@@ -193,6 +207,13 @@ public class AgentVisualFigure {
         			pointsList.add(newPoint);
         	}
     		
+        	//BOTTOM LEFT PIXEL
+        	newPoint = new Point((int)currentPoint.getX()-1, (int)currentPoint.getY()+1);
+        	if(isPixelBlack_ForShapeTracing(newPoint)) {
+        		if(!pointsList.contains(newPoint))
+        			pointsList.add(newPoint);
+        	}
+        		
         	//BOTTOM MIDDLE PIXEL
         	newPoint = new Point((int)currentPoint.getX(), (int)currentPoint.getY()+1);
         	if(isPixelBlack_ForShapeTracing(newPoint)) {
@@ -200,6 +221,13 @@ public class AgentVisualFigure {
         			pointsList.add(newPoint);
         	}
     		
+        	//BOTTOM RIGHT PIXEL
+        	newPoint = new Point((int)currentPoint.getX()+1, (int)currentPoint.getY()+1);
+        	if(isPixelBlack_ForShapeTracing(newPoint)) {
+        		if(!pointsList.contains(newPoint))
+        			pointsList.add(newPoint);
+        	}
+        		
         	pointsList.remove(0);
     	}
     }
