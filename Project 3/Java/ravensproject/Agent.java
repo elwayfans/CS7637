@@ -658,6 +658,9 @@ public class Agent {
  		answer = elProblemo.isTheOrComboOfTheFirstAndSecondEquivalentToTheThird(); //SUCH AS BASIC E-03
  		
  		if(answer == -1)
+ 			answer = elProblemo.isItAnUpsideRightSideTriangleDealio(); //SUCH AS BASIC E-12
+
+ 		if(answer == -1)
  			answer = elProblemo.isTopOfFirstAndBottomOfSecondEquivalentToThird(); //SUCH AS BASIC E-09
 
  		if(answer == -1)
@@ -684,9 +687,8 @@ public class Agent {
  		if(answer == -1)
  			answer = elProblemo.isTheORComboOfRowColumnEndsEquivalentToTheMiddle();  //SUCH AS BASIC E-06
  
-//THIS IS A BEST GUESS AT E-04
-// 		if(answer == -1)
-// 			answer = elProblemo.isItAPixelSum(); //SUCH AS BASIC E-04
+ 		if(answer == -1)
+ 			answer = elProblemo.isItAPixelSum(); //SUCH AS BASIC E-04
 
  		return answer;    	
     }

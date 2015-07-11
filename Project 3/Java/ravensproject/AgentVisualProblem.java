@@ -1,5 +1,7 @@
 package ravensproject;
 
+import java.util.ArrayList;
+
 import ravensproject.AgentVisualFigure.combinationMethod;
 
 public class AgentVisualProblem {
@@ -203,6 +205,196 @@ public class AgentVisualProblem {
 		
 		return answer;
 	}
+
+	public int isItAnUpsideRightSideTriangleDealio() { //LIKE BASIC E12
+		int answer = -1;
+		
+		if(allFiguresContainTriangles(true)) {
+			if(upsideDownRightSideUpTriangleMathWorks(figA, figD, figG)) {
+				//A+D=G
+				if(upsideDownRightSideUpTriangleMathWorks(figB, figE, figH)) {
+					//B+E=H
+					if(upsideDownRightSideUpTriangleMathWorks(figA, figB, figC)) {
+						//A+B=C
+						if(upsideDownRightSideUpTriangleMathWorks(figD, figE, figF)) {
+							//D+E=F
+							
+							//LOOKS LIKE WE GOTS OURSELF A TRIANGLE BONANZA, YA'LL!!! YEEEEHAW!!!
+							if(upsideDownRightSideUpTriangleMathWorks(figC, figF, fig1) &&
+									upsideDownRightSideUpTriangleMathWorks(figG, figH, fig1) &&
+									(fig1.numRightSideUpTriangles == 0 || fig1.numUpsideDownTriangles == 0))
+								return 1;
+							if(upsideDownRightSideUpTriangleMathWorks(figC, figF, fig2) &&
+									upsideDownRightSideUpTriangleMathWorks(figG, figH, fig2) &&
+									(fig2.numRightSideUpTriangles == 0 || fig2.numUpsideDownTriangles == 0))
+								return 2;
+							if(upsideDownRightSideUpTriangleMathWorks(figC, figF, fig3) &&
+									upsideDownRightSideUpTriangleMathWorks(figG, figH, fig3) &&
+									(fig3.numRightSideUpTriangles == 0 || fig3.numUpsideDownTriangles == 0))
+								return 3;
+							if(upsideDownRightSideUpTriangleMathWorks(figC, figF, fig4) &&
+									upsideDownRightSideUpTriangleMathWorks(figG, figH, fig4) &&
+									(fig4.numRightSideUpTriangles == 0 || fig4.numUpsideDownTriangles == 0))
+								return 4;
+							if(upsideDownRightSideUpTriangleMathWorks(figC, figF, fig5) &&
+									upsideDownRightSideUpTriangleMathWorks(figG, figH, fig5) &&
+									(fig5.numRightSideUpTriangles == 0 || fig5.numUpsideDownTriangles == 0))
+								return 5;
+							if(upsideDownRightSideUpTriangleMathWorks(figC, figF, fig6) &&
+									upsideDownRightSideUpTriangleMathWorks(figG, figH, fig6) &&
+									(fig6.numRightSideUpTriangles == 0 || fig6.numUpsideDownTriangles == 0))
+								return 6;
+							if(upsideDownRightSideUpTriangleMathWorks(figC, figF, fig7) &&
+									upsideDownRightSideUpTriangleMathWorks(figG, figH, fig7) &&
+									(fig7.numRightSideUpTriangles == 0 || fig7.numUpsideDownTriangles == 0))
+								return 7;
+							if(upsideDownRightSideUpTriangleMathWorks(figC, figF, fig8) &&
+									upsideDownRightSideUpTriangleMathWorks(figG, figH, fig8) &&
+									(fig8.numRightSideUpTriangles == 0 || fig8.numUpsideDownTriangles == 0))
+								return 8;
+						}
+					}
+				}
+			}
+		}
+		
+		return answer;
+	}
+	
+	public boolean upsideDownRightSideUpTriangleMathWorks(AgentVisualFigure firstFig, AgentVisualFigure secondFig, AgentVisualFigure thirdFig) {
+		int A = firstFig.numRightSideUpTriangles - firstFig.numUpsideDownTriangles;
+		int B = secondFig.numRightSideUpTriangles - secondFig.numUpsideDownTriangles;
+		int C = thirdFig.numRightSideUpTriangles - thirdFig.numUpsideDownTriangles;
+		
+		if(A + B == C)
+			return true;
+		
+		return false;
+	}
+	
+	public boolean allFiguresContainTriangles(boolean mustContainUpsideDownAndRightSideUp) {
+		boolean foundRightSideUp = false;
+		boolean foundUpsideDown = false;
+		
+		if(figA.numRightSideUpTriangles == 0 && figA.numUpsideDownTriangles == 0)
+			return false;
+		if(figA.numRightSideUpTriangles > 0)
+			foundRightSideUp = true;
+		if(figA.numUpsideDownTriangles > 0)
+			foundUpsideDown = true;
+		
+		if(figB.numRightSideUpTriangles == 0 && figB.numUpsideDownTriangles == 0)
+			return false;
+		if(figB.numRightSideUpTriangles > 0)
+			foundRightSideUp = true;
+		if(figB.numUpsideDownTriangles > 0)
+			foundUpsideDown = true;
+		
+		if(figC.numRightSideUpTriangles == 0 && figC.numUpsideDownTriangles == 0)
+			return false;
+		if(figC.numRightSideUpTriangles > 0)
+			foundRightSideUp = true;
+		if(figC.numUpsideDownTriangles > 0)
+			foundUpsideDown = true;
+		
+		if(figD.numRightSideUpTriangles == 0 && figD.numUpsideDownTriangles == 0)
+			return false;
+		if(figD.numRightSideUpTriangles > 0)
+			foundRightSideUp = true;
+		if(figD.numUpsideDownTriangles > 0)
+			foundUpsideDown = true;
+		
+		if(figE.numRightSideUpTriangles == 0 && figE.numUpsideDownTriangles == 0)
+			return false;
+		if(figE.numRightSideUpTriangles > 0)
+			foundRightSideUp = true;
+		if(figE.numUpsideDownTriangles > 0)
+			foundUpsideDown = true;
+		
+		if(figF.numRightSideUpTriangles == 0 && figF.numUpsideDownTriangles == 0)
+			return false;
+		if(figF.numRightSideUpTriangles > 0)
+			foundRightSideUp = true;
+		if(figF.numUpsideDownTriangles > 0)
+			foundUpsideDown = true;
+		
+		if(figG.numRightSideUpTriangles == 0 && figG.numUpsideDownTriangles == 0)
+			return false;
+		if(figG.numRightSideUpTriangles > 0)
+			foundRightSideUp = true;
+		if(figG.numUpsideDownTriangles > 0)
+			foundUpsideDown = true;
+		
+		if(figH.numRightSideUpTriangles == 0 && figH.numUpsideDownTriangles == 0)
+			return false;
+		if(figH.numRightSideUpTriangles > 0)
+			foundRightSideUp = true;
+		if(figH.numUpsideDownTriangles > 0)
+			foundUpsideDown = true;
+		
+		if(fig1.numRightSideUpTriangles == 0 && fig1.numUpsideDownTriangles == 0)
+			return false;
+		if(fig1.numRightSideUpTriangles > 0)
+			foundRightSideUp = true;
+		if(fig1.numUpsideDownTriangles > 0)
+			foundUpsideDown = true;
+		
+		if(fig2.numRightSideUpTriangles == 0 && fig2.numUpsideDownTriangles == 0)
+			return false;
+		if(fig2.numRightSideUpTriangles > 0)
+			foundRightSideUp = true;
+		if(fig2.numUpsideDownTriangles > 0)
+			foundUpsideDown = true;
+		
+		if(fig3.numRightSideUpTriangles == 0 && fig3.numUpsideDownTriangles == 0)
+			return false;
+		if(fig3.numRightSideUpTriangles > 0)
+			foundRightSideUp = true;
+		if(fig3.numUpsideDownTriangles > 0)
+			foundUpsideDown = true;
+		
+		if(fig4.numRightSideUpTriangles == 0 && fig4.numUpsideDownTriangles == 0)
+			return false;
+		if(fig4.numRightSideUpTriangles > 0)
+			foundRightSideUp = true;
+		if(fig4.numUpsideDownTriangles > 0)
+			foundUpsideDown = true;
+		
+		if(fig5.numRightSideUpTriangles == 0 && fig5.numUpsideDownTriangles == 0)
+			return false;
+		if(fig5.numRightSideUpTriangles > 0)
+			foundRightSideUp = true;
+		if(fig5.numUpsideDownTriangles > 0)
+			foundUpsideDown = true;
+		
+		if(fig6.numRightSideUpTriangles == 0 && fig6.numUpsideDownTriangles == 0)
+			return false;
+		if(fig6.numRightSideUpTriangles > 0)
+			foundRightSideUp = true;
+		if(fig6.numUpsideDownTriangles > 0)
+			foundUpsideDown = true;
+		
+		if(fig7.numRightSideUpTriangles == 0 && fig7.numUpsideDownTriangles == 0)
+			return false;
+		if(fig7.numRightSideUpTriangles > 0)
+			foundRightSideUp = true;
+		if(fig7.numUpsideDownTriangles > 0)
+			foundUpsideDown = true;
+		
+		if(fig8.numRightSideUpTriangles == 0 && fig8.numUpsideDownTriangles == 0)
+			return false;
+		if(fig8.numRightSideUpTriangles > 0)
+			foundRightSideUp = true;
+		if(fig8.numUpsideDownTriangles > 0)
+			foundUpsideDown = true;
+		
+		if(!mustContainUpsideDownAndRightSideUp || (foundRightSideUp && foundUpsideDown))
+			return true;
+		
+		return false;
+
+	}
+	
 	
 	public int isItAPixelSum() { //LIKE BASIC E-04
 		int answer = -1;
@@ -216,31 +408,51 @@ public class AgentVisualProblem {
 					if(areTheseNumbersEquivalent(figF.numberBlackPixels + figE.numberBlackPixels,  figD.numberBlackPixels, percentageToDeemEquivalent_Exactly)) {
 						//F+E=D
 
+						ArrayList<Integer> answers = new ArrayList<Integer>();
+
+						
 						//IF AN ANSWER+F=C AND +H=G, THAT'S IT!
 						if(areTheseNumbersEquivalent(fig1.numberBlackPixels + figF.numberBlackPixels,  figC.numberBlackPixels, percentageToDeemEquivalent_Exactly) &&
 								areTheseNumbersEquivalent(fig1.numberBlackPixels + figH.numberBlackPixels,  figG.numberBlackPixels, percentageToDeemEquivalent_Exactly))
-							return 1;
+							answers.add(1);
 						if(areTheseNumbersEquivalent(fig2.numberBlackPixels + figF.numberBlackPixels,  figC.numberBlackPixels, percentageToDeemEquivalent_Exactly) &&
 								areTheseNumbersEquivalent(fig2.numberBlackPixels + figH.numberBlackPixels,  figG.numberBlackPixels, percentageToDeemEquivalent_Exactly))
-							return 2;
+							answers.add(2);
 						if(areTheseNumbersEquivalent(fig3.numberBlackPixels + figF.numberBlackPixels,  figC.numberBlackPixels, percentageToDeemEquivalent_Exactly) &&
 								areTheseNumbersEquivalent(fig3.numberBlackPixels + figH.numberBlackPixels,  figG.numberBlackPixels, percentageToDeemEquivalent_Exactly))
-							return 3;
+							answers.add(3);
 						if(areTheseNumbersEquivalent(fig4.numberBlackPixels + figF.numberBlackPixels,  figC.numberBlackPixels, percentageToDeemEquivalent_Exactly) &&
 								areTheseNumbersEquivalent(fig4.numberBlackPixels + figH.numberBlackPixels,  figG.numberBlackPixels, percentageToDeemEquivalent_Exactly))
-							return 4;
+							answers.add(4);
 						if(areTheseNumbersEquivalent(fig5.numberBlackPixels + figF.numberBlackPixels,  figC.numberBlackPixels, percentageToDeemEquivalent_Exactly) &&
 								areTheseNumbersEquivalent(fig5.numberBlackPixels + figH.numberBlackPixels,  figG.numberBlackPixels, percentageToDeemEquivalent_Exactly))
-							return 5;
+							answers.add(5);
 						if(areTheseNumbersEquivalent(fig6.numberBlackPixels + figF.numberBlackPixels,  figC.numberBlackPixels, percentageToDeemEquivalent_Exactly) &&
 								areTheseNumbersEquivalent(fig6.numberBlackPixels + figH.numberBlackPixels,  figG.numberBlackPixels, percentageToDeemEquivalent_Exactly))
-							return 6;
+							answers.add(6);
 						if(areTheseNumbersEquivalent(fig7.numberBlackPixels + figF.numberBlackPixels,  figC.numberBlackPixels, percentageToDeemEquivalent_Exactly) &&
 								areTheseNumbersEquivalent(fig7.numberBlackPixels + figH.numberBlackPixels,  figG.numberBlackPixels, percentageToDeemEquivalent_Exactly))
-							return 7;
+							answers.add(7);
 						if(areTheseNumbersEquivalent(fig8.numberBlackPixels + figF.numberBlackPixels,  figC.numberBlackPixels, percentageToDeemEquivalent_Exactly) &&
 								areTheseNumbersEquivalent(fig8.numberBlackPixels + figH.numberBlackPixels,  figG.numberBlackPixels, percentageToDeemEquivalent_Exactly))
-							return 8;
+							answers.add(8);
+						
+						
+						if(answers.size() == 0)
+							return -1;
+						if(answers.size() == 1)
+							return answers.get(0);
+						
+						//MORE THAN ONE ANSWER STILL - REMOVE ANY WHICH ARE SAME AS A-H THEN TRY AGAIN
+						for(int i = 0; i < answers.size(); ++i) {
+							if(isThisAnswerTheSameAsAnyNonAnswer(getFigureByIndex(answers.get(i)), percentageToDeemEquivalent) > -1) {
+								answers.remove(i);
+								--i;
+							}								
+						}
+						
+						if(answers.size() == 1)
+							return answers.get(0);
 					}
 				}
 			}
@@ -248,6 +460,28 @@ public class AgentVisualProblem {
 			
 		
 		return answer;
+	}
+	
+	
+	private AgentVisualFigure getFigureByIndex(int index) {
+		if(index == 1)
+			return fig1;
+		if(index == 2)
+			return fig2;
+		if(index == 3)
+			return fig3;
+		if(index == 4)
+			return fig4;
+		if(index == 5)
+			return fig5;
+		if(index == 6)
+			return fig6;
+		if(index == 7)
+			return fig7;
+		if(index == 8)
+			return fig8;
+
+		return null;
 	}
 	
 	public int areShapesEquivalentAlongDiagonals() { //LIKE BASIC D-02

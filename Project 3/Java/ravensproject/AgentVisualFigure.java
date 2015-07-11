@@ -19,6 +19,8 @@ public class AgentVisualFigure {
 	Point centerOfBlack = new Point(0,0);
 	int numPixels = 0;
 	int numShapes = 0;
+	int numRightSideUpTriangles = 0;
+	int numUpsideDownTriangles = 0;
 	
 	int shapeFillColor = new Color(50,50,50).getRGB();
 	int blackColor = new Color(0,0,0).getRGB();
@@ -161,11 +163,19 @@ public class AgentVisualFigure {
     public void traceNewShapeWithoutRecurssion(Point startingPoint) {
     	++numShapes;
     	
+    	Point highestPoint = startingPoint;
+    	Point lowestPoint = startingPoint;
+    	
     	ArrayList<Point> pointsList = new ArrayList<Point>();
     	pointsList.add(startingPoint);
     	
     	while(!pointsList.isEmpty()) {
     		Point currentPoint = pointsList.get(0);
+
+    		if(currentPoint.getY() > highestPoint.getY())
+    			highestPoint = currentPoint;
+    		if(currentPoint.getY() < lowestPoint.getY())
+    			lowestPoint = currentPoint;
     		
     		image.setRGB((int)currentPoint.getX(), (int)currentPoint.getY(), shapeFillColor);
 
@@ -230,6 +240,39 @@ public class AgentVisualFigure {
         		
         	pointsList.remove(0);
     	}
+    	
+    	//TAKE A GUESS WETHER OR NOT THESE ARE TRIANGLES
+    	if(highestPoint.getY() != lowestPoint.getY()) {
+    		int lowWidth = getWidthOfShapeLine(lowestPoint);
+    		int highWidth = getWidthOfShapeLine(highestPoint);
+    		
+    		if(lowWidth != highWidth && (lowWidth < 5 || highWidth < 5) && (lowWidth > 10 || highWidth > 10)) {
+    			if(lowWidth > highWidth)
+    				++numUpsideDownTriangles;
+    			else
+    				++numRightSideUpTriangles;
+    		}
+    	}
+    }
+    
+    public int getWidthOfShapeLine(Point point) {
+    	if(!isPointValidCoordinate(point))
+    		return 0;
+    	
+    	int size = 1;
+    	int tempX = (int)point.getX()+1;
+    	int tempY = (int)point.getY();
+    	while(tempX < image.getWidth() && image.getRGB(tempX,  tempY) == shapeFillColor) {
+    		++size;
+    		++tempX;
+    	}
+    	tempX = (int)point.getX()-1;
+    	while(tempX < image.getWidth() && image.getRGB(tempX,  tempY) == shapeFillColor) {
+    		++size;
+    		--tempX;
+    	}
+    	
+    	return size;
     }
     
     public void countShapes() {
